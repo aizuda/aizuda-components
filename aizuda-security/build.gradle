@@ -1,0 +1,8 @@
+description "爱组搭安全模块"
+
+dependencies {
+    api("com.baomidou:kisso")
+
+    compileOnly("org.springframework.boot:spring-boot-starter-web")
+
+}

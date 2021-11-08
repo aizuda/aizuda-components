@@ -1,0 +1,19 @@
+# ignore directories
+.idea
+.gradle
+/c:/
+**/out/**
+/logs/
+/felix-cache/
+**/contiperf-report/
+**/build/
+/**/out
+.settings/
+bin/
+*.log
+
+# ignore files
+*.iml
+*.logs
+*.project
+*.classpath
