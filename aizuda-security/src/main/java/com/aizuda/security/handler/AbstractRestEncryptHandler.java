@@ -7,6 +7,7 @@ package com.aizuda.security.handler;
 
 import com.aizuda.security.autoconfigure.SecurityProperties;
 import com.baomidou.kisso.common.encrypt.RSA;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpInputMessage;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
  * @author hubin
  * @since 2021-11-08
  */
+@Slf4j
 public abstract class AbstractRestEncryptHandler implements IRestEncryptHandler {
 
     @Override
@@ -38,35 +40,39 @@ public abstract class AbstractRestEncryptHandler implements IRestEncryptHandler 
         try {
             return new EncryptHttpInputMessage(props, inputMessage);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RestEncryptHandler request error.", e);
         }
         return inputMessage;
     }
 
     @Override
     public Object response(SecurityProperties props, Object body, MethodParameter returnType, MediaType selectedContentType,
-                           Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
+                           Class<? extends HttpMessageConverter<?>> selectedConverterType,
+                           ServerHttpRequest request, ServerHttpResponse response) {
         try {
             /**
              * 返回 base64 加密后的 rsa 密文内容
              */
-            return encryptByPrivateKey(props.getPrivateKey(), toJson(body));
+            return encryptByPrivateKey(this.toJson(body), props.getPrivateKey());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RestEncryptHandler response error.", e);
         }
-        return null;
+        return body;
     }
 
+    /**
+     * 内置请求消息处理类
+     */
     static class EncryptHttpInputMessage implements HttpInputMessage {
         private HttpHeaders headers;
         private InputStream body;
 
         public EncryptHttpInputMessage(SecurityProperties props, HttpInputMessage inputMessage) throws Exception {
             this.headers = inputMessage.getHeaders();
-            String content = new BufferedReader(new InputStreamReader(inputMessage.getBody()))
+            final String content = new BufferedReader(new InputStreamReader(inputMessage.getBody()))
                     .lines().collect(Collectors.joining(System.lineSeparator()));
-            // content 待处理
-            this.body = new ByteArrayInputStream(content.getBytes());
+            this.body = new ByteArrayInputStream(RSA.decryptByPrivateKey(content.getBytes(StandardCharsets.UTF_8),
+                    props.getPrivateKey()));
         }
 
         @Override

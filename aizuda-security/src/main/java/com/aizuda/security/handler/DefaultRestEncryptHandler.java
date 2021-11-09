@@ -5,6 +5,8 @@
  */
 package com.aizuda.security.handler;
 
+import com.aizuda.security.toolkit.JacksonUtils;
+
 /**
  * 默认接口加密处理类
  *
@@ -15,6 +17,6 @@ public class DefaultRestEncryptHandler extends AbstractRestEncryptHandler {
 
     @Override
     public String toJson(Object body) {
-        return null;
+        return JacksonUtils.toJSONString(body);
     }
 }
