@@ -5,9 +5,9 @@
  */
 package com.aizuda.security.advice;
 
-import com.aizuda.security.annotation.RestEncrypt;
 import com.aizuda.security.autoconfigure.SecurityProperties;
 import com.aizuda.security.handler.IRestEncryptHandler;
+import com.aizuda.security.toolkit.RestEncryptHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpInputMessage;
@@ -38,10 +38,8 @@ public class EncryptRequestBodyAdvice implements RequestBodyAdvice {
     @Override
     public boolean supports(MethodParameter methodParameter, Type targetType,
                             Class<? extends HttpMessageConverter<?>> converterType) {
-        if (methodParameter.getMethod().isAnnotationPresent(RestEncrypt.class)) {
-            encrypt = true;
-        }
-        return encrypt;
+        this.encrypt = RestEncryptHelper.isAnnotationEncrypt(methodParameter.getMethod());
+        return this.encrypt;
     }
 
     @Override
@@ -53,7 +51,7 @@ public class EncryptRequestBodyAdvice implements RequestBodyAdvice {
     @Override
     public HttpInputMessage beforeBodyRead(HttpInputMessage inputMessage, MethodParameter parameter, Type targetType,
                                            Class<? extends HttpMessageConverter<?>> converterType) {
-        return encrypt ? restEncryptHandler.request(securityProperties, inputMessage,
+        return this.encrypt ? restEncryptHandler.request(securityProperties, inputMessage,
                 parameter, targetType, converterType) : inputMessage;
     }
 

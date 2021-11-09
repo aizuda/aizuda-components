@@ -5,7 +5,7 @@
  */
 package com.aizuda.security.annotation;
 
-import com.aizuda.security.autoconfigure.SecurityAutoConfiguration;
+import com.aizuda.security.autoconfigure.RestEncryptAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
@@ -20,7 +20,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
-@Import({SecurityAutoConfiguration.class})
+@Import({RestEncryptAutoConfiguration.class})
 public @interface EnableRestEncrypt {
 
 }

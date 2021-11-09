@@ -8,7 +8,6 @@ package com.aizuda.security.autoconfigure;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
 import java.io.Serializable;
 
@@ -21,7 +20,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ConfigurationProperties(prefix = SecurityProperties.PREFIX)
-@Configuration
 public class SecurityProperties implements Serializable {
     /**
      * 配置前缀

@@ -5,9 +5,9 @@
  */
 package com.aizuda.security.advice;
 
-import com.aizuda.security.annotation.RestEncrypt;
 import com.aizuda.security.autoconfigure.SecurityProperties;
 import com.aizuda.security.handler.IRestEncryptHandler;
+import com.aizuda.security.toolkit.RestEncryptHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -37,18 +37,15 @@ public class EncryptResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-        encrypt = false;
-        if (returnType.getMethod().isAnnotationPresent(RestEncrypt.class)) {
-            encrypt = true;
-        }
-        return encrypt;
+        this.encrypt = RestEncryptHelper.isAnnotationEncrypt(returnType.getMethod());
+        return this.encrypt;
     }
 
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
                                   Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                   ServerHttpRequest request, ServerHttpResponse response) {
-        return encrypt ? restEncryptHandler.response(securityProperties, body, returnType,
+        return this.encrypt ? restEncryptHandler.response(securityProperties, body, returnType,
                 selectedContentType, selectedConverterType, request, response) : body;
     }
 }
