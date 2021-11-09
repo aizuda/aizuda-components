@@ -25,7 +25,7 @@ description = "爱组搭低代码组件化开发平台"
 // 项目配置
 allprojects {
     group "com.aizuda"
-    version VERSION
+    version "1.0.0"
 }
 
 // 子模块配置
@@ -85,8 +85,14 @@ subprojects {
 
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
+        options.warnings = false
+        options.deprecation = true
+        options.compilerArgs += ["-parameters"]
     }
 
+    tasks.withType(GenerateModuleMetadata) {
+        enabled = false
+    }
     task sourcesJar(type: Jar, dependsOn: classes) {
         archiveClassifier = 'sources'
         from sourceSets.main.allSource
@@ -103,14 +109,15 @@ subprojects {
         }
     }
 
-    task javadocJar(type: Jar, dependsOn: javadoc) {
+    task javadocJar(type: Jar) {
         archiveClassifier = 'javadoc'
-        from 'build/docs/javadoc'
+        from javadoc
     }
 
-    artifacts {
-        archives sourcesJar
-        archives javadocJar
+    tasks.whenTaskAdded { task ->
+        if (task.name.contains('signMavenJavaPublication')) {
+            task.enabled = new File(project.property('signing.secretKeyRingFile') as String).isFile()
+        }
     }
 
     publishing {
