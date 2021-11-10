@@ -8,6 +8,7 @@
 
 - 愿景：每个人都是架构师
 
+![爱组搭 ~ 组件源码示例演示](https://gitee.com/aizuda/aizuda-components-examples)
 
 # 模块介绍
 
