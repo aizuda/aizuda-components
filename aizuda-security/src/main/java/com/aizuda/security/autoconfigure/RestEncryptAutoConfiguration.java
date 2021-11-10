@@ -5,7 +5,7 @@
  */
 package com.aizuda.security.autoconfigure;
 
-import com.aizuda.security.advice.EncryptRequestBodyAdvice;
+import com.aizuda.security.advice.DecryptRequestBodyAdvice;
 import com.aizuda.security.advice.EncryptResponseBodyAdvice;
 import com.aizuda.security.handler.DefaultRestEncryptHandler;
 import com.aizuda.security.handler.IRestEncryptHandler;
@@ -17,6 +17,8 @@ import org.springframework.context.annotation.Lazy;
 
 /**
  * 接口加密处理启动配置
+ * <p>
+ * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
  *
  * @author hubin
  * @since 2021-11-08
@@ -34,15 +36,16 @@ public class RestEncryptAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public EncryptRequestBodyAdvice encryptRequestBodyAdvice(SecurityProperties securityProperties,
+    public DecryptRequestBodyAdvice decryptRequestBodyAdvice(SecurityProperties securityProperties,
                                                              IRestEncryptHandler restEncryptHandler) {
-        return new EncryptRequestBodyAdvice(securityProperties, restEncryptHandler);
+        return new DecryptRequestBodyAdvice(securityProperties, restEncryptHandler);
     }
 
     @Bean
     @ConditionalOnMissingBean
     public EncryptResponseBodyAdvice encryptResponseBodyAdvice(SecurityProperties securityProperties,
                                                                IRestEncryptHandler restEncryptHandler) {
+        securityProperties.checkValid();
         return new EncryptResponseBodyAdvice(securityProperties, restEncryptHandler);
     }
 }

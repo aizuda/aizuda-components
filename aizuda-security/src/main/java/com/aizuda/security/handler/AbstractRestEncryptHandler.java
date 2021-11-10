@@ -7,6 +7,7 @@ package com.aizuda.security.handler;
 
 import com.aizuda.security.autoconfigure.SecurityProperties;
 import com.baomidou.kisso.common.encrypt.RSA;
+import com.baomidou.kisso.common.encrypt.base64.Base64;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
@@ -22,11 +23,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.stream.Collectors;
 
 /**
  * 接口加密处理抽象类
+ * <p>
+ * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
  *
  * @author hubin
  * @since 2021-11-08
@@ -71,8 +73,10 @@ public abstract class AbstractRestEncryptHandler implements IRestEncryptHandler 
             this.headers = inputMessage.getHeaders();
             final String content = new BufferedReader(new InputStreamReader(inputMessage.getBody()))
                     .lines().collect(Collectors.joining(System.lineSeparator()));
-            this.body = new ByteArrayInputStream(RSA.decryptByPrivateKey(content.getBytes(StandardCharsets.UTF_8),
-                    props.getPrivateKey()));
+            if (null != content) {
+                byte[] encryptedData = Base64.decode(content.getBytes(StandardCharsets.UTF_8));
+                this.body = new ByteArrayInputStream(RSA.decryptByPrivateKey(encryptedData, props.getPrivateKey()));
+            }
         }
 
         @Override
@@ -91,18 +95,18 @@ public abstract class AbstractRestEncryptHandler implements IRestEncryptHandler 
      *
      * @param plaintext  明文
      * @param privateKey 私钥(BASE64编码)
-     * @return
+     * @return 返回私钥加密数据
      * @throws Exception
      */
     public String encryptByPrivateKey(String plaintext, String privateKey) throws Exception {
-        return Base64.getEncoder().encodeToString(RSA.encryptByPrivateKey(plaintext.getBytes(StandardCharsets.UTF_8), privateKey));
+        return Base64.toBase64String(RSA.encryptByPrivateKey(plaintext.getBytes(StandardCharsets.UTF_8), privateKey));
     }
 
     /**
      * 对象转 json 字符串方法
      *
      * @param body 请求对象
-     * @return
+     * @return 对象 json 格式化字符串
      */
     public abstract String toJson(Object body);
 }

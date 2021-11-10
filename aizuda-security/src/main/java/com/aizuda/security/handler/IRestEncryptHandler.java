@@ -17,6 +17,8 @@ import java.lang.reflect.Type;
 
 /**
  * 接口加密处理类
+ * <p>
+ * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
  *
  * @author hubin
  * @since 2021-11-08

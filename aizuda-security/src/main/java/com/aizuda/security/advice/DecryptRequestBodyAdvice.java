@@ -18,19 +18,21 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestBodyAdvice;
 import java.lang.reflect.Type;
 
 /**
- * 接口请求加密处理切点
+ * 接口请求解密处理切点
+ * <p>
+ * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
  *
  * @author hubin
  * @since 2021-11-08
  */
 @Slf4j
 @RestControllerAdvice
-public class EncryptRequestBodyAdvice implements RequestBodyAdvice {
+public class DecryptRequestBodyAdvice implements RequestBodyAdvice {
     private SecurityProperties securityProperties;
     private IRestEncryptHandler restEncryptHandler;
     private boolean encrypt;
 
-    public EncryptRequestBodyAdvice(SecurityProperties securityProperties, IRestEncryptHandler restEncryptHandler) {
+    public DecryptRequestBodyAdvice(SecurityProperties securityProperties, IRestEncryptHandler restEncryptHandler) {
         this.securityProperties = securityProperties;
         this.restEncryptHandler = restEncryptHandler;
     }
@@ -38,7 +40,7 @@ public class EncryptRequestBodyAdvice implements RequestBodyAdvice {
     @Override
     public boolean supports(MethodParameter methodParameter, Type targetType,
                             Class<? extends HttpMessageConverter<?>> converterType) {
-        this.encrypt = RestEncryptHelper.isAnnotationEncrypt(methodParameter.getMethod());
+        this.encrypt = RestEncryptHelper.isAnnotationDecrypt(methodParameter.getMethod());
         return this.encrypt;
     }
 

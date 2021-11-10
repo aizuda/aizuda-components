@@ -5,6 +5,7 @@
  */
 package com.aizuda.security.autoconfigure;
 
+import com.baomidou.kisso.common.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -13,6 +14,8 @@ import java.io.Serializable;
 
 /**
  * 爱组搭安全配置
+ * <p>
+ * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
  *
  * @author hubin
  * @since 2021-11-08
@@ -34,4 +37,12 @@ public class SecurityProperties implements Serializable {
      */
     private String publicKey;
 
+    /**
+     * 配置有效性检查
+     */
+    public void checkValid() {
+        if (StringUtils.isEmpty(privateKey) || StringUtils.isEmpty(publicKey)) {
+            throw new RuntimeException("not found rsa privateKey or publicKey.");
+        }
+    }
 }

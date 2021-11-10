@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * JSON 字符与对像转换
+ * <p>
+ * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
  *
  * @author hubin
  * @since 2021-11-09
