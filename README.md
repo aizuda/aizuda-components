@@ -15,6 +15,12 @@
 - aizuda-security
 
   安全模块，主要内容 api 请求解密，响应加密，单点登录 等。
-
+```xml
+<dependency>
+  <groupId>com.aizuda</groupId>
+  <artifactId>aizuda-security</artifactId>
+  <version>0.0.1</version>
+</dependency>
+```
 
 

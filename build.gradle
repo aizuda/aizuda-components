@@ -93,6 +93,7 @@ subprojects {
     tasks.withType(GenerateModuleMetadata) {
         enabled = false
     }
+
     task sourcesJar(type: Jar, dependsOn: classes) {
         archiveClassifier = 'sources'
         from sourceSets.main.allSource
