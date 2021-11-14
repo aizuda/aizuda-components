@@ -1,0 +1,8 @@
+description "爱组搭限流模块"
+
+dependencies {
+    api("com.baomidou:kisso")
+
+    compileOnly("org.springframework.boot:spring-boot-starter-web")
+
+}

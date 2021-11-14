@@ -4,4 +4,5 @@ rootProject.name = 'aizuda-components'
 // 每个人都是架构师
 include 'aizuda-bom'
 include 'aizuda-security'
+include 'aizuda-limiter'
 
