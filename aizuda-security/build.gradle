@@ -1,5 +1,7 @@
 description "爱组搭安全模块"
 
+version "1.0.0"
+
 dependencies {
     api("com.baomidou:kisso")
 

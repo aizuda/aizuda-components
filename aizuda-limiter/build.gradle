@@ -1,8 +1,12 @@
 description "爱组搭限流模块"
 
+version "1.0.0"
+
 dependencies {
-    api("com.baomidou:kisso")
+    api("org.springframework.boot:spring-boot-starter-data-redis")
+    api("org.apache.commons:commons-pool2:2.11.1")
 
     compileOnly("org.springframework.boot:spring-boot-starter-web")
+    testImplementation("org.springframework.boot:spring-boot-starter-web")
 
 }

@@ -27,4 +27,12 @@
 
   限流模块，主要内容 api 限流，短信，邮件 发送限流、控制恶意利用验证码功能 等。
 
+```xml
+<dependency>
+  <groupId>com.aizuda</groupId>
+  <artifactId>aizuda-limiter</artifactId>
+  <version>0.0.1</version>
+</dependency>
+```
+
 
