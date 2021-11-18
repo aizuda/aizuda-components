@@ -25,7 +25,6 @@ description = "爱组搭低代码组件化开发平台"
 // 项目配置
 allprojects {
     group "com.aizuda"
-    version "0.0.1"
 }
 
 // 子模块配置

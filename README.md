@@ -31,7 +31,7 @@
 <dependency>
   <groupId>com.aizuda</groupId>
   <artifactId>aizuda-limiter</artifactId>
-  <version>0.0.1</version>
+  <version>1.0.0</version>
 </dependency>
 ```
 
