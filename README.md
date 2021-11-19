@@ -8,6 +8,8 @@
 
 - 愿景：每个人都是架构师
 
+![微信群](https://images.gitee.com/uploads/images/2021/1119/095213_7ac4e4e7_12260.png "aizuda.png")
+
 [爱组搭 ~ 组件源码示例演示](https://gitee.com/aizuda/aizuda-components-examples)
 
 # 模块介绍
