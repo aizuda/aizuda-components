@@ -13,7 +13,7 @@ apply plugin: "io.spring.dependency-management"
 dependencyManagement {
     dependencies {
         // 爱组搭 http://aizuda.com 低代码组件化开发平台
-        dependency "com.aizuda:aizuda-limiter:0.0.1"
+        dependency "com.aizuda:aizuda-limiter:1.0.0"
         dependency "com.aizuda:aizuda-security:0.0.1"
 
     }
