@@ -6,7 +6,16 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.extern.slf4j.Slf4j;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * JSON 字符与对像转换
@@ -18,6 +27,12 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class JacksonUtils {
+    public static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    public static final String DATE_PATTERN = "yyyy-MM-dd";
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
+    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_PATTERN);
+
+
     private static ObjectMapper OBJECT_MAPPER;
 
     /**
@@ -36,6 +51,14 @@ public class JacksonUtils {
             SimpleModule simpleModule = new SimpleModule();
             simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
             OBJECT_MAPPER.registerModule(simpleModule);
+            JavaTimeModule timeModule = new JavaTimeModule();
+            // LocalDateTime序列化与反序列化
+            timeModule.addSerializer(new LocalDateTimeSerializer(DATE_TIME_FORMATTER));
+            timeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DATE_TIME_FORMATTER));
+            // LocalDate序列化与反序列化
+            timeModule.addSerializer(new LocalDateSerializer(DATE_FORMATTER));
+            timeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(DATE_FORMATTER));
+            OBJECT_MAPPER.registerModule(timeModule);
         }
         return OBJECT_MAPPER;
     }
