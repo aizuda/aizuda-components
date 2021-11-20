@@ -6,9 +6,6 @@
 package com.aizuda.limiter.strategy;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Stream;
 
 /**
  * IP 速率限制策略
@@ -30,18 +27,17 @@ public class IpRateLimitStrategy implements IRateLimitStrategy {
     @Override
     public String getKey() {
         HttpServletRequest request = this.getRequest();
-        final AtomicReference<String> ipAddress = new AtomicReference<>();
+        String ip = null;
         // 对配置好的用于尝试的header进行尝试
-        Stream.of(HEADERS_FOR_TRY).forEach((String header) -> {
-            if (headerNotMatch(ipAddress)) {
-                ipAddress.set(request.getHeader(header));
+        for (String header : HEADERS_FOR_TRY) {
+            if (headerNotMatch(ip)) {
+                ip = request.getHeader(header);
             }
-        });
-        if (headerNotMatch(ipAddress)) {
-            ipAddress.set(request.getRemoteAddr());
+        }
+        if (headerNotMatch(ip)) {
+            ip = request.getRemoteAddr();
         }
         // 最后对获取到的ip进行处理
-        String ip = ipAddress.get();
         if (ip != null && ip.length() > 15 && ip.indexOf(",") > 0) {
             ip = ip.substring(0, ip.indexOf(","));
         }
@@ -49,12 +45,12 @@ public class IpRateLimitStrategy implements IRateLimitStrategy {
     }
 
     /**
-     * 判断header是否 不满足条件
+     * 判断ip是否 不满足条件
      *
-     * @param header header
+     * @param ip ip
      * @return 不满足条件，返回true
      */
-    private boolean headerNotMatch(AtomicReference<String> header) {
-        return !Optional.of(header).map(AtomicReference::get).filter(ip -> ip.length() != 0).filter(ip -> !"unknown".equalsIgnoreCase(ip)).isPresent();
+    private boolean headerNotMatch(String ip) {
+        return ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip);
     }
 }
