@@ -41,15 +41,15 @@ public class RedisRateLimitHandler implements IRateLimitHandler {
             REDIS_SCRIPT_RATE_LIMIT = RedisScript.of(this.luaScript(), Long.class);
         }
         // 间隔时间解析为秒
-        long _interval = DurationStyle.detectAndParse(rateLimit.interval()).getSeconds();
-        final String _key = this.buildKey(method, args, classMethodName, rateLimit);
-        log.debug("rate.limit.key = {}", _key);
-        Long currentCount = redisTemplate.execute(REDIS_SCRIPT_RATE_LIMIT, Collections.singletonList(_key),
-                String.valueOf(rateLimit.count()), String.valueOf(_interval));
+        long interval = DurationStyle.detectAndParse(rateLimit.interval()).getSeconds();
+        final String key = this.buildKey(method, args, classMethodName, rateLimit);
+        log.debug("rate.limit.key = {}", key);
+        Long currentCount = redisTemplate.execute(REDIS_SCRIPT_RATE_LIMIT, Collections.singletonList(key),
+                String.valueOf(rateLimit.count()), String.valueOf(interval));
         if (null != currentCount) {
-            long _count = currentCount.longValue();
-            if (_count > 0 && _count <= rateLimit.count()) {
-                log.debug("The {}-th visit within the current limit period", _count);
+            long count = currentCount;
+            if (count > 0 && count <= rateLimit.count()) {
+                log.debug("The {}-th visit within the current limit period", count);
                 return true;
             }
         }
@@ -74,12 +74,9 @@ public class RedisRateLimitHandler implements IRateLimitHandler {
         final String[] strArr = rateLimit.strategy();
         if (strArr.length > 0) {
             for (String str : strArr) {
-                IRateLimitStrategy rateLimitStrategy = rateLimitStrategyList.stream()
+                rateLimitStrategyList.stream()
                         .filter(t -> Objects.equals(t.getType(), str))
-                        .findFirst().orElse(null);
-                if (null != rateLimitStrategy) {
-                    key.append(rateLimitStrategy.getKey());
-                }
+                        .findFirst().ifPresent(rateLimitStrategy -> key.append(rateLimitStrategy.getKey()));
             }
         }
 
@@ -90,13 +87,11 @@ public class RedisRateLimitHandler implements IRateLimitHandler {
      * Lua 限流脚本
      */
     public String luaScript() {
-        StringBuffer lua = new StringBuffer();
-        lua.append("local key = KEYS[1];");
-        lua.append("local count = tonumber(ARGV[1]);");
-        lua.append("local interval = tonumber(ARGV[2]);");
-        lua.append("local current = tonumber(redis.call('get', key) or \"0\") ");
-        lua.append("if current + 1 > count then return 0 ");
-        lua.append("else redis.call(\"INCRBY\", key, \"1\") redis.call(\"expire\", key, interval) return current + 1 end");
-        return lua.toString();
+        return "local key = KEYS[1];" +
+                "local count = tonumber(ARGV[1]);" +
+                "local interval = tonumber(ARGV[2]);" +
+                "local current = tonumber(redis.call('get', key) or \"0\") " +
+                "if current + 1 > count then return 0 " +
+                "else redis.call(\"INCRBY\", key, \"1\") redis.call(\"expire\", key, interval) return current + 1 end";
     }
 }
