@@ -20,9 +20,7 @@ import java.util.stream.Stream;
  */
 public class IpRateLimitStrategy implements IRateLimitStrategy {
 
-    public static final String UNKNOWN = "unknown";
-    public static final String[] HEADERS_FOR_TRY = {"x-forwarded-for", "Proxy-Client-IP", "WL-Proxy-Client-IP"};
-    public static final Integer LEGAL_HEADER_LENGTH = 15;
+    public final String[] HEADERS_FOR_TRY = {"x-forwarded-for", "Proxy-Client-IP", "WL-Proxy-Client-IP"};
 
     @Override
     public String getType() {
@@ -43,7 +41,7 @@ public class IpRateLimitStrategy implements IRateLimitStrategy {
             ip.set(request.getRemoteAddr());
         }
         // 最后对获取到的ip进行处理
-        Optional.of(ip).map(AtomicReference::get).filter(header -> header.length() > LEGAL_HEADER_LENGTH).filter(header -> header.indexOf(",") > 0)
+        Optional.of(ip).map(AtomicReference::get).filter(header -> header.length() > 15).filter(header -> header.indexOf(",") > 0)
                 .map(header -> header.substring(0, header.indexOf(","))).ifPresent(ip::set);
         return ip.get();
     }
@@ -55,6 +53,6 @@ public class IpRateLimitStrategy implements IRateLimitStrategy {
      * @return 不满足条件，返回true
      */
     private boolean headerNotMatch(AtomicReference<String> header) {
-        return !Optional.of(header).map(AtomicReference::get).filter(ip -> ip.length() != 0).filter(ip -> !UNKNOWN.equalsIgnoreCase(ip)).isPresent();
+        return !Optional.of(header).map(AtomicReference::get).filter(ip -> ip.length() != 0).filter(ip -> !"unknown".equalsIgnoreCase(ip)).isPresent();
     }
 }
