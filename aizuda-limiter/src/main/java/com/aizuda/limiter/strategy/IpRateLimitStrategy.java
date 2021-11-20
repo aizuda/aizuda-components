@@ -6,6 +6,9 @@
 package com.aizuda.limiter.strategy;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Stream;
 
 /**
  * IP 速率限制策略
@@ -19,25 +22,32 @@ public class IpRateLimitStrategy implements IRateLimitStrategy {
 
     @Override
     public String getType() {
-        return "ip";
+        return IP;
     }
 
     @Override
     public String getKey() {
         HttpServletRequest request = this.getRequest();
-        String ip = request.getHeader("x-forwarded-for");
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
-        if (ip != null && ip.length() > 15 && ip.indexOf(",") > 0) {
-            ip = ip.substring(0, ip.indexOf(","));
-        }
-        return ip;
+        final AtomicReference<String> ip = new AtomicReference<>(request.getRemoteAddr());
+        // 对配置好的用于尝试的header进行尝试
+        Stream.of(HEADERS_FOR_TRY).forEach((String header) -> {
+            if (headerNotMatch(ip)) {
+                ip.set(request.getHeader(header));
+            }
+        });
+        // 最后对获取到的ip进行处理
+        Optional.of(ip).map(AtomicReference::get).filter(header -> header.length() > LEGAL_HEADER_LENGTH).filter(header -> header.indexOf(COMMA) > ZERO)
+                .map(header -> header.substring(ZERO, header.indexOf(COMMA))).ifPresent(ip::set);
+        return ip.get();
+    }
+
+    /**
+     * 判断header是否 不满足条件
+     *
+     * @param header header
+     * @return 不满足条件，返回true
+     */
+    private boolean headerNotMatch(AtomicReference<String> header) {
+        return !Optional.of(header).map(AtomicReference::get).filter(ip -> ip.length() != ZERO).filter(ip -> !UNKNOWN.equalsIgnoreCase(ip)).isPresent();
     }
 }

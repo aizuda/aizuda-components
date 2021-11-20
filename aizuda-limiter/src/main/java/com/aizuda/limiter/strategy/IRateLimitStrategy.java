@@ -20,6 +20,14 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface IRateLimitStrategy {
 
+    String UNKNOWN = "unknown";
+    String COMMA = ",";
+    String IP = "ip";
+    String[] HEADERS_FOR_TRY = {"x-forwarded-for", "Proxy-Client-IP", "WL-Proxy-Client-IP"};
+    Integer LEGAL_HEADER_LENGTH = 15;
+    Integer ZERO = 0;
+
+
     /**
      * 策略类型
      */
