@@ -5,4 +5,5 @@ rootProject.name = 'aizuda-components'
 include 'aizuda-bom'
 include 'aizuda-limiter'
 include 'aizuda-security'
+include 'aizuda-robot'
 

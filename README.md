@@ -14,17 +14,6 @@
 
 # 模块介绍
 
-- aizuda-security
-
-  安全模块，主要内容 api 请求解密，响应加密，单点登录 等。
-```xml
-<dependency>
-  <groupId>com.aizuda</groupId>
-  <artifactId>aizuda-security</artifactId>
-  <version>0.0.1</version>
-</dependency>
-```
-
 - aizuda-limiter
 
   限流模块，主要内容 api 限流，短信，邮件 发送限流、控制恶意利用验证码功能 等。
@@ -34,6 +23,22 @@
   <groupId>com.aizuda</groupId>
   <artifactId>aizuda-limiter</artifactId>
   <version>1.0.0</version>
+</dependency>
+```
+
+- aizuda-robot
+
+  机器人模块，主要内容 bug 异常 推送到 钉钉 企业微信 飞书 等平台。
+
+
+- aizuda-security
+
+  安全模块，主要内容 api 请求解密，响应加密，单点登录 等。
+```xml
+<dependency>
+  <groupId>com.aizuda</groupId>
+  <artifactId>aizuda-security</artifactId>
+  <version>0.0.1</version>
 </dependency>
 ```
 
