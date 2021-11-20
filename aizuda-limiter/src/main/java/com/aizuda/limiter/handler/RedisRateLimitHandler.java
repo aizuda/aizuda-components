@@ -14,7 +14,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -44,7 +44,7 @@ public class RedisRateLimitHandler implements IRateLimitHandler {
         long _interval = DurationStyle.detectAndParse(rateLimit.interval()).getSeconds();
         final String _key = this.buildKey(method, args, classMethodName, rateLimit);
         log.debug("rate.limit.key = {}", _key);
-        Long currentCount = redisTemplate.execute(REDIS_SCRIPT_RATE_LIMIT, Arrays.asList(_key),
+        Long currentCount = redisTemplate.execute(REDIS_SCRIPT_RATE_LIMIT, Collections.singletonList(_key),
                 String.valueOf(rateLimit.count()), String.valueOf(_interval));
         if (null != currentCount) {
             long _count = currentCount.longValue();

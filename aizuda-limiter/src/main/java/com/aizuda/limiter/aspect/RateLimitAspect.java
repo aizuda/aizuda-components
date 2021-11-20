@@ -29,7 +29,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Aspect
 @AllArgsConstructor
 public class RateLimitAspect {
-    private static Map<String, RateLimit> RATE_LIMIT_MAP = new ConcurrentHashMap<>();
+    /**
+     * 缓存方法上的源注解信息。减少反射的开销
+     */
+    private static final Map<String, RateLimit> RATE_LIMIT_MAP = new ConcurrentHashMap<>();
     private final IRateLimitHandler rateLimitHandler;
 
     /**
@@ -45,7 +48,7 @@ public class RateLimitAspect {
         Method method = signature.getMethod();
         final String classMethodName = this.getClassMethodName(method);
         RateLimit rateLimit = this.getRateLimit(method, classMethodName);
-        if (rateLimitHandler.proceed(method, () -> pjp.getArgs(), classMethodName, rateLimit)) {
+        if (rateLimitHandler.proceed(method, pjp::getArgs, classMethodName, rateLimit)) {
             return pjp.proceed();
         } else {
             throw new RateLimitException(!"".equals(rateLimit.message()) ? rateLimit.message() :
@@ -58,22 +61,17 @@ public class RateLimitAspect {
      *
      * @param method          执行方法
      * @param classMethodName 执行类方法名
-     * @return
+     * @return 方法对应的注解源信息，如果有，直接返回，如果无，获取放入缓存。
      */
     public RateLimit getRateLimit(Method method, String classMethodName) {
-        RateLimit rateLimit = RATE_LIMIT_MAP.get(classMethodName);
-        if (null == rateLimit) {
-            rateLimit = method.getAnnotation(RateLimit.class);
-            RATE_LIMIT_MAP.put(classMethodName, rateLimit);
-        }
-        return rateLimit;
+        return RATE_LIMIT_MAP.computeIfAbsent(classMethodName, k -> method.getAnnotation(RateLimit.class));
     }
 
     /**
      * 获取执行类方法名
      *
      * @param method 执行方法
-     * @return
+     * @return 类名+方法名
      */
     public String getClassMethodName(Method method) {
         return String.format("%s.%s", method.getDeclaringClass().getName(), method.getName());
