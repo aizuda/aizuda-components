@@ -22,16 +22,22 @@ public interface IRateLimitStrategy {
 
     /**
      * 策略类型
+     *
+     * @return 限流策略类型
      */
     String getType();
 
     /**
      * 唯一标示 key
+     *
+     * @return 限流key
      */
     String getKey();
 
     /**
      * 当前请求
+     *
+     * @return 当前请求
      */
     default HttpServletRequest getRequest() {
         return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();

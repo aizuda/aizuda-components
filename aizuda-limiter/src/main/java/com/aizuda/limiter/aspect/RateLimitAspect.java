@@ -40,7 +40,7 @@ public class RateLimitAspect {
      *
      * @param pjp {@link ProceedingJoinPoint}
      * @return {@link Object}
-     * @throws Throwable
+     * @throws Throwable 限流异常
      */
     @Around("@annotation(com.aizuda.limiter.annotation.RateLimit)")
     public Object interceptor(ProceedingJoinPoint pjp) throws Throwable {
