@@ -30,20 +30,22 @@ public class IpRateLimitStrategy implements IRateLimitStrategy {
     @Override
     public String getKey() {
         HttpServletRequest request = this.getRequest();
-        final AtomicReference<String> ip = new AtomicReference<>();
+        final AtomicReference<String> ipAddress = new AtomicReference<>();
         // 对配置好的用于尝试的header进行尝试
         Stream.of(HEADERS_FOR_TRY).forEach((String header) -> {
-            if (headerNotMatch(ip)) {
-                ip.set(request.getHeader(header));
+            if (headerNotMatch(ipAddress)) {
+                ipAddress.set(request.getHeader(header));
             }
         });
-        if (headerNotMatch(ip)) {
-            ip.set(request.getRemoteAddr());
+        if (headerNotMatch(ipAddress)) {
+            ipAddress.set(request.getRemoteAddr());
         }
         // 最后对获取到的ip进行处理
-        Optional.of(ip).map(AtomicReference::get).filter(header -> header.length() > 15).filter(header -> header.indexOf(",") > 0)
-                .map(header -> header.substring(0, header.indexOf(","))).ifPresent(ip::set);
-        return ip.get();
+        String ip = ipAddress.get();
+        if (ip != null && ip.length() > 15 && ip.indexOf(",") > 0) {
+            ip = ip.substring(0, ip.indexOf(","));
+        }
+        return ip;
     }
 
     /**
