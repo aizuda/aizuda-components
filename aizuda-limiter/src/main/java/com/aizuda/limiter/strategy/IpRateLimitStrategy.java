@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class IpRateLimitStrategy implements IRateLimitStrategy {
 
-    private final String[] HEADERS_FOR_TRY = {
+    private final String[] HEADERS = {
             "x-forwarded-for",
             "Proxy-Client-IP",
             "WL-Proxy-Client-IP",
@@ -29,7 +29,8 @@ public class IpRateLimitStrategy implements IRateLimitStrategy {
             "HTTP_FORWARDED",
             "HTTP_VIA",
             "REMOTE_ADDR",
-            "X-Real-IP"};
+            "X-Real-IP"
+    };
 
     @Override
     public String getType() {
@@ -40,7 +41,7 @@ public class IpRateLimitStrategy implements IRateLimitStrategy {
     public String getKey() {
         HttpServletRequest request = this.getRequest();
         String ip = null;
-        for (String header : HEADERS_FOR_TRY) {
+        for (String header : HEADERS) {
             String currentIp = request.getHeader(header);
             if (isNotUnknown(currentIp)) {
                 ip = currentIp;
@@ -50,12 +51,12 @@ public class IpRateLimitStrategy implements IRateLimitStrategy {
         if (null == ip) {
             ip = request.getRemoteAddr();
         }
-        String localAddr = "0:0:0:0:0:0:0:1";
-        if (localAddr.equals(ip)) {
-            return "127.0.0.1";
-        }
         if (null == ip) {
             return "";
+        }
+        String localAddress = "0:0:0:0:0:0:0:1";
+        if (localAddress.equals(ip)) {
+            return "127.0.0.1";
         }
         return getMultistageReverseProxyIp(ip);
     }

@@ -63,7 +63,7 @@ public abstract class AbstractRestEncryptHandler implements IRestEncryptHandler 
     }
 
     /**
-     * 内置请求消息处理类
+     * 请求加密消息处理类
      */
     static class EncryptHttpInputMessage implements HttpInputMessage {
         private  HttpHeaders headers;

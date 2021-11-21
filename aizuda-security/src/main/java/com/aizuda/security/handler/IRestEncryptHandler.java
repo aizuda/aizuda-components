@@ -25,9 +25,31 @@ import java.lang.reflect.Type;
  */
 public interface IRestEncryptHandler {
 
+    /**
+     * 请求加密消息处理方法
+     *
+     * @param props         配置信息
+     * @param inputMessage  请求加密消息
+     * @param parameter     方法参数
+     * @param targetType    {@link Type}
+     * @param converterType {@link HttpMessageConverter}
+     * @return
+     */
     HttpInputMessage request(SecurityProperties props, HttpInputMessage inputMessage, MethodParameter parameter, Type targetType,
                              Class<? extends HttpMessageConverter<?>> converterType);
 
+    /**
+     * 响应加密消息处理方法
+     *
+     * @param props                 配置信息
+     * @param body                  返回对象
+     * @param returnType            方法参数
+     * @param selectedContentType   {@link MediaType}
+     * @param selectedConverterType {@link HttpMessageConverter}
+     * @param request               {@link ServerHttpRequest}
+     * @param response              {@link ServerHttpResponse}
+     * @return
+     */
     Object response(SecurityProperties props, Object body, MethodParameter returnType, MediaType selectedContentType,
                     Class<? extends HttpMessageConverter<?>> selectedConverterType,
                     ServerHttpRequest request, ServerHttpResponse response);
