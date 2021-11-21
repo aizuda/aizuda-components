@@ -28,8 +28,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 @Slf4j
 @RestControllerAdvice
 public class EncryptResponseBodyAdvice implements ResponseBodyAdvice<Object> {
-    private SecurityProperties securityProperties;
-    private IRestEncryptHandler restEncryptHandler;
+    private final SecurityProperties securityProperties;
+    private final IRestEncryptHandler restEncryptHandler;
     private boolean encrypt;
 
     public EncryptResponseBodyAdvice(SecurityProperties securityProperties, IRestEncryptHandler restEncryptHandler) {
