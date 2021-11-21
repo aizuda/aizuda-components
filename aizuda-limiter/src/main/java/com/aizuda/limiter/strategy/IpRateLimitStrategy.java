@@ -42,7 +42,7 @@ public class IpRateLimitStrategy implements IRateLimitStrategy {
         String ip = null;
         for (String header : HEADERS_FOR_TRY) {
             String currentIp = request.getHeader(header);
-            if (isUnknown(currentIp)) {
+            if (isNotUnknown(currentIp)) {
                 ip = currentIp;
                 break;
             }
@@ -72,7 +72,7 @@ public class IpRateLimitStrategy implements IRateLimitStrategy {
         if (ip != null && ip.indexOf(delimiter) > 0) {
             String[] ips = ip.trim().split(delimiter);
             for (String subIp : ips) {
-                if (!isUnknown(subIp)) {
+                if (isNotUnknown(subIp)) {
                     ip = subIp;
                     break;
                 }
@@ -81,7 +81,7 @@ public class IpRateLimitStrategy implements IRateLimitStrategy {
         return ip;
     }
 
-    private boolean isUnknown(String checkIp) {
+    private boolean isNotUnknown(String checkIp) {
         return null != checkIp && checkIp.length() > 0 && !"unknown".equalsIgnoreCase(checkIp);
     }
 }
