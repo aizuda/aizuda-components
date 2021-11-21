@@ -5,6 +5,7 @@
  */
 package com.aizuda.limiter.aspect;
 
+import com.aizuda.common.toolkit.MethodUtils;
 import com.aizuda.limiter.annotation.RateLimit;
 import com.aizuda.limiter.exception.RateLimitException;
 import com.aizuda.limiter.handler.IRateLimitHandler;
@@ -46,7 +47,7 @@ public class RateLimitAspect {
     public Object interceptor(ProceedingJoinPoint pjp) throws Throwable {
         MethodSignature signature = (MethodSignature) pjp.getSignature();
         Method method = signature.getMethod();
-        final String classMethodName = this.getClassMethodName(method);
+        final String classMethodName = MethodUtils.getClassMethodName(method);
         RateLimit rateLimit = this.getRateLimit(method, classMethodName);
         if (rateLimitHandler.proceed(method, pjp::getArgs, classMethodName, rateLimit)) {
             return pjp.proceed();
@@ -65,15 +66,5 @@ public class RateLimitAspect {
      */
     public RateLimit getRateLimit(Method method, String classMethodName) {
         return RATE_LIMIT_MAP.computeIfAbsent(classMethodName, k -> method.getAnnotation(RateLimit.class));
-    }
-
-    /**
-     * 获取执行类方法名
-     *
-     * @param method 执行方法
-     * @return 类名+方法名
-     */
-    public String getClassMethodName(Method method) {
-        return String.format("%s.%s", method.getDeclaringClass().getName(), method.getName());
     }
 }

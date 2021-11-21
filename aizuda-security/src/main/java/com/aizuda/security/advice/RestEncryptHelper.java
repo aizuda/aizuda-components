@@ -3,8 +3,9 @@
  * ------------------------------------------
  * 受知识产权保护，请勿删除版权申明
  */
-package com.aizuda.security.toolkit;
+package com.aizuda.security.advice;
 
+import com.aizuda.common.toolkit.MethodUtils;
 import com.aizuda.security.annotation.RestEncrypt;
 
 import java.lang.reflect.Method;
@@ -42,7 +43,6 @@ public class RestEncryptHelper {
     }
 
     private static RestEncrypt getRestEncrypt(Method method) {
-        return method.isAnnotationPresent(RestEncrypt.class) ?
-                method.getAnnotation(RestEncrypt.class) : null;
+        return MethodUtils.getAnnotation(method, RestEncrypt.class);
     }
 }

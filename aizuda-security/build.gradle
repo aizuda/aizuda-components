@@ -3,6 +3,7 @@ description "爱组搭安全模块"
 version "1.0.0"
 
 dependencies {
+    api project(":aizuda-common")
     api("com.baomidou:kisso")
 
     compileOnly("org.springframework.boot:spring-boot-starter-web")

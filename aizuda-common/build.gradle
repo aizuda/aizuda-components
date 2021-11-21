@@ -1,10 +1,10 @@
-description "爱组搭机器人模块"
+description "爱组搭公共模块"
 
 version "0.0.1"
 
 dependencies {
-    api project(":aizuda-common")
-
     compileOnly("org.springframework.boot:spring-boot-starter-web")
+
+    /*     该模块禁止引入第三方依赖     */
 
 }

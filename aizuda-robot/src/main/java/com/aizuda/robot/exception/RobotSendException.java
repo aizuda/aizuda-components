@@ -5,6 +5,7 @@
  */
 package com.aizuda.robot.exception;
 
+import com.aizuda.common.toolkit.JacksonUtils;
 import com.aizuda.robot.message.ISendMessage;
 import lombok.AllArgsConstructor;
 import org.aspectj.lang.JoinPoint;
@@ -33,6 +34,7 @@ public class RobotSendException implements ISendException {
             StringBuffer error = new StringBuffer();
             Signature signature = joinPoint.getSignature();
             error.append("<br>Method: ").append(signature.getDeclaringTypeName()).append(".").append(signature.getName());
+            error.append("<br>Args: ").append(JacksonUtils.toJSONString(joinPoint.getArgs()));
             error.append("<br>Exception: ").append(this.getStackTrace(e));
             sendMessageList.forEach(t -> t.send(error.toString()));
             return true;
