@@ -43,17 +43,23 @@ public class RedisRateLimitHandler implements IRateLimitHandler {
         // 间隔时间解析为秒
         long interval = DurationStyle.detectAndParse(rateLimit.interval()).getSeconds();
         final String key = this.buildKey(method, args, classMethodName, rateLimit);
-        log.debug("rate.limit.key = {}", key);
+        if (log.isDebugEnabled()) {
+            log.debug("rate.limit.key = {}", key);
+        }
         Long currentCount = redisTemplate.execute(REDIS_SCRIPT_RATE_LIMIT, Collections.singletonList(key),
                 String.valueOf(rateLimit.count()), String.valueOf(interval));
         if (null != currentCount) {
             long count = currentCount;
             if (count > 0 && count <= rateLimit.count()) {
-                log.debug("The {}-th visit within the current limit period", count);
+                if (log.isDebugEnabled()) {
+                    log.debug("The {}-th visit within the current limit period", count);
+                }
                 return true;
             }
         }
-        log.debug("current limiting rule triggered");
+        if (log.isDebugEnabled()) {
+            log.debug("current limiting rule triggered");
+        }
         return false;
     }
 

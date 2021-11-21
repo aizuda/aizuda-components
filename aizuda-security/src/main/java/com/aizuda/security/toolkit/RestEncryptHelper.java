@@ -27,7 +27,7 @@ public class RestEncryptHelper {
      */
     public static boolean isAnnotationEncrypt(Method method) {
         RestEncrypt restEncrypt = getRestEncrypt(method);
-        return null == restEncrypt ? false : restEncrypt.encrypt();
+        return null != restEncrypt && restEncrypt.encrypt();
     }
 
     /**
@@ -38,7 +38,7 @@ public class RestEncryptHelper {
      */
     public static boolean isAnnotationDecrypt(Method method) {
         RestEncrypt restEncrypt = getRestEncrypt(method);
-        return null == restEncrypt ? false : restEncrypt.decrypt();
+        return null != restEncrypt && restEncrypt.decrypt();
     }
 
     private static RestEncrypt getRestEncrypt(Method method) {

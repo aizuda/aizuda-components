@@ -28,8 +28,8 @@ import java.lang.reflect.Type;
 @Slf4j
 @RestControllerAdvice
 public class DecryptRequestBodyAdvice implements RequestBodyAdvice {
-    private SecurityProperties securityProperties;
-    private IRestEncryptHandler restEncryptHandler;
+    private final SecurityProperties securityProperties;
+    private final IRestEncryptHandler restEncryptHandler;
     private boolean encrypt;
 
     public DecryptRequestBodyAdvice(SecurityProperties securityProperties, IRestEncryptHandler restEncryptHandler) {
