@@ -72,7 +72,7 @@ public class IpRateLimitStrategy implements IRateLimitStrategy {
         if (ip != null && ip.indexOf(delimiter) > 0) {
             String[] ips = ip.trim().split(delimiter);
             for (String subIp : ips) {
-                if (!isNotUnknown(subIp)) {
+                if (isNotUnknown(subIp)) {
                     ip = subIp;
                     break;
                 }
