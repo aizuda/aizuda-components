@@ -10,7 +10,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.util.function.SupplierUtils;
 
 /**
  * 异常捕获切面处理类
@@ -22,6 +25,7 @@ import org.aspectj.lang.annotation.Pointcut;
  */
 @Slf4j
 @AllArgsConstructor
+@Aspect
 public class ExceptionAspect {
     private final ISendException sendException;
 

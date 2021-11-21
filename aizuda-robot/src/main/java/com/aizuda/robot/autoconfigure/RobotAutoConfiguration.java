@@ -8,8 +8,13 @@ package com.aizuda.robot.autoconfigure;
 import com.aizuda.robot.aspect.ExceptionAspect;
 import com.aizuda.robot.exception.ISendException;
 import com.aizuda.robot.exception.RobotSendException;
+import com.aizuda.robot.message.DingTalkSendMessage;
 import com.aizuda.robot.message.ISendMessage;
+import com.aizuda.robot.message.QyWxSendMessage;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,7 +29,11 @@ import java.util.List;
  * @since 2021-11-21
  */
 @Configuration
+@EnableConfigurationProperties({RobotProperties.class})
+@AllArgsConstructor
 public class RobotAutoConfiguration {
+
+    private RobotProperties robotProperties;
 
     @Bean
     @ConditionalOnMissingBean
@@ -36,4 +45,23 @@ public class RobotAutoConfiguration {
     public ExceptionAspect exceptionAspect(ISendException sendException) {
         return new ExceptionAspect(sendException);
     }
+    /**
+     * 钉钉的消息发送器
+     * @return
+     */
+    @Bean
+    public ISendMessage dingTalkSendMessage() {
+        return new DingTalkSendMessage(robotProperties);
+    }
+
+    /**
+     * 微信的消息发送器
+     * @return
+     */
+    @Bean
+    public ISendMessage qyWxSendMessage() {
+        return new QyWxSendMessage(robotProperties);
+    }
+
+
 }
