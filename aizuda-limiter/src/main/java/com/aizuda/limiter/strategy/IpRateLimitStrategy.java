@@ -17,7 +17,19 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class IpRateLimitStrategy implements IRateLimitStrategy {
 
-    private final String[] HEADERS_FOR_TRY = {"x-forwarded-for", "Proxy-Client-IP", "WL-Proxy-Client-IP"};
+    private final String[] HEADERS_FOR_TRY = {
+            "x-forwarded-for",
+            "Proxy-Client-IP",
+            "WL-Proxy-Client-IP",
+            "HTTP_X_FORWARDED_FOR",
+            "HTTP_X_FORWARDED",
+            "HTTP_X_CLUSTER_CLIENT_IP",
+            "HTTP_CLIENT_IP",
+            "HTTP_FORWARDED_FOR",
+            "HTTP_FORWARDED",
+            "HTTP_VIA",
+            "REMOTE_ADDR",
+            "X-Real-IP"};
 
     @Override
     public String getType() {
@@ -29,19 +41,47 @@ public class IpRateLimitStrategy implements IRateLimitStrategy {
         HttpServletRequest request = this.getRequest();
         String ip = null;
         for (String header : HEADERS_FOR_TRY) {
-            String _ip = request.getHeader(header);
-            if (null != _ip && _ip.length() > 0 && !"unknown".equalsIgnoreCase(_ip)) {
-                ip = _ip;
+            String currentIp = request.getHeader(header);
+            if (isUnknown(currentIp)) {
+                ip = currentIp;
                 break;
             }
         }
         if (null == ip) {
             ip = request.getRemoteAddr();
         }
+        String localAddr = "0:0:0:0:0:0:0:1";
+        if (localAddr.equals(ip)) {
+            return "127.0.0.1";
+        }
         if (null == ip) {
             return "";
         }
-        int index = ip.indexOf(",");
-        return index > 0 ? ip.substring(0, index) : ip;
+        return getMultistageReverseProxyIp(ip);
+    }
+
+    /**
+     * 从多级反向代理中获得第一个非unknown IP地址
+     *
+     * @param ip 获得的IP地址
+     * @return 第一个非unknown IP地址
+     */
+    private String getMultistageReverseProxyIp(String ip) {
+        // 多级反向代理检测
+        String delimiter = ",";
+        if (ip != null && ip.indexOf(delimiter) > 0) {
+            String[] ips = ip.trim().split(delimiter);
+            for (String subIp : ips) {
+                if (!isUnknown(subIp)) {
+                    ip = subIp;
+                    break;
+                }
+            }
+        }
+        return ip;
+    }
+
+    private boolean isUnknown(String checkIp) {
+        return null != checkIp && checkIp.length() > 0 && !"unknown".equalsIgnoreCase(checkIp);
     }
 }
