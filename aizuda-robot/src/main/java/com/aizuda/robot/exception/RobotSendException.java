@@ -5,14 +5,15 @@
  */
 package com.aizuda.robot.exception;
 
+import com.aizuda.common.toolkit.DateUtils;
 import com.aizuda.common.toolkit.JacksonUtils;
+import com.aizuda.common.toolkit.RequestUtils;
 import com.aizuda.robot.message.ISendMessage;
 import lombok.AllArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -25,30 +26,29 @@ import java.util.List;
  */
 @AllArgsConstructor
 public class RobotSendException implements ISendException {
-
-    /**
-     * 分隔(换行)符
-     */
-    private final static String LINEBREAK = "\n";
-
     /**
      * 允许多端发送
      */
     private List<ISendMessage> sendMessageList;
-
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    /**
+     * 换行
+     */
+    private final String LINE_BREAK = "\n";
 
     @Override
     public boolean send(JoinPoint joinPoint, Exception e) {
         try {
             StringBuffer error = new StringBuffer();
+            error.append("Time: ").append(DateUtils.nowTime());
+            HttpServletRequest request = RequestUtils.getRequest();
+            error.append(LINE_BREAK).append("IP: ").append(RequestUtils.getIp(request));
             Signature signature = joinPoint.getSignature();
-            error.append("<br>Time: ").append(LocalDateTime.now().format(DATE_TIME_FORMATTER));
-            error.append(LINEBREAK).append("<br>Method: ").append(signature.getDeclaringTypeName()).append(".").append(signature.getName());
-            error.append(LINEBREAK).append("<br>Args: ").append(JacksonUtils.toJSONString(joinPoint.getArgs()));
-            error.append(LINEBREAK).append("<br>Exception: ").append(this.getStackTrace(e));
-
-            sendMessageList.forEach(t -> t.send(error.toString()));
+            error.append(LINE_BREAK).append("Method: ").append(signature.getDeclaringTypeName()).append(".").append(signature.getName());
+            error.append(LINE_BREAK).append("Args: ").append(JacksonUtils.toJSONString(joinPoint.getArgs()));
+            error.append(LINE_BREAK).append("Exception: ").append(this.getStackTrace(e));
+            for (ISendMessage sendMessage : sendMessageList) {
+                sendMessage.send(error.toString());
+            }
             return true;
         } catch (Throwable t) {
             /**

@@ -12,12 +12,12 @@ import com.aizuda.robot.message.DingTalkSendMessage;
 import com.aizuda.robot.message.ISendMessage;
 import com.aizuda.robot.message.QyWxSendMessage;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -30,8 +30,8 @@ import java.util.List;
  * @since 2021-11-21
  */
 @Configuration
-@EnableConfigurationProperties({RobotProperties.class})
 @AllArgsConstructor
+@EnableConfigurationProperties({RobotProperties.class})
 public class RobotAutoConfiguration {
 
     private RobotProperties robotProperties;
@@ -46,25 +46,24 @@ public class RobotAutoConfiguration {
     public ExceptionAspect exceptionAspect(ISendException sendException) {
         return new ExceptionAspect(sendException);
     }
+
     /**
-     * 钉钉的消息发送器
-     * @return
+     * 钉钉
      */
     @Bean
-    @ConditionalOnProperty(prefix = RobotProperties.PREFIX, name = "dingToken")
-    public ISendMessage dingTalkSendMessage() {
-        return new DingTalkSendMessage(robotProperties);
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(prefix = RobotProperties.PREFIX, name = "dingTalk.accessToken")
+    public ISendMessage dingTalkSendMessage(RestTemplate restTemplate) {
+        return new DingTalkSendMessage(robotProperties, restTemplate);
     }
 
     /**
-     * 微信的消息发送器
-     * @return
+     * 企业微信
      */
     @Bean
+    @ConditionalOnMissingBean
     @ConditionalOnProperty(prefix = RobotProperties.PREFIX, name = "wechatKey")
-    public ISendMessage qyWxSendMessage() {
-        return new QyWxSendMessage(robotProperties);
+    public ISendMessage qyWxSendMessage(RestTemplate restTemplate) {
+        return new QyWxSendMessage(robotProperties, restTemplate);
     }
-
-
 }

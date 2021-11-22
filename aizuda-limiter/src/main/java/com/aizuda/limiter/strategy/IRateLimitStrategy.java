@@ -5,8 +5,7 @@
  */
 package com.aizuda.limiter.strategy;
 
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
+import com.aizuda.common.toolkit.RequestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -40,6 +39,6 @@ public interface IRateLimitStrategy {
      * @return 当前请求
      */
     default HttpServletRequest getRequest() {
-        return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        return RequestUtils.getRequest();
     }
 }

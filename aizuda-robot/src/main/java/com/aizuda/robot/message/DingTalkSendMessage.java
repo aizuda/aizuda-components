@@ -6,14 +6,15 @@
 package com.aizuda.robot.message;
 
 import com.aizuda.robot.autoconfigure.RobotProperties;
-import com.aizuda.robot.enums.Robot;
-import com.aizuda.robot.model.dto.MessageDTO;
-import com.aizuda.robot.model.vo.WebHookSendResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
+import org.apache.tomcat.util.codec.binary.Base64;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.Optional;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.net.URLEncoder;
+import java.util.HashMap;
 
 /**
  * 发送消息机器人【钉钉】
@@ -23,44 +24,42 @@ import java.util.Optional;
  * @author hubin
  * @since 2021-11-21
  */
-@AllArgsConstructor
 @Slf4j
-public class DingTalkSendMessage extends AbstractSendMessage {
-
-
+@AllArgsConstructor
+public class DingTalkSendMessage extends AbstractRobotSendMessage {
     private RobotProperties robotProperties;
-
+    private RestTemplate restTemplate;
 
     @Override
-    public boolean send(String message) {
-        if (!support()) {
-            return false;
-        }
-        //消息转换,转成钉钉需要的格式
-        MessageDTO convert = MessageDTO.convert(message);
-        WebHookSendResponse dingSendResponse = sendRequest(robot().getUrl(robotProperties.getDingToken()), convert);
-        if (dingSendResponse == null || dingSendResponse.getErrcode() != 0) {
-            final WebHookSendResponse sendResponse = Optional.ofNullable(dingSendResponse).orElse(new WebHookSendResponse());
-            Integer errorCode = sendResponse.getErrcode();
-            String errorMsg = sendResponse.getErrmsg();
-            log.error("exception message send to dingTask ,errorCode: {},errorMsg:{}", errorCode, errorMsg);
-            return false;
-        }
-        return true;
+    public boolean send(String message) throws Exception {
+        return this.request(restTemplate, new HashMap<String, Object>(3) {{
+            put("msgtype", "text");
+            put("at", new HashMap<String, Object>(1) {{
+                put("isAtAll", true);
+            }});
+            put("text", new HashMap<String, Object>(1) {{
+                put("content", message);
+            }});
+        }});
     }
 
     @Override
-    public Robot robot() {
-        return Robot.DING_TALK;
-    }
-
-    /**
-     * 是否启用此方式
-     *
-     * @return boolean
-     */
-    @Override
-    public boolean support() {
-        return StringUtils.hasLength(robotProperties.getDingToken());
+    public String getUrl() throws Exception {
+        RobotProperties.DingTalk dingTalk = robotProperties.getDingTalk();
+        StringBuffer url = new StringBuffer();
+        url.append("https://oapi.dingtalk.com/robot/send?access_token=");
+        url.append(dingTalk.getAccessToken());
+        String secret = dingTalk.getSecret();
+        if (null != secret && !"".equals(secret)) {
+            Long timestamp = System.currentTimeMillis();
+            url.append("&timestamp=").append(timestamp);
+            String stringToSign = timestamp + "\n" + secret;
+            Mac mac = Mac.getInstance("HmacSHA256");
+            mac.init(new SecretKeySpec(secret.getBytes("UTF-8"), "HmacSHA256"));
+            byte[] signData = mac.doFinal(stringToSign.getBytes("UTF-8"));
+            String sign = URLEncoder.encode(new String(Base64.encodeBase64(signData)), "UTF-8");
+            url.append("&sign=").append(sign);
+        }
+        return url.toString();
     }
 }

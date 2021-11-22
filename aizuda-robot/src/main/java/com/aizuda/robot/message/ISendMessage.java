@@ -5,8 +5,6 @@
  */
 package com.aizuda.robot.message;
 
-import com.aizuda.robot.enums.Robot;
-
 /**
  * 发送消息接口
  * <p>
@@ -22,20 +20,7 @@ public interface ISendMessage {
      *
      * @param message 消息内容
      * @return true 发送成功 false 发送失败
+     * @throws Exception
      */
-    boolean send(String message);
-
-    /**
-     * 机器人
-     *
-     * @return {@link Robot}
-     */
-    Robot robot();
-
-    /**
-     * 是否启用此方式
-     *
-     * @return boolean
-     */
-    boolean support();
+    boolean send(String message) throws Exception;
 }
