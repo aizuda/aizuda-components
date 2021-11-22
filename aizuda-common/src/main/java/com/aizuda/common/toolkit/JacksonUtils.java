@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -36,6 +37,7 @@ public class JacksonUtils {
             SimpleModule simpleModule = new SimpleModule();
             simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
             OBJECT_MAPPER.registerModule(simpleModule);
+            OBJECT_MAPPER.registerModule(new JavaTimeModule());
         }
         return OBJECT_MAPPER;
     }
