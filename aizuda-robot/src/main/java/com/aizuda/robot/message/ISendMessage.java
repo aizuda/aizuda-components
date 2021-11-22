@@ -5,7 +5,7 @@
  */
 package com.aizuda.robot.message;
 
-import com.aizuda.robot.Robot;
+import com.aizuda.robot.enums.Robot;
 
 /**
  * 发送消息接口
