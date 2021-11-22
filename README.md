@@ -10,6 +10,11 @@
 
 [爱组搭 ~ 组件源码示例演示](https://gitee.com/aizuda/aizuda-components-examples)
 
+# 公共模块
+
+-  aizuda-common 主要内容 工具类 等。
+
+
 # 限流模块
 
 -  aizuda-limiter 主要内容 api 限流，短信，邮件 发送限流、控制恶意利用验证码功能 等。

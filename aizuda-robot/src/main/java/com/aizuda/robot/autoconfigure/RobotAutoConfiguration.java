@@ -14,6 +14,7 @@ import com.aizuda.robot.message.QyWxSendMessage;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,6 +51,7 @@ public class RobotAutoConfiguration {
      * @return
      */
     @Bean
+    @ConditionalOnProperty(prefix = RobotProperties.PREFIX, name = "dingToken")
     public ISendMessage dingTalkSendMessage() {
         return new DingTalkSendMessage(robotProperties);
     }
@@ -59,6 +61,7 @@ public class RobotAutoConfiguration {
      * @return
      */
     @Bean
+    @ConditionalOnProperty(prefix = RobotProperties.PREFIX, name = "wechatKey")
     public ISendMessage qyWxSendMessage() {
         return new QyWxSendMessage(robotProperties);
     }

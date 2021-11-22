@@ -1,4 +1,4 @@
-package com.aizuda.security.toolkit;
+package com.aizuda.common.toolkit;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;

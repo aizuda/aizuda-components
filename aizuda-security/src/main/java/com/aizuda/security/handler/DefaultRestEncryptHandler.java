@@ -5,7 +5,7 @@
  */
 package com.aizuda.security.handler;
 
-import com.aizuda.security.toolkit.JacksonUtils;
+import com.aizuda.common.toolkit.JacksonUtils;
 
 /**
  * 默认接口加密处理类

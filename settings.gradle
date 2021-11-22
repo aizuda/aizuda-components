@@ -3,6 +3,7 @@ rootProject.name = 'aizuda-components'
 
 // 每个人都是架构师
 include 'aizuda-bom'
+include 'aizuda-common'
 include 'aizuda-limiter'
 include 'aizuda-security'
 include 'aizuda-robot'
