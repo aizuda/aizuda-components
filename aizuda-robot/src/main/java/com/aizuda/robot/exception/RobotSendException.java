@@ -11,6 +11,8 @@ import lombok.AllArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -28,11 +30,14 @@ public class RobotSendException implements ISendException {
      */
     private List<ISendMessage> sendMessageList;
 
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     @Override
     public boolean send(JoinPoint joinPoint, Exception e) {
         try {
             StringBuffer error = new StringBuffer();
             Signature signature = joinPoint.getSignature();
+            error.append("<br>Time: ").append(LocalDateTime.now().format(DATE_TIME_FORMATTER));
             error.append("<br>Method: ").append(signature.getDeclaringTypeName()).append(".").append(signature.getName());
             error.append("<br>Args: ").append(JacksonUtils.toJSONString(joinPoint.getArgs()));
             error.append("<br>Exception: ").append(this.getStackTrace(e));
