@@ -32,4 +32,10 @@ public interface ISendMessage {
      */
     Robot robot();
 
+    /**
+     * 是否启用此方式
+     *
+     * @return boolean
+     */
+    boolean support();
 }

@@ -22,6 +22,12 @@ import java.util.List;
  */
 @AllArgsConstructor
 public class RobotSendException implements ISendException {
+
+    /**
+     * 分隔(换行)符
+     */
+    private final static String LINEBREAK = "\n";
+
     /**
      * 允许多端发送
      */
@@ -33,7 +39,7 @@ public class RobotSendException implements ISendException {
             StringBuffer error = new StringBuffer();
             Signature signature = joinPoint.getSignature();
             error.append("<br>Method: ").append(signature.getDeclaringTypeName()).append(".").append(signature.getName());
-            error.append("<br>Exception: ").append(this.getStackTrace(e));
+            error.append(LINEBREAK).append("<br>Exception: ").append(this.getStackTrace(e));
             sendMessageList.forEach(t -> t.send(error.toString()));
             return true;
         } catch (Throwable t) {

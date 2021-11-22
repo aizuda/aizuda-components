@@ -5,14 +5,15 @@
  */
 package com.aizuda.robot.message;
 
-import com.aizuda.robot.dto.MessageDTO;
-import com.aizuda.robot.enums.Robot;
 import com.aizuda.robot.autoconfigure.RobotProperties;
-import com.aizuda.robot.vo.WechatSendResponse;
+import com.aizuda.robot.enums.Robot;
+import com.aizuda.robot.model.dto.MessageDTO;
+import com.aizuda.robot.model.vo.WebHookSendResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.util.StringUtils;
+
+import java.util.Optional;
 
 /**
  * 发送消息机器人【钉钉】
@@ -24,22 +25,25 @@ import org.springframework.web.client.RestTemplate;
  */
 @AllArgsConstructor
 @Slf4j
-public class DingTalkSendMessage implements ISendMessage {
+public class DingTalkSendMessage extends AbstractSendMessage {
+
+
     private RobotProperties robotProperties;
+
+
     @Override
     public boolean send(String message) {
-        Robot robot = robot();
-        String url = robot.getUrl() + robotProperties.getDingToken();
-        RestTemplate restTemplate = new RestTemplate();
-        //消息转换,转成钉钉需要的格式
-        MessageDTO convert = MessageDTO.convert(message);
-        final ResponseEntity<WechatSendResponse> responseEntity = restTemplate.postForEntity(url, convert, WechatSendResponse.class);
-        final WechatSendResponse dingSendResponse = responseEntity.getBody();
-        if (dingSendResponse == null) {
+        if (!support()) {
             return false;
         }
-        if (dingSendResponse.getErrcode() != 0) {
-            log.error("发送消息到钉钉失败,失败代码: {},失败原因:{}", dingSendResponse.getErrcode(), dingSendResponse.getErrmsg());
+        //消息转换,转成钉钉需要的格式
+        MessageDTO convert = MessageDTO.convert(message);
+        WebHookSendResponse dingSendResponse = sendRequest(robot().getUrl(robotProperties.getDingToken()), convert);
+        if (dingSendResponse == null || dingSendResponse.getErrcode() != 0) {
+            final WebHookSendResponse sendResponse = Optional.ofNullable(dingSendResponse).orElse(new WebHookSendResponse());
+            Integer errorCode = sendResponse.getErrcode();
+            String errorMsg = sendResponse.getErrmsg();
+            log.error("exception message send to dingTask ,errorCode: {},errorMsg:{}", errorCode, errorMsg);
             return false;
         }
         return true;
@@ -48,5 +52,15 @@ public class DingTalkSendMessage implements ISendMessage {
     @Override
     public Robot robot() {
         return Robot.DING_TALK;
+    }
+
+    /**
+     * 是否启用此方式
+     *
+     * @return boolean
+     */
+    @Override
+    public boolean support() {
+        return StringUtils.hasLength(robotProperties.getDingToken());
     }
 }

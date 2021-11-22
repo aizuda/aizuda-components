@@ -29,15 +29,18 @@ public enum Robot {
     /**
      * 名称
      */
-    private String name;
+    private final String name;
     /**
      * 地址
      */
-    private String url;
+    private final String url;
 
     Robot(String name, String url) {
         this.name = name;
         this.url = url;
     }
 
+    public String getUrl(String key) {
+        return url + key;
+    }
 }
