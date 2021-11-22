@@ -27,6 +27,7 @@ import org.springframework.util.function.SupplierUtils;
 @AllArgsConstructor
 @Aspect
 public class ExceptionAspect {
+
     private final ISendException sendException;
 
     /**

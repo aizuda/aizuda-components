@@ -1,15 +1,18 @@
-package com.aizuda.robot.dto;
+package com.aizuda.robot.model.dto;
 
 import com.aizuda.robot.enums.SendType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author LoveHuahua
  * @date 2021年11月21日 12:27
  * @description 通用异常到微信消息接口
  */
-@Data
+@Getter
+@Setter
 public class MessageDTO {
 
     private String msgtype;
@@ -31,7 +34,8 @@ public class MessageDTO {
         return wechatMessageDto;
     }
 
-    @Data
+    @Getter
+    @Setter
     @AllArgsConstructor
     public static class Text {
         private String content;

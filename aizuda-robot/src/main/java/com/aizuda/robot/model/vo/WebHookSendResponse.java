@@ -1,8 +1,7 @@
-package com.aizuda.robot.vo;
+package com.aizuda.robot.model.vo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * @author LoveHuahua
@@ -10,8 +9,10 @@ import lombok.NoArgsConstructor;
  * @description believe in yourself
  */
 @NoArgsConstructor
-@Data
-public class WechatSendResponse {
+@Getter
+@Setter
+@AllArgsConstructor
+public class WebHookSendResponse {
 
     /**
      * 错误代码
