@@ -31,8 +31,21 @@
 
 # 机器人模块
 
-- aizuda-robot 主要内容 bug 异常 推送到 钉钉 企业微信 飞书 等平台。
+- aizuda-robot 主要内容 bug 异常 推送到 企业微信 飞书 钉钉 等平台。
 
+[企业微信机器人申请](https://work.weixin.qq.com/api/doc/90000/90136/91770)
+
+[钉钉机器人申请](https://developers.dingtalk.com/document/robots/use-group-robots)
+
+[飞书机器人申请](https://open.feishu.cn/document/ukTMukTMukTM/ucTM5YjL3ETO24yNxkjN)
+
+```xml
+<dependency>
+  <groupId>com.aizuda</groupId>
+  <artifactId>aizuda-robot</artifactId>
+  <version>0.0.1</version>
+</dependency>
+```
 
 
 # 安全模块

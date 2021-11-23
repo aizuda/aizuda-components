@@ -1,9 +1,7 @@
 description "爱组搭机器人模块"
 
 version "0.0.1"
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
-}
+
 dependencies {
     api project(":aizuda-common")
 
