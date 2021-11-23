@@ -9,6 +9,7 @@ import com.aizuda.robot.aspect.ExceptionAspect;
 import com.aizuda.robot.exception.ISendException;
 import com.aizuda.robot.exception.RobotSendException;
 import com.aizuda.robot.message.DingTalkSendMessage;
+import com.aizuda.robot.message.FeiShuSendMessage;
 import com.aizuda.robot.message.ISendMessage;
 import com.aizuda.robot.message.QyWxSendMessage;
 import lombok.AllArgsConstructor;
@@ -35,6 +36,14 @@ import java.util.List;
 public class RobotAutoConfiguration {
 
     private RobotProperties robotProperties;
+
+
+
+    @Bean
+    @ConditionalOnMissingBean
+    RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 
     @Bean
     @ConditionalOnMissingBean
@@ -66,4 +75,16 @@ public class RobotAutoConfiguration {
     public ISendMessage qyWxSendMessage(RestTemplate restTemplate) {
         return new QyWxSendMessage(robotProperties, restTemplate);
     }
+
+
+    /**
+     * 飞书
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(prefix = RobotProperties.PREFIX, name = "feiShu.key")
+    public ISendMessage feiShuSendMessage(RestTemplate restTemplate) {
+        return new FeiShuSendMessage(robotProperties, restTemplate);
+    }
+
 }
