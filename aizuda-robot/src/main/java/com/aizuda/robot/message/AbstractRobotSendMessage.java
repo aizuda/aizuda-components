@@ -46,6 +46,8 @@ public abstract class AbstractRobotSendMessage implements ISendMessage {
 
     /**
      * 请求发送地址
+     *
+     * @throws Exception
      */
     public abstract String getUrl() throws Exception;
 }

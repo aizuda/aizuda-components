@@ -5,14 +5,12 @@
  */
 package com.aizuda.robot.message;
 
+import com.aizuda.common.toolkit.AlgorithmUtils;
 import com.aizuda.robot.autoconfigure.RobotProperties;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.web.client.RestTemplate;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import java.net.URLEncoder;
 import java.util.HashMap;
 
@@ -53,12 +51,8 @@ public class DingTalkSendMessage extends AbstractRobotSendMessage {
         if (null != secret && !"".equals(secret)) {
             Long timestamp = System.currentTimeMillis();
             url.append("&timestamp=").append(timestamp);
-            String stringToSign = timestamp + "\n" + secret;
-            Mac mac = Mac.getInstance("HmacSHA256");
-            mac.init(new SecretKeySpec(secret.getBytes("UTF-8"), "HmacSHA256"));
-            byte[] signData = mac.doFinal(stringToSign.getBytes("UTF-8"));
-            String sign = URLEncoder.encode(new String(Base64.encodeBase64(signData)), "UTF-8");
-            url.append("&sign=").append(sign);
+            String sign = AlgorithmUtils.encodeBase64HmacSHA256(secret, timestamp + "\n" + secret);
+            url.append("&sign=").append(URLEncoder.encode(sign, "UTF-8"));
         }
         return url.toString();
     }
