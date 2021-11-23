@@ -6,11 +6,15 @@
 package com.aizuda.common.toolkit;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -23,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class JacksonUtils {
+
     private static ObjectMapper OBJECT_MAPPER;
 
     /**
@@ -41,6 +46,7 @@ public class JacksonUtils {
             SimpleModule simpleModule = new SimpleModule();
             simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
             OBJECT_MAPPER.registerModule(simpleModule);
+            OBJECT_MAPPER.registerModule(new JavaTimeModule());
         }
         return OBJECT_MAPPER;
     }
@@ -57,10 +63,50 @@ public class JacksonUtils {
         return null;
     }
 
+
+    /**
+     * 把json字符串转换为JavaBean
+     */
+    public static <T> T parse(String json, Class<T> tClass) {
+        try {
+            return parseThrows(json, tClass);
+        } catch (Exception e) {
+            log.error("JSONString parse error.", e);
+        }
+        return null;
+    }
+
+    /**
+     * 把json字符串转换为JavaBean,支持泛型
+     */
+    public static <T> T parse(String json, TypeReference<T> valueTypeRef) {
+        try {
+            return parseThrows(json, valueTypeRef);
+        } catch (Exception e) {
+            log.error("JSONString parse error.", e);
+        }
+        return null;
+    }
+
     /**
      * 把JavaBean转换为json字符串，抛出异常
      */
     public static String toJsonThrows(Object object) throws Exception {
         return getObjectMapper().writeValueAsString(object);
     }
+
+    /**
+     * 把json字符串转换为JavaBean，抛出异常
+     */
+    public static <T> T parseThrows(String json, Class<T> tClass) throws Exception {
+        return getObjectMapper().readValue(json, tClass);
+    }
+
+    /**
+     * 把json字符串转换为JavaBean，支持泛型，抛出异常
+     */
+    public static <T> T parseThrows(String json, TypeReference<T> valueTypeRef) throws JsonProcessingException {
+        return getObjectMapper().readValue(json, valueTypeRef);
+    }
+
 }
