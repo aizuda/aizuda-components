@@ -3,26 +3,26 @@
  * ------------------------------------------
  * 受知识产权保护，请勿删除版权申明
  */
-package com.aizuda.robot.exception;
+package com.aizuda.robot.handler;
 
 import org.aspectj.lang.JoinPoint;
 
 /**
- * 异常发送接口
+ * 异常消息处理器
  * <p>
  * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
  *
  * @author hubin
  * @since 2021-11-21
  */
-public interface ISendException {
+public interface IErrorMessageHandler {
 
     /**
-     * 发送异常内容
+     * 异常消息内容
      *
      * @param joinPoint {@link JoinPoint}
      * @param e         {@link Exception}
-     * @return true 发送成功  false 发送失败
+     * @return 异常消息内容
      */
-    boolean send(JoinPoint joinPoint, Exception e);
+    String message(JoinPoint joinPoint, Exception e);
 }

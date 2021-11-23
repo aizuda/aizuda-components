@@ -5,15 +5,11 @@
  */
 package com.aizuda.robot.exception;
 
-import com.aizuda.common.toolkit.DateUtils;
-import com.aizuda.common.toolkit.JacksonUtils;
-import com.aizuda.common.toolkit.RequestUtils;
+import com.aizuda.robot.handler.IErrorMessageHandler;
 import com.aizuda.robot.message.ISendMessage;
 import lombok.AllArgsConstructor;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.Signature;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -30,24 +26,14 @@ public class RobotSendException implements ISendException {
      * 允许多端发送
      */
     private List<ISendMessage> sendMessageList;
-    /**
-     * 换行
-     */
-    private final String LINE_BREAK = "\n";
+    private IErrorMessageHandler errorMessageHandler;
 
     @Override
     public boolean send(JoinPoint joinPoint, Exception e) {
         try {
-            StringBuffer error = new StringBuffer();
-            error.append("Time: ").append(DateUtils.nowTime());
-            HttpServletRequest request = RequestUtils.getRequest();
-            error.append(LINE_BREAK).append("IP: ").append(RequestUtils.getIp(request));
-            Signature signature = joinPoint.getSignature();
-            error.append(LINE_BREAK).append("Method: ").append(signature.getDeclaringTypeName()).append(".").append(signature.getName());
-            error.append(LINE_BREAK).append("Args: ").append(JacksonUtils.toJSONString(joinPoint.getArgs()));
-            error.append(LINE_BREAK).append("Exception: ").append(this.getStackTrace(e));
+            String message = errorMessageHandler.message(joinPoint, e);
             for (ISendMessage sendMessage : sendMessageList) {
-                sendMessage.send(error.toString());
+                sendMessage.send(message);
             }
             return true;
         } catch (Throwable t) {

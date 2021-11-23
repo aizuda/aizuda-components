@@ -24,9 +24,10 @@ public class RobotProperties {
     public static final String PREFIX = "aizuda.robot";
 
     /**
-     * 企业微信 key
+     * 企业微信
      */
-    private String wechatKey;
+    private WeChat weChat;
+
     /**
      * 钉钉
      */
@@ -39,6 +40,13 @@ public class RobotProperties {
 
     @Getter
     @Setter
+    public static class WeChat {
+        private String key;
+
+    }
+
+    @Getter
+    @Setter
     public static class DingTalk {
         private String accessToken;
         private String secret;
@@ -48,18 +56,7 @@ public class RobotProperties {
     @Getter
     @Setter
     public static class FeiShu {
-
-        /**
-         * 飞书的webhook地址后半部分
-         * 例如https://open.feishu.cn/open-apis/bot/v2/hook/5439ea7b-13ec-4522-a819-xxxxx
-         * 5439ea7b-13ec-4522-a819-xxxxx为key
-         */
         private String key;
-
-        /**
-         * 飞书的密钥
-         * 安全设置中设置了加密的话这里是必填,不然会出错
-         */
         private String secret;
     }
 }

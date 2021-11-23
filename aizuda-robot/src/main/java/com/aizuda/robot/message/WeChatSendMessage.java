@@ -16,6 +16,8 @@ import java.util.HashMap;
 /**
  * 发送消息机器人【企业微信】
  * <p>
+ * 文档 https://work.weixin.qq.com/api/doc/90000/90136/91770
+ * <p>
  * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
  *
  * @author hubin
@@ -23,7 +25,7 @@ import java.util.HashMap;
  */
 @AllArgsConstructor
 @Slf4j
-public class QyWxSendMessage extends AbstractRobotSendMessage {
+public class WeChatSendMessage extends AbstractRobotSendMessage {
     private RobotProperties robotProperties;
     private RestTemplate restTemplate;
 
@@ -34,7 +36,6 @@ public class QyWxSendMessage extends AbstractRobotSendMessage {
             put("msgtype", "text");
             put("text", new HashMap<String, Object>(3) {{
                 put("mentioned_list", Collections.singleton("@all"));
-                put("mentioned_mobile_list", Collections.singleton("@all"));
                 put("content", length > 2048 ? message.substring(0, 2048) : message);
             }});
         }});
@@ -44,8 +45,7 @@ public class QyWxSendMessage extends AbstractRobotSendMessage {
     public String getUrl() throws Exception {
         StringBuffer url = new StringBuffer();
         url.append("https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=");
-        url.append(robotProperties.getWechatKey());
-        // TODO 没有写完
+        url.append(robotProperties.getWeChat().getKey());
         return url.toString();
     }
 }
