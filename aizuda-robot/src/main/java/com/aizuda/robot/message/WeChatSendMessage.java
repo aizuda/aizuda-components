@@ -34,7 +34,7 @@ public class WeChatSendMessage extends AbstractRobotSendMessage {
         final int length = message.length();
         return this.request(restTemplate, new HashMap<String, Object>(2) {{
             put("msgtype", "text");
-            put("text", new HashMap<String, Object>(3) {{
+            put("text", new HashMap<String, Object>(2) {{
                 put("mentioned_list", Collections.singleton("@all"));
                 put("content", length > 2048 ? message.substring(0, 2048) : message);
             }});

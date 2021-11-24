@@ -39,7 +39,7 @@ public class FeiShuSendMessage extends AbstractRobotSendMessage {
      */
     @Override
     public boolean send(String message) throws Exception {
-        return this.request(restTemplate, new HashMap<String, Object>(2) {{
+        return this.request(restTemplate, new HashMap<String, Object>(4) {{
             RobotProperties.FeiShu feiShu = robotProperties.getFeiShu();
             final String secret = feiShu.getSecret();
             if (null != secret && !"".equals(secret)) {
@@ -53,7 +53,7 @@ public class FeiShuSendMessage extends AbstractRobotSendMessage {
                 put("sign", new String(Base64.encodeBase64(signData)));
             }
             put("msg_type", "text");
-            put("content", new HashMap<String, Object>(2) {{
+            put("content", new HashMap<String, Object>(1) {{
                 put("text", message);
             }});
         }});
