@@ -47,6 +47,7 @@ public class DistributedLimitHandler implements IDistributedLimitHandler {
         Optional.ofNullable(distributedLimitExtends)
                 .ifPresent(distributedLimitExtends ->
                         distributedLimitExtends.forEach(distributedLimitExtend ->
+                                // 在执行分布式锁之前需要执行的方法
                                 distributedLimitExtend.beforeDistributedLock(method, args, classMethodName, distributedLimit, key)));
         return distributedLockTemplate.execute(key, (int) expire, TimeUnit.SECONDS, callback);
     }
@@ -66,16 +67,16 @@ public class DistributedLimitHandler implements IDistributedLimitHandler {
 
         if (null != distributedKeyBuilderStrategies && !distributedKeyBuilderStrategies.isEmpty()) {
             // 先看是否有自定义key生成策略，否则使用默认策略
-            distributedKeyBuilderStrategies.stream()
-                    .filter(distributedKeyBuilderStrategy -> distributedKeyBuilderStrategy.support(method, classMethodName, distributedLimit, parserKey))
+            String parserKeyCopy = parserKey;
+            parserKey = distributedKeyBuilderStrategies.stream()
+                    .filter(distributedKeyBuilderStrategy ->
+                            distributedKeyBuilderStrategy.support(method, classMethodName, distributedLimit, parserKeyCopy))
                     .findAny()
-                    .ifPresent(distributedKeyBuilderStrategy -> {
-                        String buildKey = distributedKeyBuilderStrategy.buildKey(method, classMethodName, distributedLimit, parserKey);
-                        if (null != buildKey) {
-                            key.append(buildKey);
-                        }
-                    });
-        } else if (!"".equals(limitKey)) {
+                    .map(distributedKeyBuilderStrategy ->
+                            distributedKeyBuilderStrategy.buildKey(method, classMethodName, distributedLimit, parserKeyCopy))
+                    .orElse(parserKey);
+        }
+        if (!"".equals(parserKey)) {
             key.append(parserKey);
         }
 
