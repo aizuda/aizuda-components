@@ -22,9 +22,13 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
+ * redis分布式锁实例
+ * 参考自Redission，感谢Redission
+ * <p>
+ * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
+ *
  * @author zhongjiahua
- * @date 2021-11-27
- * @Description:
+ * @since 2021-11-28
  */
 @Slf4j
 public class RedisLockRegistry implements DisposableBean {
