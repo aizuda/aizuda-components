@@ -5,6 +5,8 @@
  */
 package com.aizuda.common.toolkit;
 
+import org.springframework.lang.Nullable;
+
 /**
  * 字符串工具类
  * <p>
@@ -16,23 +18,13 @@ package com.aizuda.common.toolkit;
 public class StringUtils {
 
     /**
-     * 判断是否为空字符串
-     *
-     * @param str 字符串
-     * @return
-     */
-    public static boolean isEmpty(Object str) {
-        return null == str || "".equals(str);
-    }
-
-    /**
      * 判断是否为非空字符串
      *
      * @param str 字符串
      * @return
      */
-    public static boolean isNotEmpty(Object str) {
-        return !isEmpty(str);
+    public static boolean hasLength(@Nullable String str) {
+        return null != str && !str.isEmpty();
     }
 
     /**
@@ -43,7 +35,7 @@ public class StringUtils {
      * @return
      */
     public static String substringByBytes(String str, int bytes) {
-        if (isNotEmpty(str)) {
+        if (hasLength(str)) {
             int len = 0;
             int strLength = str.length();
             for (int i = 0; i < strLength; i++) {

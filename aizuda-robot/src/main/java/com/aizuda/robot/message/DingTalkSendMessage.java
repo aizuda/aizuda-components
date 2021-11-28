@@ -6,6 +6,7 @@
 package com.aizuda.robot.message;
 
 import com.aizuda.common.toolkit.AlgorithmUtils;
+import com.aizuda.common.toolkit.StringUtils;
 import com.aizuda.robot.autoconfigure.RobotProperties;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +51,7 @@ public class DingTalkSendMessage extends AbstractRobotSendMessage {
         url.append("https://oapi.dingtalk.com/robot/send?access_token=");
         url.append(dingTalk.getAccessToken());
         String secret = dingTalk.getSecret();
-        if (null != secret && !"".equals(secret)) {
+        if (StringUtils.hasLength(secret)) {
             Long timestamp = System.currentTimeMillis();
             url.append("&timestamp=").append(timestamp);
             String sign = AlgorithmUtils.encodeBase64HmacSHA256(secret, timestamp + "\n" + secret);

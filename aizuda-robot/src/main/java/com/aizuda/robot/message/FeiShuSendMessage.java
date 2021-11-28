@@ -5,6 +5,7 @@
  */
 package com.aizuda.robot.message;
 
+import com.aizuda.common.toolkit.StringUtils;
 import com.aizuda.robot.autoconfigure.RobotProperties;
 import lombok.AllArgsConstructor;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -42,7 +43,7 @@ public class FeiShuSendMessage extends AbstractRobotSendMessage {
         return this.request(restTemplate, new HashMap<String, Object>(4) {{
             RobotProperties.FeiShu feiShu = robotProperties.getFeiShu();
             final String secret = feiShu.getSecret();
-            if (null != secret && !"".equals(secret)) {
+            if (StringUtils.hasLength(secret)) {
                 final long currentTimeMillis = System.currentTimeMillis();
                 String stringToSign = currentTimeMillis + "\n" + secret;
                 // 使用HmacSHA256算法计算签名
