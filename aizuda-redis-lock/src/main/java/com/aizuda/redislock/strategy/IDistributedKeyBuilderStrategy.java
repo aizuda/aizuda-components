@@ -1,7 +1,7 @@
-package com.aizuda.limiter.strategy;
+package com.aizuda.redislock.strategy;
 
 
-import com.aizuda.limiter.annotation.DistributedLimit;
+import com.aizuda.redislock.annotation.DistributedLimit;
 
 import java.lang.reflect.Method;
 

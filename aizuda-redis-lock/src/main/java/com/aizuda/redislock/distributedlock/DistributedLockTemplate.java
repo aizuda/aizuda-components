@@ -1,4 +1,4 @@
-package com.aizuda.limiter.distributedlock;
+package com.aizuda.redislock.distributedlock;
 
 import java.util.concurrent.TimeUnit;
 

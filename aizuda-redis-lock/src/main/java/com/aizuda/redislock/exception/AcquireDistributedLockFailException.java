@@ -1,4 +1,4 @@
-package com.aizuda.limiter.exception;
+package com.aizuda.redislock.exception;
 
 /**
  * 获取分布式锁失败异常，到时候可以全局捕获此异常，返回前端信息

@@ -1,11 +1,11 @@
-package com.aizuda.limiter.aspect;
+package com.aizuda.redislock.aspect;
 
 import com.aizuda.common.toolkit.MethodUtils;
-import com.aizuda.limiter.annotation.DistributedLimit;
-import com.aizuda.limiter.distributedlock.DistributedLockCallback;
-import com.aizuda.limiter.exception.AcquireDistributedLockFailException;
-import com.aizuda.limiter.extend.IDistributedLimitExtend;
-import com.aizuda.limiter.handler.IDistributedLimitHandler;
+import com.aizuda.redislock.annotation.DistributedLimit;
+import com.aizuda.redislock.distributedlock.DistributedLockCallback;
+import com.aizuda.redislock.exception.AcquireDistributedLockFailException;
+import com.aizuda.redislock.extend.IDistributedLimitExtend;
+import com.aizuda.redislock.handler.IDistributedLimitHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -41,7 +41,7 @@ public class DistributedLimitAspect {
      * @return {@link Object}
      * @throws Throwable 限流异常
      */
-    @Around("@annotation(com.aizuda.limiter.annotation.DistributedLimit)")
+    @Around("@annotation(com.aizuda.redislock.annotation.DistributedLimit)")
     public Object interceptor(ProceedingJoinPoint pjp) throws Throwable {
         MethodSignature signature = (MethodSignature) pjp.getSignature();
         Method method = signature.getMethod();

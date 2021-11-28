@@ -1,4 +1,4 @@
-package com.aizuda.limiter.exception;
+package com.aizuda.redislock.exception;
 
 import lombok.Getter;
 import lombok.Setter;

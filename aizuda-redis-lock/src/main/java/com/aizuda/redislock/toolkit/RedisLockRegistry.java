@@ -1,4 +1,4 @@
-package com.aizuda.limiter.toolkit;
+package com.aizuda.redislock.toolkit;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;

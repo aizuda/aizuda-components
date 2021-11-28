@@ -1,0 +1,11 @@
+description "爱组搭分布式锁模块"
+
+version "1.0.0"
+
+dependencies {
+    api project(":aizuda-common")
+    api("org.springframework.boot:spring-boot-starter-data-redis")
+    api("org.apache.commons:commons-pool2:2.11.1")
+
+    compileOnly("org.springframework.boot:spring-boot-starter-web")
+}

@@ -1,4 +1,4 @@
-package com.aizuda.limiter.distributedlock;
+package com.aizuda.redislock.distributedlock;
 
 /**
  * 分布式锁处理接口

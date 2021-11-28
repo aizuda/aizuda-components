@@ -3,11 +3,11 @@
  * ------------------------------------------
  * 受知识产权保护，请勿删除版权申明
  */
-package com.aizuda.limiter.handler;
+package com.aizuda.redislock.handler;
 
 
-import com.aizuda.limiter.annotation.DistributedLimit;
-import com.aizuda.limiter.distributedlock.DistributedLockCallback;
+import com.aizuda.redislock.annotation.DistributedLimit;
+import com.aizuda.redislock.distributedlock.DistributedLockCallback;
 
 import java.lang.reflect.Method;
 import java.util.function.Supplier;

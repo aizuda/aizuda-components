@@ -1,7 +1,7 @@
-package com.aizuda.limiter.distributedlock;
+package com.aizuda.redislock.distributedlock;
 
-import com.aizuda.limiter.exception.DistributedLimitException;
-import com.aizuda.limiter.toolkit.RedisLockRegistry;
+import com.aizuda.redislock.exception.DistributedLimitException;
+import com.aizuda.redislock.toolkit.RedisLockRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

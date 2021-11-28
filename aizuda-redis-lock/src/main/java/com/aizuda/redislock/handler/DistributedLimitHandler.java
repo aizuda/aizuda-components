@@ -1,11 +1,11 @@
-package com.aizuda.limiter.handler;
+package com.aizuda.redislock.handler;
 
-import com.aizuda.limiter.annotation.DistributedLimit;
-import com.aizuda.limiter.distributedlock.DistributedLockCallback;
-import com.aizuda.limiter.distributedlock.DistributedLockTemplate;
-import com.aizuda.limiter.exception.DistributedLimitException;
-import com.aizuda.limiter.extend.IDistributedLimitExtend;
-import com.aizuda.limiter.strategy.IDistributedKeyBuilderStrategy;
+import com.aizuda.redislock.annotation.DistributedLimit;
+import com.aizuda.redislock.distributedlock.DistributedLockCallback;
+import com.aizuda.redislock.distributedlock.DistributedLockTemplate;
+import com.aizuda.redislock.exception.DistributedLimitException;
+import com.aizuda.redislock.extend.IDistributedLimitExtend;
+import com.aizuda.redislock.strategy.IDistributedKeyBuilderStrategy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.convert.DurationStyle;
