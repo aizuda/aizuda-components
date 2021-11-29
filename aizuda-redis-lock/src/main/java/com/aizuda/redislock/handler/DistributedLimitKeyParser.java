@@ -23,7 +23,7 @@ import java.lang.reflect.Method;
  * @author hubin
  * @since 2021-11-16
  */
-public class RateLimitKeyParser {
+public class DistributedLimitKeyParser {
     private final ParameterNameDiscoverer nameDiscoverer = new DefaultParameterNameDiscoverer();
     private final ExpressionParser parser = new SpelExpressionParser();
 

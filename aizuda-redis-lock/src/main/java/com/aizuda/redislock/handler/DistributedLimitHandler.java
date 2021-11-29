@@ -27,7 +27,7 @@ import java.util.function.Supplier;
 @Slf4j
 @RequiredArgsConstructor
 public class DistributedLimitHandler implements IDistributedLimitHandler {
-    private final RateLimitKeyParser rateLimitKeyParser;
+    private final DistributedLimitKeyParser distributedLimitKeyParser;
     private final List<IDistributedKeyBuilderStrategy> distributedKeyBuilderStrategies;
     private final DistributedLockTemplate distributedLockTemplate;
     private final List<IDistributedLimitExtend> distributedLimitExtends;
@@ -62,7 +62,7 @@ public class DistributedLimitHandler implements IDistributedLimitHandler {
         final String limitKey = distributedLimit.key();
         String parserKey = Optional.of(limitKey)
                 .filter(str -> !"".equals(limitKey))
-                .map(str -> rateLimitKeyParser.parser(limitKey, method, args.get()))
+                .map(str -> distributedLimitKeyParser.parser(limitKey, method, args.get()))
                 .orElse("");
 
         if (null != distributedKeyBuilderStrategies && !distributedKeyBuilderStrategies.isEmpty()) {
