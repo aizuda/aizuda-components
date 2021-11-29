@@ -11,7 +11,7 @@ import com.aizuda.redislock.distributedlock.RedisDistributedLockTemplate;
 import com.aizuda.redislock.extend.IDistributedLimitExtend;
 import com.aizuda.redislock.handler.DistributedLimitHandler;
 import com.aizuda.redislock.handler.IDistributedLimitHandler;
-import com.aizuda.redislock.handler.RateLimitKeyParser;
+import com.aizuda.redislock.handler.DistributedLimitKeyParser;
 import com.aizuda.redislock.strategy.IDistributedKeyBuilderStrategy;
 import com.aizuda.redislock.toolkit.RedisLockRegistry;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -44,11 +44,11 @@ public class RateLimitAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public IDistributedLimitHandler distributedLimitHandler(RateLimitKeyParser rateLimitKeyParser,
+    public IDistributedLimitHandler distributedLimitHandler(DistributedLimitKeyParser distributedLimitKeyParser,
                                                             Optional<List<IDistributedKeyBuilderStrategy>> distributedKeyBuilderStrategiesOptional,
                                                             DistributedLockTemplate distributedLockTemplate,
                                                             Optional<List<IDistributedLimitExtend>> distributedLimitExtendsOptional) {
-        return new DistributedLimitHandler(rateLimitKeyParser, distributedKeyBuilderStrategiesOptional.orElse(null),
+        return new DistributedLimitHandler(distributedLimitKeyParser, distributedKeyBuilderStrategiesOptional.orElse(null),
                 distributedLockTemplate, distributedLimitExtendsOptional.orElse(null));
     }
 
@@ -66,8 +66,8 @@ public class RateLimitAutoConfiguration {
 
 
     @Bean
-    public RateLimitKeyParser rateLimitKeyParser() {
-        return new RateLimitKeyParser();
+    public DistributedLimitKeyParser distributedLimitKeyParser() {
+        return new DistributedLimitKeyParser();
     }
 
 }
