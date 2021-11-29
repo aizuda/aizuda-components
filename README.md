@@ -10,6 +10,12 @@
 
 [爱组搭 ~ 组件源码示例演示](https://gitee.com/aizuda/aizuda-components-examples)
 
+
+
+# 微信交流群
+<img src="https://images.gitee.com/uploads/images/2021/1129/221920_d2559092_12260.jpeg" width="50%" height="50%">
+
+
 # 公共模块
 
 -  aizuda-common 主要内容 工具类 等。
@@ -62,9 +68,4 @@
 </dependency>
 ```
 
-
-
-# 微信交流群
-
-![微信群](https://images.gitee.com/uploads/images/2021/1119/095213_7ac4e4e7_12260.png "aizuda.png")
 
