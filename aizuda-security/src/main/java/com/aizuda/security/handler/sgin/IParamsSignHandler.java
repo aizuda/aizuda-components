@@ -7,9 +7,10 @@ package com.aizuda.security.handler.sgin;
  * @author imantou
  * @since 2021-12-1
  */
+
 import javax.servlet.http.HttpServletRequest;
 
-public interface IParamsSignHandler extends ISignHandler {
+public interface IParamsSignHandler {
 
     boolean signGetRequest(HttpServletRequest request) throws Exception;
 

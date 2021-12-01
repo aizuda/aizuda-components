@@ -10,8 +10,6 @@ package com.aizuda.security.handler.sgin;
  */
 public interface ISignHandler {
 
-    default String sign(String jsonStr) throws Exception {
-        return null;
-    }
+    String sign(String jsonStr);
 
 }
