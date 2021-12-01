@@ -2,12 +2,14 @@ package com.aizuda.security.handler.sgin;
 
 import com.aizuda.common.toolkit.JacksonUtils;
 import com.baomidou.kisso.common.util.StringUtils;
-import org.springframework.util.DigestUtils;
 import org.springframework.util.StreamUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * 验签抽类

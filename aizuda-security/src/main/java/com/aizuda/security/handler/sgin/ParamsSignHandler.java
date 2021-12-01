@@ -1,7 +1,6 @@
 package com.aizuda.security.handler.sgin;
 
 import com.aizuda.security.autoconfigure.SecurityProperties;
-import com.baomidou.kisso.common.util.StringUtils;
 import lombok.AllArgsConstructor;
 
 import javax.servlet.http.HttpServletRequest;
