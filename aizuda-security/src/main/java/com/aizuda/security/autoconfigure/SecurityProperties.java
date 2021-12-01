@@ -36,6 +36,10 @@ public class SecurityProperties implements Serializable {
      * 公钥
      */
     private String publicKey;
+    /**
+     * 开启验签
+     */
+    private Sign sign;
 
     /**
      * 配置有效性检查
@@ -44,5 +48,18 @@ public class SecurityProperties implements Serializable {
         if (StringUtils.isEmpty(privateKey) || StringUtils.isEmpty(publicKey)) {
             throw new RuntimeException("not found rsa privateKey or publicKey.");
         }
+    }
+
+    @Getter
+    @Setter
+    public static class Sign {
+        /**
+         * md5验签
+         */
+        private String md5;
+        /**
+         * rsa验签
+         */
+        private String rsa;
     }
 }
