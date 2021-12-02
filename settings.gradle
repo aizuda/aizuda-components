@@ -7,5 +7,5 @@ include 'aizuda-common'
 include 'aizuda-limiter'
 include 'aizuda-security'
 include 'aizuda-robot'
-include 'aizuda-redis-lock'
+include 'aizuda-payload'
 

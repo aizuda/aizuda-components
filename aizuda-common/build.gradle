@@ -1,6 +1,6 @@
 description "爱组搭公共模块"
 
-version "0.0.1"
+version "0.0.2"
 
 dependencies {
     compileOnly("org.springframework.boot:spring-boot-starter-web")

@@ -34,11 +34,6 @@ subprojects {
     apply plugin: 'signing'
     apply plugin: "io.spring.dependency-management"
 
-    tasks.withType(JavaCompile) {
-        options.encoding = 'UTF-8'
-        options.warnings = false
-    }
-
     // 仓库配置
     repositories {
         mavenLocal()

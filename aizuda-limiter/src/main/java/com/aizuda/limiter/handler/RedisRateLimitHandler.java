@@ -6,7 +6,6 @@
 package com.aizuda.limiter.handler;
 
 import com.aizuda.limiter.annotation.RateLimit;
-import com.aizuda.limiter.strategy.IRateLimitStrategy;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.convert.DurationStyle;
@@ -15,8 +14,6 @@ import org.springframework.data.redis.core.script.RedisScript;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -32,7 +29,6 @@ import java.util.function.Supplier;
 public class RedisRateLimitHandler implements IRateLimitHandler {
     private static RedisScript<Long> REDIS_SCRIPT_RATE_LIMIT = null;
     private final RedisTemplate<String, String> redisTemplate;
-    private final List<IRateLimitStrategy> rateLimitStrategyList;
     private final RateLimitKeyParser rateLimitKeyParser;
 
     @Override
@@ -42,7 +38,7 @@ public class RedisRateLimitHandler implements IRateLimitHandler {
         }
         // 间隔时间解析为秒
         long interval = DurationStyle.detectAndParse(rateLimit.interval()).getSeconds();
-        final String key = this.buildKey(method, args, classMethodName, rateLimit);
+        final String key = rateLimitKeyParser.buildKey(method, args, classMethodName, rateLimit.key(), rateLimit.strategy());
         if (log.isDebugEnabled()) {
             log.debug("rate.limit.key = {}", key);
         }
@@ -61,32 +57,6 @@ public class RedisRateLimitHandler implements IRateLimitHandler {
             log.debug("current limiting rule triggered");
         }
         return false;
-    }
-
-    /**
-     * 构建唯一标示 KEY
-     */
-    public String buildKey(Method method, Supplier<Object[]> args, String classMethodName, RateLimit rateLimit) {
-        StringBuffer key = new StringBuffer();
-        key.append(classMethodName).append(":");
-
-        // SpEL Key 解析
-        final String rateLimitKey = rateLimit.key();
-        if (!"".equals(rateLimitKey)) {
-            key.append(rateLimitKeyParser.parser(rateLimitKey, method, args.get()));
-        }
-
-        // 组装自定义策略
-        final String[] strArr = rateLimit.strategy();
-        if (strArr.length > 0) {
-            for (String str : strArr) {
-                rateLimitStrategyList.stream()
-                        .filter(t -> Objects.equals(t.getType(), str))
-                        .findFirst().ifPresent(rateLimitStrategy -> key.append(rateLimitStrategy.getKey()));
-            }
-        }
-
-        return key.toString();
     }
 
     /**

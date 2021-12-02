@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.aizuda.limiter.autoconfigure.RateLimitAutoConfiguration
+com.aizuda.limiter.autoconfigure.LimiterAutoConfiguration
