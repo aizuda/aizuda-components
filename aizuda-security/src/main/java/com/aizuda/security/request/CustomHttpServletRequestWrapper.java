@@ -1,3 +1,8 @@
+/*
+ * 爱组搭 http://aizuda.com 低代码组件化开发平台
+ * ------------------------------------------
+ * 受知识产权保护，请勿删除版权申明
+ */
 package com.aizuda.security.request;
 
 import org.springframework.util.StreamUtils;

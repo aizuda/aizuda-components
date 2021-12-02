@@ -13,8 +13,11 @@ import com.aizuda.security.handler.IRestEncryptHandler;
 import com.aizuda.security.handler.sgin.IParamsSignHandler;
 import com.aizuda.security.handler.sgin.Md5SignHandler;
 import com.aizuda.security.handler.sgin.ParamsSignHandler;
+import com.aizuda.security.request.HttpServletRequestReplacedFilter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,22 +59,29 @@ public class RestEncryptAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(prefix = SecurityProperties.PREFIX, name = "sign")
+    @ConditionalOnProperty(prefix = SecurityProperties.PREFIX, name = "sign.invalidTime")
     public Md5SignHandler md5SignHandler() {
         return new Md5SignHandler();
     }
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(prefix = SecurityProperties.PREFIX, name = "sign")
-    public ParamsSignHandler paramsSignHandler(Md5SignHandler md5SignHandler, SecurityProperties.Sign sign) {
-        return new ParamsSignHandler(md5SignHandler, sign);
+    @ConditionalOnProperty(prefix = SecurityProperties.PREFIX, name = "sign.invalidTime")
+    public ParamsSignHandler paramsSignHandler(Md5SignHandler md5SignHandler, SecurityProperties securityProperties) {
+        return new ParamsSignHandler(md5SignHandler, securityProperties);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(prefix = SecurityProperties.PREFIX, name = "sign")
+    @ConditionalOnProperty(prefix = SecurityProperties.PREFIX, name = "sign.invalidTime")
     public ParamSignAspect paramSignAspect(IParamsSignHandler paramsSignHandler) {
         return new ParamSignAspect(paramsSignHandler);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(prefix = SecurityProperties.PREFIX, name = "sign.invalidTime")
+    public HttpServletRequestReplacedFilter customDispatcherServlet() {
+        return new HttpServletRequestReplacedFilter();
     }
 }

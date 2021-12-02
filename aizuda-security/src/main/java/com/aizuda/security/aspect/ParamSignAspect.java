@@ -6,11 +6,15 @@
 package com.aizuda.security.aspect;
 
 import com.aizuda.security.handler.sgin.IParamsSignHandler;
+import com.aizuda.security.request.CustomHttpServletRequestWrapper;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.http.MediaType;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -26,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Aspect
 @AllArgsConstructor
+@Slf4j
 public class ParamSignAspect {
 
     private IParamsSignHandler paramsSignHandler;
@@ -38,12 +43,19 @@ public class ParamSignAspect {
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
+        CustomHttpServletRequestWrapper requestWrapper = (CustomHttpServletRequestWrapper) request;
         // 验签
-        if ("GET".equals(request.getMethod())) {
-            paramsSignHandler.signGetRequest(request);
-        } else {
+        if ("GET".equals(requestWrapper.getMethod())) {
+            if (!paramsSignHandler.signGetRequest(requestWrapper)) {
+                log.error("Illegal tampering with data");
+                return null;
+            }
+        } else if (!requestWrapper.getContentType().toLowerCase().startsWith("multipart")) {
             //获取请求body
-            paramsSignHandler.signPostRequest(request);
+            if (!paramsSignHandler.signPostRequest(requestWrapper)) {
+                log.error("Illegal tampering with data");
+                return null;
+            }
         }
         return joinPoint.proceed(joinPoint.getArgs());
     }

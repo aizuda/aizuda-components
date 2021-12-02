@@ -19,7 +19,6 @@ public class Md5SignHandler implements ISignHandler {
 
     @Override
     public String sign(String str) {
-        // 重排序md5
         return DigestUtils.md5DigestAsHex(str.getBytes()).toUpperCase();
     }
 
