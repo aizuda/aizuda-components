@@ -26,14 +26,18 @@ import java.util.TreeMap;
  */
 public abstract class AbstractParamsSignHandler implements IParamsSignHandler {
 
-    private long failureTime = 20000L;
+    private final long failureTime;
 
-    protected boolean doBefore(HttpServletRequest request, String invalidTime) {
+    protected AbstractParamsSignHandler(long failureTime) {
+        this.failureTime = failureTime;
+    }
+
+    protected boolean doBefore(HttpServletRequest request) {
         String timestamp = this.getTimestamp(request);
         if (StringUtils.isEmpty(timestamp)) return false;
         String sign = this.getSign(request);
         if (StringUtils.isEmpty(sign)) return false;
-        if (!this.invalidTime(timestamp, invalidTime)) return false;
+        if (!this.isInvalid(timestamp)) return false;
         return true;
     }
 
@@ -65,21 +69,8 @@ public abstract class AbstractParamsSignHandler implements IParamsSignHandler {
         return this.getSignParam(request, "sign");
     }
 
-    private boolean invalidTime(String timestamp, String invalidTime) {
-        if (StringUtils.isNotEmpty(invalidTime)) {
-            try {
-                if (invalidTime.endsWith("ms")) {
-                    failureTime = Long.parseLong(invalidTime.substring(0, invalidTime.length() - 2).trim());
-                } else if (invalidTime.endsWith("s")) {
-                    failureTime = Long.parseLong(invalidTime.substring(0, invalidTime.length() - 1).trim()) * 1000L;
-                } else if (invalidTime.substring(invalidTime.length() - 1).matches("[0-9]*")) {
-                    failureTime = Long.parseLong(invalidTime);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new RuntimeException("sign config error: unsupported time configuration");
-            }
-        }
+
+    private boolean isInvalid(String timestamp) {
         return failureTime > System.currentTimeMillis() - Long.parseLong(timestamp);
     }
 

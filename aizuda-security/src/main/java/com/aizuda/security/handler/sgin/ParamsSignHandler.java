@@ -6,6 +6,7 @@
 package com.aizuda.security.handler.sgin;
 
 import com.aizuda.security.autoconfigure.SecurityProperties;
+import com.baomidou.kisso.common.util.StringUtils;
 import lombok.AllArgsConstructor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,26 +20,27 @@ import java.io.IOException;
  * @author imantou
  * @since 2021-12-01
  */
-@AllArgsConstructor
 public class ParamsSignHandler extends AbstractParamsSignHandler {
 
     private ISignHandler signHandler;
 
-    private SecurityProperties.Sign sign;
+    public ParamsSignHandler(ISignHandler signHandler, SecurityProperties properties) {
+        super(ParamsSignHelper.invalidTime(properties.getSign().getInvalidTime()));
+        this.signHandler = signHandler;
+    }
 
     @Override
     public boolean signGetRequest(HttpServletRequest request) {
-        if (!this.doBefore(request,sign.getInvalidTime())) return false;
+        if (!this.doBefore(request)) return false;
         String requestJsonStr = this.getRequestJsonStr(request);
+        System.out.println(signHandler.sign(requestJsonStr));
         return signHandler.sign(requestJsonStr).equals(this.getSign(request));
     }
 
     @Override
     public boolean signPostRequest(HttpServletRequest request) throws IOException {
-        if (!this.doBefore(request,sign.getInvalidTime())) return false;
+        if (!this.doBefore(request)) return false;
         String requestJsonStr = this.postRequestJsonStr(request);
         return signHandler.sign(requestJsonStr).equals(this.getSign(request));
     }
-
-
 }
