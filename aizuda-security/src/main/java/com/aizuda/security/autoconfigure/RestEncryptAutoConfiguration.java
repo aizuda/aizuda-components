@@ -11,8 +11,8 @@ import com.aizuda.security.aspect.ParamSignAspect;
 import com.aizuda.security.handler.DefaultRestEncryptHandler;
 import com.aizuda.security.handler.IRestEncryptHandler;
 import com.aizuda.security.handler.sgin.IParamsSignHandler;
-import com.aizuda.security.handler.sgin.SignMd5Handler;
-import com.aizuda.security.handler.sgin.SignRSAHandler;
+import com.aizuda.security.handler.sgin.Md5SignHandler;
+import com.aizuda.security.handler.sgin.ParamsSignHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -56,22 +56,22 @@ public class RestEncryptAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(prefix = SecurityProperties.PREFIX, name = "sign.md5")
-    public SignMd5Handler signMd5Handler() {
-        return new SignMd5Handler();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    @ConditionalOnProperty(prefix = SecurityProperties.PREFIX, name = "sign.rsa")
-    public SignRSAHandler signRSAHandler(SecurityProperties securityProperties) {
-        return new SignRSAHandler(securityProperties);
+    @ConditionalOnProperty(prefix = SecurityProperties.PREFIX, name = "sign")
+    public Md5SignHandler md5SignHandler() {
+        return new Md5SignHandler();
     }
 
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(prefix = SecurityProperties.PREFIX, name = "sign")
-    public ParamSignAspect signMd5Handler(IParamsSignHandler paramsSignHandler) {
+    public ParamsSignHandler paramsSignHandler(Md5SignHandler md5SignHandler, SecurityProperties.Sign sign) {
+        return new ParamsSignHandler(md5SignHandler, sign);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(prefix = SecurityProperties.PREFIX, name = "sign")
+    public ParamSignAspect paramSignAspect(IParamsSignHandler paramsSignHandler) {
         return new ParamSignAspect(paramsSignHandler);
     }
 }

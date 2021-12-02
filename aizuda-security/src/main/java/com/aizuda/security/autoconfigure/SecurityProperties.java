@@ -53,13 +53,11 @@ public class SecurityProperties implements Serializable {
     @Getter
     @Setter
     public static class Sign {
+
         /**
-         * md5验签
+         * 时间戳有效时间 不配置默认 20秒
          */
-        private String md5;
-        /**
-         * rsa验签
-         */
-        private String rsa;
+        private String invalidTime;
+
     }
 }

@@ -5,7 +5,8 @@
  */
 package com.aizuda.security.handler.sgin;
 
-import com.baomidou.kisso.common.encrypt.MD5;
+import com.aizuda.security.autoconfigure.SecurityProperties;
+import lombok.AllArgsConstructor;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -18,28 +19,26 @@ import java.io.IOException;
  * @author imantou
  * @since 2021-12-01
  */
-public class SignMd5Handler extends AbstractParamsSignHandler {
+@AllArgsConstructor
+public class ParamsSignHandler extends AbstractParamsSignHandler {
+
+    private ISignHandler signHandler;
+
+    private SecurityProperties.Sign sign;
 
     @Override
     public boolean signGetRequest(HttpServletRequest request) {
-        if (!this.doBefore(request)) {
-            return false;
-        }
+        if (!this.doBefore(request,sign.getInvalidTime())) return false;
         String requestJsonStr = this.getRequestJsonStr(request);
-        return this.sign(requestJsonStr).equals(this.getSign(request));
+        return signHandler.sign(requestJsonStr).equals(this.getSign(request));
     }
 
     @Override
     public boolean signPostRequest(HttpServletRequest request) throws IOException {
-        if (!this.doBefore(request)) {
-            return false;
-        }
+        if (!this.doBefore(request,sign.getInvalidTime())) return false;
         String requestJsonStr = this.postRequestJsonStr(request);
-        return this.sign(requestJsonStr).equals(this.getSign(request));
+        return signHandler.sign(requestJsonStr).equals(this.getSign(request));
     }
 
-    @Override
-    public String sign(String str) {
-        return MD5.toMD5(str);
-    }
+
 }
