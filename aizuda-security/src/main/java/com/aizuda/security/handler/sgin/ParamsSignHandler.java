@@ -33,7 +33,6 @@ public class ParamsSignHandler extends AbstractParamsSignHandler {
     public boolean signGetRequest(HttpServletRequest request) {
         if (!this.doBefore(request)) return false;
         String requestJsonStr = this.getRequestJsonStr(request);
-        System.out.println(signHandler.sign(requestJsonStr));
         return signHandler.sign(requestJsonStr).equals(this.getSign(request));
     }
 
