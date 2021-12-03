@@ -40,16 +40,16 @@ public class Md5ParamsSignHandler extends AbstractParamsSignHandler {
 
     @Override
     public String getSignParam() {
-        return securityProperties.getSign().getSign();
+        return securityProperties.getParamsSign().getSign();
     }
 
     @Override
     public String getTimestampParam() {
-        return securityProperties.getSign().getTimestamp();
+        return securityProperties.getParamsSign().getTimestamp();
     }
 
     @Override
     public Long getFailureTime() {
-        return DurationStyle.detectAndParse(securityProperties.getSign().getInvalidTime()).getSeconds();
+        return DurationStyle.detectAndParse(securityProperties.getParamsSign().getInvalidTime()).getSeconds();
     }
 }

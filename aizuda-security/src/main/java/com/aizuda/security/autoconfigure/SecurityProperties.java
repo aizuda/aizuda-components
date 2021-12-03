@@ -39,7 +39,7 @@ public class SecurityProperties implements Serializable {
     /**
      * 开启验签
      */
-    private Sign sign;
+    private ParamsSign paramsSign;
 
     /**
      * 配置有效性检查
@@ -52,7 +52,7 @@ public class SecurityProperties implements Serializable {
 
     @Getter
     @Setter
-    public static class Sign {
+    public static class ParamsSign {
 
         /**
          * 签名
