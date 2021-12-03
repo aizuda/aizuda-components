@@ -37,9 +37,17 @@ public class SecurityProperties implements Serializable {
      */
     private String publicKey;
     /**
-     * 开启验签
+     * 请求参数验签配置
      */
     private ParamsSign paramsSign;
+
+    public ParamsSign getParamsSign() {
+        if (null == this.paramsSign) {
+            // 创建默认参数配置
+            this.paramsSign = new ParamsSign();
+        }
+        return this.paramsSign;
+    }
 
     /**
      * 配置有效性检查
@@ -65,11 +73,11 @@ public class SecurityProperties implements Serializable {
         private String timestamp = "timestamp";
 
         /**
-         * 时间戳有效时间 不配置默认 30秒
+         * 时间戳有效时间 不配置默认 20秒
          * <p>
          * 例如 5s 五秒，6m 六分钟，7h 七小时，8d 八天
          */
-        private String invalidTime = "30s";
+        private String invalidTime = "20s";
 
     }
 }

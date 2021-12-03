@@ -6,6 +6,7 @@
 package com.aizuda.security.handler;
 
 import com.aizuda.common.toolkit.StringUtils;
+import com.aizuda.security.exception.ParamsSignException;
 import org.springframework.util.StreamUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -88,9 +89,8 @@ public abstract class AbstractParamsSignHandler implements IParamsSignHandler {
                 String jsonStr = new String(bodyBytes, request.getCharacterEncoding());
                 return this.parse(jsonStr);
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new ParamsSignException("request body copy error");
             }
-            return null;
         });
     }
 
