@@ -20,6 +20,10 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class RequestUtils {
 
+    public final static String LOCAL_IP = "127.0.0.1";
+
+    public final static String LOCAL_ADDRESS = "0:0:0:0:0:0:0:1";
+
     /**
      * 当前 HttpServletRequest 请求
      *
@@ -64,9 +68,8 @@ public class RequestUtils {
         if (null == ip) {
             return "";
         }
-        String localAddress = "0:0:0:0:0:0:0:1";
-        if (localAddress.equals(ip)) {
-            return "127.0.0.1";
+        if (LOCAL_ADDRESS.equals(ip)) {
+            return LOCAL_IP;
         }
         return getMultistageReverseProxyIp(ip);
     }
@@ -93,6 +96,6 @@ public class RequestUtils {
     }
 
     private static boolean isNotUnknown(String checkIp) {
-        return null != checkIp && checkIp.length() > 0 && !"unknown".equalsIgnoreCase(checkIp);
+        return StringUtils.hasLength(checkIp) && !"unknown".equalsIgnoreCase(checkIp);
     }
 }
