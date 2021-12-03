@@ -6,6 +6,7 @@
 package com.aizuda.limiter.aspect;
 
 import com.aizuda.common.toolkit.MethodUtils;
+import com.aizuda.common.toolkit.StringUtils;
 import com.aizuda.limiter.annotation.RateLimit;
 import com.aizuda.limiter.exception.RateLimitException;
 import com.aizuda.limiter.handler.IRateLimitHandler;
@@ -52,7 +53,7 @@ public class RateLimitAspect {
         if (rateLimitHandler.proceed(method, pjp::getArgs, classMethodName, rateLimit)) {
             return pjp.proceed();
         } else {
-            throw new RateLimitException(!"".equals(rateLimit.message()) ? rateLimit.message() :
+            throw new RateLimitException(StringUtils.hasLength(rateLimit.message()) ? rateLimit.message() :
                     "current limiting rule triggered");
         }
     }
