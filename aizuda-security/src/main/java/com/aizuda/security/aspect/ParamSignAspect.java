@@ -44,18 +44,20 @@ public class ParamSignAspect {
         HttpServletRequest request = attributes.getRequest();
         SignRequestWrapper requestWrapper = new SignRequestWrapper(request);
         // 请求参数验签
+        boolean isOk = false;
         if (Objects.equals(HttpMethod.GET.name(), requestWrapper.getMethod())) {
-            this.checkSign(paramsSignHandler.doGet(requestWrapper));
+            isOk = this.checkSign(paramsSignHandler.doGet(requestWrapper));
         } else if (!requestWrapper.getContentType().toLowerCase().startsWith("multipart")) {
             // 请求body内容处理
-            this.checkSign(paramsSignHandler.doPost(requestWrapper));
+            isOk = this.checkSign(paramsSignHandler.doPost(requestWrapper));
         }
-        return pjp.proceed();
+        return isOk ? pjp.proceed() : null;
     }
 
-    private void checkSign(boolean result) {
-        if (result) {
-            throw new ParamsSignException("Illegal tampering with data");
+    private boolean checkSign(boolean result) {
+        if (!result) {
+            throw new ParamsSignException("Request parameter signature verification failed");
         }
+        return true;
     }
 }
