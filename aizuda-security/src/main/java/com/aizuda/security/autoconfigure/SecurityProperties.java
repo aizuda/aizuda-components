@@ -55,9 +55,21 @@ public class SecurityProperties implements Serializable {
     public static class Sign {
 
         /**
-         * 时间戳有效时间 不配置默认 20秒
+         * 签名
          */
-        private String invalidTime;
+        private String sign = "sign";
+
+        /**
+         * 时间戳
+         */
+        private String timestamp = "timestamp";
+
+        /**
+         * 时间戳有效时间 不配置默认 30秒
+         * <p>
+         * 例如 5s 五秒，6m 六分钟，7h 七小时，8d 八天
+         */
+        private String invalidTime = "30s";
 
     }
 }

@@ -5,32 +5,31 @@
  */
 package com.aizuda.security.aspect;
 
-import com.aizuda.security.handler.sgin.IParamsSignHandler;
-import com.aizuda.security.request.CustomHttpServletRequestWrapper;
+import com.aizuda.security.exception.ParamsSignException;
+import com.aizuda.security.handler.IParamsSignHandler;
+import com.aizuda.security.request.SignRequestWrapper;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.http.MediaType;
-import org.springframework.util.StreamUtils;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 
 /**
- * 验签切面
+ * 请求参数验签切面
  * <p>
  * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
  *
- * @author imantou
+ * @author imantou hubin
  * @since 2021-12-01
  */
 @Aspect
 @AllArgsConstructor
-@Slf4j
 public class ParamSignAspect {
 
     private IParamsSignHandler paramsSignHandler;
@@ -40,24 +39,23 @@ public class ParamSignAspect {
     }
 
     @Around("paramSignCut()")
-    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object around(ProceedingJoinPoint pjp) throws Throwable {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
-        CustomHttpServletRequestWrapper requestWrapper = (CustomHttpServletRequestWrapper) request;
-        // 验签
-        if ("GET".equals(requestWrapper.getMethod())) {
-            if (!paramsSignHandler.signGetRequest(requestWrapper)) {
-                log.error("Illegal tampering with data");
-                return null;
-            }
+        SignRequestWrapper requestWrapper = new SignRequestWrapper(request);
+        // 请求参数验签
+        if (Objects.equals(HttpMethod.GET.name(), requestWrapper.getMethod())) {
+            this.checkSign(paramsSignHandler.doGet(requestWrapper));
         } else if (!requestWrapper.getContentType().toLowerCase().startsWith("multipart")) {
-            //获取请求body
-            if (!paramsSignHandler.signPostRequest(requestWrapper)) {
-                log.error("Illegal tampering with data");
-                return null;
-            }
+            // 请求body内容处理
+            this.checkSign(paramsSignHandler.doPost(requestWrapper));
         }
-        return joinPoint.proceed(joinPoint.getArgs());
+        return pjp.proceed();
     }
 
+    private void checkSign(boolean result) {
+        if (result) {
+            throw new ParamsSignException("Illegal tampering with data");
+        }
+    }
 }

@@ -21,22 +21,20 @@ public class HttpServletRequestReplacedFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) {
+
     }
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException, IOException {
-        ServletRequest requestWrapper = null;
         if (servletRequest instanceof HttpServletRequest) {
-            requestWrapper = new CustomHttpServletRequestWrapper((HttpServletRequest) servletRequest);
-        }
-        if (requestWrapper == null) {
-            filterChain.doFilter(servletRequest, servletResponse);
+            filterChain.doFilter(new SignRequestWrapper((HttpServletRequest) servletRequest), servletResponse);
         } else {
-            filterChain.doFilter(requestWrapper, servletResponse);
+            filterChain.doFilter(servletRequest, servletResponse);
         }
     }
 
     @Override
     public void destroy() {
+
     }
 }

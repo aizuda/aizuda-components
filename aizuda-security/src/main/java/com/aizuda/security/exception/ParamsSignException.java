@@ -3,18 +3,19 @@
  * ------------------------------------------
  * 受知识产权保护，请勿删除版权申明
  */
-package com.aizuda.security.handler.sgin;
+package com.aizuda.security.exception;
 
 /**
- * 加密基础类
+ * 请求参数签名异常
  * <p>
  * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
  *
- * @author imantou
- * @since 2021-12-01
+ * @author hubin
+ * @since 2021-12-03
  */
-public interface ISignHandler {
+public class ParamsSignException extends RuntimeException {
 
-    String sign(String jsonStr);
-
+    public ParamsSignException(String message) {
+        super(message);
+    }
 }

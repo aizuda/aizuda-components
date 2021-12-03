@@ -21,14 +21,14 @@ import java.io.*;
  * @author imantou
  * @since 2021-11-26
  */
-public class CustomHttpServletRequestWrapper extends HttpServletRequestWrapper {
+public class SignRequestWrapper extends HttpServletRequestWrapper {
 
     /**
      * 缓存下来的HTTP body
      */
     private byte[] body;
 
-    public CustomHttpServletRequestWrapper(HttpServletRequest request) throws IOException {
+    public SignRequestWrapper(HttpServletRequest request) throws IOException {
         super(request);
         body = StreamUtils.copyToByteArray(request.getInputStream());
     }
