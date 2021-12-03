@@ -5,6 +5,7 @@
  */
 package com.aizuda.limiter.handler;
 
+import com.aizuda.common.toolkit.StringUtils;
 import com.aizuda.limiter.strategy.IRateLimitStrategy;
 import org.springframework.context.expression.MethodBasedEvaluationContext;
 import org.springframework.core.DefaultParameterNameDiscoverer;
@@ -44,7 +45,7 @@ public class RateLimitKeyParser {
         key.append(classMethodName).append(":");
 
         // SpEL Key 解析
-        if (!"".equals(spELKey)) {
+        if (StringUtils.hasLength(spELKey)) {
             key.append(this.parser(spELKey, method, args.get()));
         }
 
