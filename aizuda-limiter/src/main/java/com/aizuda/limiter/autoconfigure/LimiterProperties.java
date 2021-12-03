@@ -40,6 +40,6 @@ public class LimiterProperties implements Serializable {
     private boolean enableDistributedLock;
 
     public boolean isEnable() {
-        return this.enableDistributedLock || this.enableDistributedLock;
+        return this.enableRateLimit || this.enableDistributedLock;
     }
 }

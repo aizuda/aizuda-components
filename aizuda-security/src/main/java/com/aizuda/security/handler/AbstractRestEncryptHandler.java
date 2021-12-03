@@ -5,6 +5,7 @@
  */
 package com.aizuda.security.handler;
 
+import com.aizuda.common.toolkit.StringUtils;
 import com.aizuda.security.autoconfigure.SecurityProperties;
 import com.baomidou.kisso.common.encrypt.RSA;
 import com.baomidou.kisso.common.encrypt.base64.Base64;
@@ -73,7 +74,7 @@ public abstract class AbstractRestEncryptHandler implements IRestEncryptHandler 
             this.headers = inputMessage.getHeaders();
             final String content = new BufferedReader(new InputStreamReader(inputMessage.getBody()))
                     .lines().collect(Collectors.joining(System.lineSeparator()));
-            if (null != content) {
+            if (StringUtils.hasLength(content)) {
                 byte[] encryptedData = Base64.decode(content.getBytes(StandardCharsets.UTF_8));
                 this.body = new ByteArrayInputStream(RSA.decryptByPrivateKey(encryptedData, props.getPrivateKey()));
             }
