@@ -8,6 +8,7 @@ package com.aizuda.security.autoconfigure;
 import com.aizuda.security.aspect.ParamSignAspect;
 import com.aizuda.security.handler.IParamsSignHandler;
 import com.aizuda.security.handler.Md5ParamsSignHandler;
+import com.aizuda.security.request.SignRequestFilter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -36,5 +37,10 @@ public class ParamsSignAutoConfiguration {
     @Bean
     public ParamSignAspect paramSignAspect(IParamsSignHandler paramsSignHandler) {
         return new ParamSignAspect(paramsSignHandler);
+    }
+
+    @Bean
+    public SignRequestFilter signRequestFilter() {
+        return new SignRequestFilter();
     }
 }

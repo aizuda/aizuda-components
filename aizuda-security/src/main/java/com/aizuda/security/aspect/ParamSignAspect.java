@@ -42,7 +42,7 @@ public class ParamSignAspect {
     public Object around(ProceedingJoinPoint pjp) throws Throwable {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
-        SignRequestWrapper requestWrapper = new SignRequestWrapper(request);
+        SignRequestWrapper requestWrapper = (SignRequestWrapper) request;
         // 请求参数验签
         boolean isOk = false;
         if (Objects.equals(HttpMethod.GET.name(), requestWrapper.getMethod())) {

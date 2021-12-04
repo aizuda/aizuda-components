@@ -17,7 +17,7 @@ import java.io.IOException;
  * @author imantou
  * @since 2021-11-26
  */
-public class HttpServletRequestReplacedFilter implements Filter {
+public class SignRequestFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) {

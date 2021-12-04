@@ -35,20 +35,23 @@ public abstract class AbstractParamsSignHandler implements IParamsSignHandler {
      * @return
      */
     protected boolean doCheck(HttpServletRequest request, Supplier<SortedMap<String, String>> paramFunc) {
-        String timestampParam = this.getTimestampParam();
-        String timestampValue = this.getHeaderOrParameter(request, timestampParam);
-        if (!StringUtils.hasLength(timestampValue)) {
-            return false;
-        }
         String signParam = this.getSignParam();
         String signValue = this.getHeaderOrParameter(request, signParam);
         if (!StringUtils.hasLength(signValue)) {
             return false;
         }
-        if (this.getFailureTime() > System.currentTimeMillis() - Long.parseLong(timestampValue)) {
+
+        SortedMap<String, String> parameterMap = paramFunc.get();
+        String timestampValue = parameterMap.get(this.getTimestampParam());
+        if (!StringUtils.hasLength(timestampValue)) {
             return false;
         }
-        SortedMap<String, String> parameterMap = paramFunc.get();
+
+        // 转换为毫秒对比时间戳
+        if (this.getFailureTime() < System.currentTimeMillis() - Long.parseLong(timestampValue)) {
+            return false;
+        }
+
         // 移除可能存在的签名
         parameterMap.remove(signParam);
         return Objects.equals(signValue, this.sign(parameterMap));

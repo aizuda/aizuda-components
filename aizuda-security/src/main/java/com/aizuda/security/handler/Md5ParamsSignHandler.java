@@ -28,6 +28,11 @@ public class Md5ParamsSignHandler extends AbstractParamsSignHandler {
 
     private SecurityProperties securityProperties;
 
+    /**
+     * 失效时间
+     */
+    private static Long FAILURE_TIME = null;
+
     @Override
     public String sign(SortedMap<String, String> parameterMap) {
         return DigestUtils.md5DigestAsHex(JacksonUtils.toJSONString(parameterMap).getBytes(StandardCharsets.UTF_8));
@@ -50,6 +55,9 @@ public class Md5ParamsSignHandler extends AbstractParamsSignHandler {
 
     @Override
     public Long getFailureTime() {
-        return DurationStyle.detectAndParse(securityProperties.getParamsSign().getInvalidTime()).getSeconds();
+        if (null == FAILURE_TIME) {
+            FAILURE_TIME = DurationStyle.detectAndParse(securityProperties.getParamsSign().getInvalidTime()).getSeconds();
+        }
+        return FAILURE_TIME;
     }
 }
