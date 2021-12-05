@@ -5,6 +5,8 @@
  */
 package com.aizuda.limiter.annotation;
 
+import com.aizuda.limiter.strategy.IRateLimitStrategy;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -30,15 +32,21 @@ public @interface DistributedLock {
     String key() default "";
 
     /**
-     * 当前分布式锁失效时间，默认 10 秒
+     * 获取分布式锁超时失败时间，默认 10 秒
      * <p>
      * 例如 5s 五秒，6m 六分钟，7h 七小时，8d 八天
      */
-    String expire() default "10s";
+    String tryAcquireTimeout() default "10s";
 
     /**
-     * 限制策略
+     * 加key策略
+     * 需要实现{@link IRateLimitStrategy}接口注入到spring中
+     * 通过{@link IRateLimitStrategy#getKey()}返回的key将会作为后缀加在默认得到的key后
      */
     String[] strategy() default {};
 
+    /**
+     * 获取分布式锁超时提示
+     */
+    String acquireTimeoutMessage() default "";
 }

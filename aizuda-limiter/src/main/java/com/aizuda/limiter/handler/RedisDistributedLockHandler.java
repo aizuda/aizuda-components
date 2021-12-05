@@ -5,17 +5,25 @@
  */
 package com.aizuda.limiter.handler;
 
+import com.aizuda.common.toolkit.CollectionUtils;
+import com.aizuda.common.toolkit.StringUtils;
 import com.aizuda.limiter.annotation.DistributedLock;
+import com.aizuda.limiter.context.DistributedContext;
+import com.aizuda.limiter.distributedlock.DistributedLockCallback;
+import com.aizuda.limiter.distributedlock.IDistributedLockTemplate;
+import com.aizuda.limiter.exception.AcquireLockTimeoutException;
+import com.aizuda.limiter.extend.IAcquireLockTimeoutHandler;
+import com.aizuda.limiter.extend.IDistributedLimitListener;
+import com.aizuda.limiter.metadata.MethodMetadata;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.boot.convert.DurationStyle;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.script.RedisScript;
 
-import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 分布式锁处理器 Redis 实现
@@ -28,43 +36,99 @@ import java.util.Objects;
 @Slf4j
 @AllArgsConstructor
 public class RedisDistributedLockHandler implements IDistributedLockHandler {
-    private static RedisScript<Long> REDIS_SCRIPT_LOCK = null;
-    private static RedisScript<Long> REDIS_SCRIPT_UNLOCK = null;
-    private final RedisTemplate<String, String> redisTemplate;
     private final RateLimitKeyParser rateLimitKeyParser;
+    private final DistributedContext distributedContext;
 
     @Override
-    public Object proceed(ProceedingJoinPoint pjp, Method method, String classMethodName, DistributedLock distributedLock) throws Throwable {
-        long tid = Thread.currentThread().getId();
-        StringBuffer value = new StringBuffer();
-        value.append(tid).append(Math.random());
-        final String lockKey = rateLimitKeyParser.buildKey(method, pjp::getArgs, classMethodName, distributedLock.key(), distributedLock.strategy());
-        boolean locked = false;
+    public Object proceed(ProceedingJoinPoint pjp, MethodMetadata methodMetadata) {
+        // 获取分布式锁超时处理器
+        IAcquireLockTimeoutHandler acquireLockTimeoutHandler = distributedContext.getAcquireLockTimeoutHandler(methodMetadata);
+        // 监听器
+        List<IDistributedLimitListener> distributedLimitListeners = distributedContext.getDistributedLimitListeners(methodMetadata);
+
+        DistributedLock distributedLock = methodMetadata.getAnnotation();
+
+        final String lockKey = rateLimitKeyParser.buildKey(methodMetadata.getMethod(), pjp::getArgs, methodMetadata.getClassMethodName(),
+                distributedLock.key(), distributedLock.strategy());
+
+        DistributedLockCallback callback = this.builderDistributedLockCallback(pjp, methodMetadata, acquireLockTimeoutHandler,
+                distributedLimitListeners, lockKey);
+
+        beforeDistributedLock(methodMetadata, distributedLimitListeners, lockKey);
+
+        IDistributedLockTemplate distributedLockTemplate = distributedContext.getDistributedLockTemplate();
+        long expire = DurationStyle.detectAndParse(distributedLock.tryAcquireTimeout()).getSeconds();
         try {
-            // 失效时间解析为秒
-            long expire = DurationStyle.detectAndParse(distributedLock.expire()).getSeconds();
-            if (null == REDIS_SCRIPT_LOCK) {
-                REDIS_SCRIPT_LOCK = RedisScript.of("if redis.call('setNx',KEYS[1],ARGV[1]) == 1 then return redis.call('expire',KEYS[1],ARGV[2]) else return 0 end", Long.class);
-            }
-            if (Objects.equals(1L, redisTemplate.execute(REDIS_SCRIPT_LOCK, Collections.singletonList(lockKey), value.toString(), String.valueOf(expire)))) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Thread:{} Lock acquisition succeeded", tid);
-                }
-                locked = true;
-                return pjp.proceed();
-            }
+            return distributedLockTemplate.execute(lockKey, expire, TimeUnit.SECONDS, callback);
         } finally {
-            if (locked) {
-                // 释放分布式锁
-                if (null == REDIS_SCRIPT_UNLOCK) {
-                    REDIS_SCRIPT_UNLOCK = RedisScript.of("if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end", Long.class);
-                }
-                redisTemplate.execute(REDIS_SCRIPT_UNLOCK, Collections.singletonList(lockKey), value.toString());
-                log.info("Thread:{} Release lock", tid);
-            } else if (log.isDebugEnabled()) {
-                log.debug("Thread:{} Failed to acquire lock", tid);
-            }
+            distributedLockFinally(methodMetadata, distributedLimitListeners, lockKey);
         }
-        return null;
     }
+
+    private DistributedLockCallback builderDistributedLockCallback(ProceedingJoinPoint joinPoint, MethodMetadata methodMetadata,
+                                                                   IAcquireLockTimeoutHandler acquireLockTimeoutHandler,
+                                                                   List<IDistributedLimitListener> distributedLimitListeners, String lockKey) {
+        return new DistributedLockCallback() {
+
+            @SneakyThrows
+            @Override
+            public Object onGetLock() {
+                afterDistributedLock(distributedLimitListeners, methodMetadata, lockKey);
+
+                Object result = joinPoint.proceed();
+
+                afterExecute(result, distributedLimitListeners, methodMetadata, lockKey);
+                return result;
+            }
+
+            @Override
+            public Object onTimeout() {
+                // 有自定义超时处理策略，执行自定义超时处理策略
+                if (null != acquireLockTimeoutHandler) {
+                    return acquireLockTimeoutHandler.onDistributedLockFailure(methodMetadata);
+                }
+                // 否则抛出默认异常
+                DistributedLock distributedLock = methodMetadata.getAnnotation();
+                String acquireTimeoutMessage = Optional.of(distributedLock.acquireTimeoutMessage())
+                        .filter(StringUtils::hasLength)
+                        .orElse(String.format("method [%s] acquire distributed lock fail", methodMetadata.getClassMethodName()));
+                throw new AcquireLockTimeoutException(acquireTimeoutMessage);
+            }
+        };
+    }
+
+    /** ---------------------- 执行监听器 ---------------------- */
+
+    private void beforeDistributedLock(MethodMetadata methodMetadata, List<IDistributedLimitListener> distributedLimitListeners,
+                                       String lockKey) {
+        if (CollectionUtils.isNotEmpty(distributedLimitListeners)) {
+            distributedLimitListeners.forEach(distributedLimitListener ->
+                    distributedLimitListener.beforeDistributedLock(methodMetadata, lockKey));
+        }
+    }
+
+    private void afterDistributedLock(List<IDistributedLimitListener> distributedLimitListeners, MethodMetadata methodMetadata,
+                                      String lockKey) {
+        if (CollectionUtils.isNotEmpty(distributedLimitListeners)) {
+            distributedLimitListeners.forEach(distributedLimitListener ->
+                    distributedLimitListener.afterDistributedLock(methodMetadata, lockKey));
+        }
+    }
+
+    private void afterExecute(Object result, List<IDistributedLimitListener> distributedLimitListeners,
+                              MethodMetadata methodMetadata, String lockKey) {
+        if (CollectionUtils.isNotEmpty(distributedLimitListeners)) {
+            distributedLimitListeners.forEach(distributedLimitListener ->
+                    distributedLimitListener.afterExecute(methodMetadata, lockKey, result));
+        }
+    }
+
+    private void distributedLockFinally(MethodMetadata methodMetadata, List<IDistributedLimitListener> distributedLimitListeners,
+                                        String lockKey) {
+        if (CollectionUtils.isNotEmpty(distributedLimitListeners)) {
+            distributedLimitListeners.forEach(distributedLimitListener ->
+                    distributedLimitListener.distributedLockFinally(methodMetadata, lockKey));
+        }
+    }
+
 }

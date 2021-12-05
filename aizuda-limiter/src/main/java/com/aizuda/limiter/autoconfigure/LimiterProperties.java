@@ -10,6 +10,7 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.io.Serializable;
+import java.time.Duration;
 
 /**
  * 爱组搭安全配置
@@ -39,7 +40,19 @@ public class LimiterProperties implements Serializable {
      */
     private boolean enableDistributedLock;
 
+    /**
+     * 分布式锁的前缀名称：默认为'aizuda-redis-lock'
+     */
+    private String distributedRootKey;
+    /**
+     * RedisLock的key失效时间
+     * 默认2分钟
+     * <p>
+     * 例如 5s 五秒，6m 六分钟，7h 七小时，8d 八天
+     */
+    private Duration expireAfter;
+
     public boolean isEnable() {
-        return this.enableDistributedLock || this.enableDistributedLock;
+        return this.enableRateLimit || this.enableDistributedLock;
     }
 }
