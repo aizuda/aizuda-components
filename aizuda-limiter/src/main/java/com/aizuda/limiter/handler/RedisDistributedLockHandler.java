@@ -13,7 +13,7 @@ import com.aizuda.limiter.distributedlock.DistributedLockCallback;
 import com.aizuda.limiter.distributedlock.IDistributedLockTemplate;
 import com.aizuda.limiter.exception.AcquireLockTimeoutException;
 import com.aizuda.limiter.extend.IAcquireLockTimeoutHandler;
-import com.aizuda.limiter.extend.IDistributedLimitListener;
+import com.aizuda.limiter.extend.IDistributedLockListener;
 import com.aizuda.limiter.metadata.MethodMetadata;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -44,20 +44,20 @@ public class RedisDistributedLockHandler implements IDistributedLockHandler {
         // 获取分布式锁超时处理器
         IAcquireLockTimeoutHandler acquireLockTimeoutHandler = distributedContext.getAcquireLockTimeoutHandler(methodMetadata);
         // 监听器
-        List<IDistributedLimitListener> distributedLimitListeners = distributedContext.getDistributedLimitListeners(methodMetadata);
+        List<IDistributedLockListener> distributedLimitListeners = distributedContext.getDistributedLimitListeners(methodMetadata);
 
         DistributedLock distributedLock = methodMetadata.getAnnotation();
 
         final String lockKey = rateLimitKeyParser.buildKey(methodMetadata.getMethod(), pjp::getArgs, methodMetadata.getClassMethodName(),
                 distributedLock.key(), distributedLock.strategy());
 
+        IDistributedLockTemplate distributedLockTemplate = distributedContext.getDistributedLockTemplate();
+        long expire = DurationStyle.detectAndParse(distributedLock.tryAcquireTimeout()).getSeconds();
+
         DistributedLockCallback callback = this.builderDistributedLockCallback(pjp, methodMetadata, acquireLockTimeoutHandler,
                 distributedLimitListeners, lockKey);
 
         beforeDistributedLock(methodMetadata, distributedLimitListeners, lockKey);
-
-        IDistributedLockTemplate distributedLockTemplate = distributedContext.getDistributedLockTemplate();
-        long expire = DurationStyle.detectAndParse(distributedLock.tryAcquireTimeout()).getSeconds();
         try {
             return distributedLockTemplate.execute(lockKey, expire, TimeUnit.SECONDS, callback);
         } finally {
@@ -67,7 +67,7 @@ public class RedisDistributedLockHandler implements IDistributedLockHandler {
 
     private DistributedLockCallback builderDistributedLockCallback(ProceedingJoinPoint joinPoint, MethodMetadata methodMetadata,
                                                                    IAcquireLockTimeoutHandler acquireLockTimeoutHandler,
-                                                                   List<IDistributedLimitListener> distributedLimitListeners, String lockKey) {
+                                                                   List<IDistributedLockListener> distributedLimitListeners, String lockKey) {
         return new DistributedLockCallback() {
 
             @SneakyThrows
@@ -97,9 +97,9 @@ public class RedisDistributedLockHandler implements IDistributedLockHandler {
         };
     }
 
-    /** ---------------------- 执行监听器 ---------------------- */
+    /*  ---------------------- 执行监听器 ----------------------  */
 
-    private void beforeDistributedLock(MethodMetadata methodMetadata, List<IDistributedLimitListener> distributedLimitListeners,
+    private void beforeDistributedLock(MethodMetadata methodMetadata, List<IDistributedLockListener> distributedLimitListeners,
                                        String lockKey) {
         if (CollectionUtils.isNotEmpty(distributedLimitListeners)) {
             distributedLimitListeners.forEach(distributedLimitListener ->
@@ -107,7 +107,7 @@ public class RedisDistributedLockHandler implements IDistributedLockHandler {
         }
     }
 
-    private void afterDistributedLock(List<IDistributedLimitListener> distributedLimitListeners, MethodMetadata methodMetadata,
+    private void afterDistributedLock(List<IDistributedLockListener> distributedLimitListeners, MethodMetadata methodMetadata,
                                       String lockKey) {
         if (CollectionUtils.isNotEmpty(distributedLimitListeners)) {
             distributedLimitListeners.forEach(distributedLimitListener ->
@@ -115,7 +115,7 @@ public class RedisDistributedLockHandler implements IDistributedLockHandler {
         }
     }
 
-    private void afterExecute(Object result, List<IDistributedLimitListener> distributedLimitListeners,
+    private void afterExecute(Object result, List<IDistributedLockListener> distributedLimitListeners,
                               MethodMetadata methodMetadata, String lockKey) {
         if (CollectionUtils.isNotEmpty(distributedLimitListeners)) {
             distributedLimitListeners.forEach(distributedLimitListener ->
@@ -123,7 +123,7 @@ public class RedisDistributedLockHandler implements IDistributedLockHandler {
         }
     }
 
-    private void distributedLockFinally(MethodMetadata methodMetadata, List<IDistributedLimitListener> distributedLimitListeners,
+    private void distributedLockFinally(MethodMetadata methodMetadata, List<IDistributedLockListener> distributedLimitListeners,
                                         String lockKey) {
         if (CollectionUtils.isNotEmpty(distributedLimitListeners)) {
             distributedLimitListeners.forEach(distributedLimitListener ->
