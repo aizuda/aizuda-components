@@ -6,10 +6,9 @@
 package com.aizuda.limiter.handler;
 
 
-import com.aizuda.limiter.annotation.DistributedLock;
+import com.aizuda.limiter.metadata.DistributedLockMethodMetaData;
+import com.aizuda.limiter.metadata.MethodMetadata;
 import org.aspectj.lang.ProceedingJoinPoint;
-
-import java.lang.reflect.Method;
 
 /**
  * 分布式锁限制处理器接口
@@ -24,11 +23,9 @@ public interface IDistributedLockHandler {
     /**
      * 继续执行
      *
-     * @param pjp             {@link ProceedingJoinPoint}
-     * @param method          {@link Method}
-     * @param classMethodName 执行类方法名
-     * @param distributedLock 分布式锁限制注解对象
+     * @param pjp            {@link ProceedingJoinPoint}
+     * @param methodMetadata {@link DistributedLockMethodMetaData}
      * @return Object
      */
-    Object proceed(ProceedingJoinPoint pjp, Method method, String classMethodName, DistributedLock distributedLock) throws Throwable;
+    Object proceed(ProceedingJoinPoint pjp, MethodMetadata methodMetadata) throws Throwable;
 }

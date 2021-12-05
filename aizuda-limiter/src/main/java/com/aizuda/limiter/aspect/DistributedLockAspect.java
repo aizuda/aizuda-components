@@ -8,6 +8,8 @@ package com.aizuda.limiter.aspect;
 import com.aizuda.common.toolkit.MethodUtils;
 import com.aizuda.limiter.annotation.DistributedLock;
 import com.aizuda.limiter.handler.IDistributedLockHandler;
+import com.aizuda.limiter.metadata.DistributedLockMethodMetaData;
+import com.aizuda.limiter.metadata.MethodMetadata;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -41,11 +43,16 @@ public class DistributedLockAspect {
      */
     @Around("@annotation(com.aizuda.limiter.annotation.DistributedLock)")
     public Object interceptor(ProceedingJoinPoint pjp) throws Throwable {
-        MethodSignature signature = (MethodSignature) pjp.getSignature();
+        MethodMetadata methodMetadata = this.buildMethodMetadata(pjp);
+        return redisLockHandler.proceed(pjp, methodMetadata);
+    }
+
+    private MethodMetadata buildMethodMetadata(ProceedingJoinPoint joinPoint) {
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
-        final String classMethodName = MethodUtils.getClassMethodName(method);
-        final DistributedLock redisLock = this.getDistributedLock(method, classMethodName);
-        return redisLockHandler.proceed(pjp, method, classMethodName, redisLock);
+        String classMethodName = MethodUtils.getClassMethodName(method);
+        DistributedLock distributedLock = this.getDistributedLock(method, classMethodName);
+        return new DistributedLockMethodMetaData(method, joinPoint::getArgs, distributedLock);
     }
 
     /**
