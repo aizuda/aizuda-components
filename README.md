@@ -13,7 +13,8 @@
 
 
 # 微信交流群
-<img src="https://images.gitee.com/uploads/images/2021/1129/221920_d2559092_12260.jpeg" width="50%" height="50%">
+
+<img src="https://images.gitee.com/uploads/images/2021/1129/224455_6f75c7a9_12260.png" width="50%" height="50%">
 
 
 # 公共模块
