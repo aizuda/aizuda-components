@@ -117,7 +117,7 @@ public class RedisLockRegistry {
     }
 
     public RedisLockRegistry(RedisTemplate<String, String> redisTemplate, String registryKey, long expireAfter) {
-        Assert.notNull(redisTemplate, "'connectionFactory' cannot be null");
+        Assert.notNull(redisTemplate, "'redisTemplate' cannot be null");
         Assert.notNull(registryKey, "'registryKey' cannot be null");
         this.redisTemplate = redisTemplate;
         this.obtainLockScript = RedisScript.of(OBTAIN_LOCK_SCRIPT, Boolean.class);

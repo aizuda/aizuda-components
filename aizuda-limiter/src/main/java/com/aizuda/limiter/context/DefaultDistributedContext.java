@@ -8,7 +8,7 @@ package com.aizuda.limiter.context;
 import com.aizuda.common.toolkit.CollectionUtils;
 import com.aizuda.limiter.distributedlock.IDistributedLockTemplate;
 import com.aizuda.limiter.extend.IAcquireLockTimeoutHandler;
-import com.aizuda.limiter.extend.IDistributedLimitListener;
+import com.aizuda.limiter.extend.IDistributedLockListener;
 import com.aizuda.limiter.metadata.MethodMetadata;
 import lombok.AllArgsConstructor;
 import org.springframework.util.Assert;
@@ -30,7 +30,7 @@ import java.util.List;
 public class DefaultDistributedContext implements DistributedContext {
     private IDistributedLockTemplate distributedLockTemplate;
     private List<IAcquireLockTimeoutHandler> acquireLockTimeoutHandlers;
-    private List<IDistributedLimitListener> distributedLimitListeners;
+    private List<IDistributedLockListener> distributedLimitListeners;
 
 
     @Override
@@ -59,8 +59,8 @@ public class DefaultDistributedContext implements DistributedContext {
     }
 
     @Override
-    public List<IDistributedLimitListener> getDistributedLimitListeners() {
-        List<IDistributedLimitListener> result = new ArrayList<>();
+    public List<IDistributedLockListener> getDistributedLimitListeners() {
+        List<IDistributedLockListener> result = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(distributedLimitListeners)) {
             result.addAll(distributedLimitListeners);
         }
@@ -68,9 +68,9 @@ public class DefaultDistributedContext implements DistributedContext {
     }
 
     @Override
-    public List<IDistributedLimitListener> getDistributedLimitListeners(MethodMetadata methodMetadata) {
+    public List<IDistributedLockListener> getDistributedLimitListeners(MethodMetadata methodMetadata) {
         Assert.notNull(methodMetadata,"'methodMetadata' cannot be null");
-        List<IDistributedLimitListener> result = new ArrayList<>();
+        List<IDistributedLockListener> result = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(distributedLimitListeners)) {
             distributedLimitListeners.forEach(distributedLimitListener->{
                 if (distributedLimitListener.supports(methodMetadata)) {

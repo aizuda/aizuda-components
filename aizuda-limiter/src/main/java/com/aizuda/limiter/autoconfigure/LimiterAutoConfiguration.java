@@ -13,7 +13,7 @@ import com.aizuda.limiter.context.DistributedContext;
 import com.aizuda.limiter.distributedlock.IDistributedLockTemplate;
 import com.aizuda.limiter.distributedlock.RedisDistributedLockTemplate;
 import com.aizuda.limiter.extend.IAcquireLockTimeoutHandler;
-import com.aizuda.limiter.extend.IDistributedLimitListener;
+import com.aizuda.limiter.extend.IDistributedLockListener;
 import com.aizuda.limiter.handler.*;
 import com.aizuda.limiter.strategy.IRateLimitStrategy;
 import com.aizuda.limiter.strategy.IpRateLimitStrategy;
@@ -89,7 +89,7 @@ public class LimiterAutoConfiguration {
     @ConditionalOnProperty(prefix = LimiterProperties.PREFIX, name = "enableDistributedLock", havingValue = "true")
     public DistributedContext distributedContext(IDistributedLockTemplate distributedLockTemplate,
                                                  Optional<List<IAcquireLockTimeoutHandler>> acquireLockTimeoutHandlersOptional,
-                                                 Optional<List<IDistributedLimitListener>> distributedLimitListenersOptional) {
+                                                 Optional<List<IDistributedLockListener>> distributedLimitListenersOptional) {
         return new DefaultDistributedContext(distributedLockTemplate, acquireLockTimeoutHandlersOptional.orElse(null),
                 distributedLimitListenersOptional.orElse(null));
     }

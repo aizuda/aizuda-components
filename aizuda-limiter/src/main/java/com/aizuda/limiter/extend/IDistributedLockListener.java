@@ -17,7 +17,7 @@ import com.aizuda.limiter.metadata.MethodMetadata;
  * @author zhongjiahua
  * @since 2021-12-05
  */
-public interface IDistributedLimitListener {
+public interface IDistributedLockListener {
 
     /**
      * 判断是否支持当前监听

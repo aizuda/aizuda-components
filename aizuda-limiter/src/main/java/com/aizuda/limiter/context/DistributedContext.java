@@ -7,7 +7,7 @@ package com.aizuda.limiter.context;
 
 import com.aizuda.limiter.distributedlock.IDistributedLockTemplate;
 import com.aizuda.limiter.extend.IAcquireLockTimeoutHandler;
-import com.aizuda.limiter.extend.IDistributedLimitListener;
+import com.aizuda.limiter.extend.IDistributedLockListener;
 import com.aizuda.limiter.metadata.DistributedLockMethodMetaData;
 import com.aizuda.limiter.metadata.MethodMetadata;
 
@@ -48,16 +48,16 @@ public interface DistributedContext {
     /**
      * 获取分布式锁监听器，默认为空
      *
-     * @return {@link IDistributedLimitListener}
+     * @return {@link IDistributedLockListener}
      */
-    List<IDistributedLimitListener> getDistributedLimitListeners();
+    List<IDistributedLockListener> getDistributedLimitListeners();
 
     /**
      * 获取分布式锁监听器，默认为空
      *
      * @param methodMetadata {@link DistributedLockMethodMetaData}
-     * @return {@link IDistributedLimitListener}
+     * @return {@link IDistributedLockListener}
      */
-    List<IDistributedLimitListener> getDistributedLimitListeners(MethodMetadata methodMetadata);
+    List<IDistributedLockListener> getDistributedLimitListeners(MethodMetadata methodMetadata);
 
 }
