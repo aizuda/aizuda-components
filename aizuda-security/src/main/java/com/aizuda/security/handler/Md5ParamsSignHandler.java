@@ -6,12 +6,14 @@
 package com.aizuda.security.handler;
 
 import com.aizuda.common.toolkit.JacksonUtils;
+import com.aizuda.common.toolkit.StringUtils;
 import com.aizuda.security.autoconfigure.SecurityProperties;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.convert.DurationStyle;
 import org.springframework.util.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -34,13 +36,43 @@ public class Md5ParamsSignHandler extends AbstractParamsSignHandler {
     private static Long FAILURE_TIME = null;
 
     @Override
-    public String sign(SortedMap<String, String> parameterMap) {
-        return DigestUtils.md5DigestAsHex(JacksonUtils.toJSONString(parameterMap).getBytes(StandardCharsets.UTF_8));
+    public boolean checkSign(SortedMap<String, String> parameterMap, String timestamp, String sign) {
+        StringBuffer sb = new StringBuffer();
+        // 加密参数内容
+        String paramEncrypt = parameterMap.get(this.getParamEncryptKey());
+        if (StringUtils.hasLength(paramEncrypt)) {
+            sb.append(this.toMd5(paramEncrypt));
+        } else {
+            sb.append(this.toMd5(JacksonUtils.toJSONString(parameterMap)));
+        }
+        // 混淆时间戳
+        sb.append(timestamp);
+        return Objects.equals(this.toMd5(sb.toString()), sign);
+    }
+
+    private String toMd5(String string) {
+        return DigestUtils.md5DigestAsHex(string.getBytes(StandardCharsets.UTF_8));
     }
 
     @Override
     public SortedMap<String, String> parse(String jsonStr) {
-        return JacksonUtils.parse(jsonStr, TreeMap.class);
+        SortedMap<String, String> parameterMap = null;
+        try {
+            parameterMap = JacksonUtils.parseThrows(jsonStr, TreeMap.class);
+        } catch (Exception e) {
+            // 加密导致异常逻辑
+        }
+
+        // 处理加密逻辑
+        if (null == parameterMap) {
+            parameterMap = new TreeMap<>();
+            parameterMap.put(this.getParamEncryptKey(), jsonStr);
+        }
+        return parameterMap;
+    }
+
+    private String getParamEncryptKey() {
+        return "AZD_PARAMS_SIGN_";
     }
 
     @Override
@@ -56,7 +88,8 @@ public class Md5ParamsSignHandler extends AbstractParamsSignHandler {
     @Override
     public Long getFailureTime() {
         if (null == FAILURE_TIME) {
-            FAILURE_TIME = DurationStyle.detectAndParse(securityProperties.getParamsSign().getInvalidTime()).getSeconds();
+            FAILURE_TIME = DurationStyle.detectAndParse(securityProperties.getParamsSign()
+                    .getInvalidTime()).getSeconds() * 1000;
         }
         return FAILURE_TIME;
     }

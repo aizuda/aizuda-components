@@ -59,8 +59,6 @@
 
 -  aizuda-security 主要内容 api 请求解密，响应加密，单点登录 等。
 
-
-
 ```xml
 <dependency>
   <groupId>com.aizuda</groupId>
@@ -69,4 +67,56 @@
 </dependency>
 ```
 
+> 签名规则规则
+
+```text
+md5( md5(传入内容) + timestamp ) = sign
+```
+
+> 请求约定规则
+
+```text
+时间戳 timestamp 签名 sign 参数（ MD5 算法 ）需要放在 header 或 url 明文传输。
+
+开启加密签名内容为加密后的密文
+```
+
+
+> 响应返回规则
+
+```text
+{
+   "code": 响应编码,
+   "data": 文本json或其它，开启加密为加密后的内容,
+   "message": 提示消息,
+   "timestamp": 时间戳,
+   "sign": 签名
+}
+```
+
+- 单点登录功能支持，登录支持 cookie 或 token 两种模式，更多细节点击 [kisso](https://gitee.com/baomidou/kisso)
+
+```text
+// 生成 jwt 票据，访问请求头设置‘ accessToken=票据内容 ’ 适合前后分离模式单点登录
+String jwtToken = SSOToken.create().setId(1).setIssuer("admin").setOrigin(TokenOrigin.HTML5).getToken();
+
+// 解析票据
+SSOToken ssoToken = SSOToken.parser(jwtToken);
+
+// Cookie 模式设置
+SSOHelper.setCookie(request, response,  new SSOToken().setId(String.valueOf(1)).setIssuer("admin"));
+
+// 安全配置如下
+kisso:
+  config:
+    # 开启 https 有效，传输更安全
+    cookie-secure: true
+    # 防止 XSS 防止脚本攻击
+    cookie-http-only: true
+    # 防止 CSRF 跨站攻击
+    cookie-same-site: Lax
+    # 加密算法 RSA
+    sign-algorithm: RS512
+    ...
+```
 

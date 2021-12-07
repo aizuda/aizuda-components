@@ -5,6 +5,7 @@
  */
 package com.aizuda.security.advice;
 
+import com.aizuda.security.annotation.EncryptIgnore;
 import com.aizuda.security.autoconfigure.SecurityProperties;
 import com.aizuda.security.handler.IRestEncryptHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,7 @@ import java.lang.reflect.Type;
 public class DecryptRequestBodyAdvice implements RequestBodyAdvice {
     private final SecurityProperties securityProperties;
     private final IRestEncryptHandler restEncryptHandler;
-    private boolean encrypt;
+    private boolean encrypt = true;
 
     public DecryptRequestBodyAdvice(SecurityProperties securityProperties, IRestEncryptHandler restEncryptHandler) {
         this.securityProperties = securityProperties;
@@ -39,7 +40,9 @@ public class DecryptRequestBodyAdvice implements RequestBodyAdvice {
     @Override
     public boolean supports(MethodParameter methodParameter, Type targetType,
                             Class<? extends HttpMessageConverter<?>> converterType) {
-        this.encrypt = RestEncryptHelper.isAnnotationDecrypt(methodParameter.getMethod());
+        if (methodParameter.getMethod().isAnnotationPresent(EncryptIgnore.class)) {
+            this.encrypt = false;
+        }
         return this.encrypt;
     }
 

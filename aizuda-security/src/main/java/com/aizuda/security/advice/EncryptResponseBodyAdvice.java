@@ -5,6 +5,7 @@
  */
 package com.aizuda.security.advice;
 
+import com.aizuda.security.annotation.EncryptIgnore;
 import com.aizuda.security.autoconfigure.SecurityProperties;
 import com.aizuda.security.handler.IRestEncryptHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 public class EncryptResponseBodyAdvice implements ResponseBodyAdvice<Object> {
     private final SecurityProperties securityProperties;
     private final IRestEncryptHandler restEncryptHandler;
-    private boolean encrypt;
+    private boolean encrypt = true;
 
     public EncryptResponseBodyAdvice(SecurityProperties securityProperties, IRestEncryptHandler restEncryptHandler) {
         this.securityProperties = securityProperties;
@@ -38,7 +39,9 @@ public class EncryptResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-        this.encrypt = RestEncryptHelper.isAnnotationEncrypt(returnType.getMethod());
+        if (returnType.getMethod().isAnnotationPresent(EncryptIgnore.class)) {
+            this.encrypt = false;
+        }
         return this.encrypt;
     }
 

@@ -12,7 +12,6 @@ import org.springframework.util.StreamUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.Supplier;
@@ -41,8 +40,8 @@ public abstract class AbstractParamsSignHandler implements IParamsSignHandler {
             return false;
         }
 
-        SortedMap<String, String> parameterMap = paramFunc.get();
-        String timestampValue = parameterMap.get(this.getTimestampParam());
+        String timestampParam = this.getTimestampParam();
+        String timestampValue = this.getHeaderOrParameter(request, timestampParam);
         if (!StringUtils.hasLength(timestampValue)) {
             return false;
         }
@@ -52,9 +51,18 @@ public abstract class AbstractParamsSignHandler implements IParamsSignHandler {
             return false;
         }
 
-        // 移除可能存在的签名
-        parameterMap.remove(signParam);
-        return Objects.equals(signValue, this.sign(parameterMap));
+        SortedMap<String, String> parameterMap = paramFunc.get();
+
+        // 移除 时间戳、签名
+        if (null != parameterMap.get(signParam)) {
+            parameterMap.remove(signParam);
+        }
+        if (null != parameterMap.get(timestampParam)) {
+            parameterMap.remove(timestampParam);
+        }
+
+        // 验证签名
+        return this.checkSign(parameterMap, timestampValue, signValue);
     }
 
     /**
@@ -98,12 +106,14 @@ public abstract class AbstractParamsSignHandler implements IParamsSignHandler {
     }
 
     /**
-     * 参数签名
+     * 验证参数签名
      *
      * @param parameterMap {@link SortedMap}
+     * @param timestamp    时间戳
+     * @param sign         签名值
      * @return
      */
-    public abstract String sign(SortedMap<String, String> parameterMap);
+    public abstract boolean checkSign(SortedMap<String, String> parameterMap, String timestamp, String sign);
 
     /**
      * 解析 json 字符串转换为 SortedMap
