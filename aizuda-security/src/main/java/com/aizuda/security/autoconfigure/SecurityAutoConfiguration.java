@@ -5,65 +5,23 @@
  */
 package com.aizuda.security.autoconfigure;
 
-import com.aizuda.security.advice.DecryptRequestBodyAdvice;
-import com.aizuda.security.advice.EncryptResponseBodyAdvice;
-import com.aizuda.security.handler.DefaultRestEncryptHandler;
-import com.aizuda.security.handler.IParamsSignHandler;
-import com.aizuda.security.handler.IRestEncryptHandler;
-import com.aizuda.security.handler.Md5ParamsSignHandler;
-import com.aizuda.security.request.SignRequestFilter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Lazy;
 
 /**
- * 接口加密处理启动配置
+ * 安全模块启动配置
  * <p>
  * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
  *
  * @author hubin
- * @since 2021-11-08
+ * @since 2021-12-08
  */
 @Lazy
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties({SecurityProperties.class})
+@Import(value = {EncryptAutoConfiguration.class})
 public class SecurityAutoConfiguration {
 
-    /*  -------------------- 验证签名相关配置  --------------------  */
-
-    @Bean
-    @ConditionalOnMissingBean
-    public Md5ParamsSignHandler md5ParamsSignHandler(SecurityProperties securityProperties) {
-        return new Md5ParamsSignHandler(securityProperties);
-    }
-
-    @Bean
-    public SignRequestFilter signRequestFilter(IParamsSignHandler paramsSignHandler) {
-        return new SignRequestFilter(paramsSignHandler);
-    }
-
-    /*  -------------------- 接口加解密相关配置  --------------------  */
-
-    @Bean
-    @ConditionalOnMissingBean
-    public DefaultRestEncryptHandler restEncryptHandler() {
-        return new DefaultRestEncryptHandler();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public DecryptRequestBodyAdvice decryptRequestBodyAdvice(SecurityProperties securityProperties,
-                                                             IRestEncryptHandler restEncryptHandler) {
-        return new DecryptRequestBodyAdvice(securityProperties, restEncryptHandler);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public EncryptResponseBodyAdvice encryptResponseBodyAdvice(SecurityProperties securityProperties,
-                                                               IRestEncryptHandler restEncryptHandler) {
-        securityProperties.checkValid();
-        return new EncryptResponseBodyAdvice(securityProperties, restEncryptHandler);
-    }
 }

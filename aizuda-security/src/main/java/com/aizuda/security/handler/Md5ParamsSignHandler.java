@@ -8,6 +8,7 @@ package com.aizuda.security.handler;
 import com.aizuda.common.toolkit.JacksonUtils;
 import com.aizuda.common.toolkit.StringUtils;
 import com.aizuda.security.autoconfigure.SecurityProperties;
+import com.baomidou.kisso.common.util.StringPool;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.convert.DurationStyle;
 import org.springframework.util.DigestUtils;
@@ -57,10 +58,12 @@ public class Md5ParamsSignHandler extends AbstractParamsSignHandler {
     @Override
     public SortedMap<String, String> parse(String jsonStr) {
         SortedMap<String, String> parameterMap = null;
-        try {
-            parameterMap = JacksonUtils.parseThrows(jsonStr, TreeMap.class);
-        } catch (Exception e) {
-            // 加密导致异常逻辑
+        if(null != jsonStr && jsonStr.contains(StringPool.LEFT_BRACE)) {
+            try {
+                parameterMap = JacksonUtils.parseThrows(jsonStr, TreeMap.class);
+            } catch (Exception e) {
+                // 加密导致异常逻辑
+            }
         }
 
         // 处理加密逻辑

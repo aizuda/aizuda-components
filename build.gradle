@@ -2,7 +2,7 @@
 buildscript {
     ext {
         // https://start.spring.io/actuator/info
-        springBootVersion = "2.5.5"
+        springBootVersion = "2.6.1"
     }
 
     // 仓库配置

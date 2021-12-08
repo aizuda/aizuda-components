@@ -57,41 +57,28 @@
 
 # 安全模块
 
--  aizuda-security 主要内容 api 请求解密，响应加密，单点登录 等。
+-  aizuda-security 主要内容 api 请求 签名 解密，响应加密，单点登录 等。
 
 ```xml
 <dependency>
   <groupId>com.aizuda</groupId>
   <artifactId>aizuda-security</artifactId>
-  <version>0.0.1</version>
+  <version>1.0.0</version>
 </dependency>
 ```
 
-> 签名规则规则
+> 签名规则
 
 ```text
 md5( md5(传入内容) + timestamp ) = sign
 ```
 
-> 请求约定规则
+> 请求约定
 
 ```text
 时间戳 timestamp 签名 sign 参数（ MD5 算法 ）需要放在 header 或 url 明文传输。
 
 开启加密签名内容为加密后的密文
-```
-
-
-> 响应返回规则
-
-```text
-{
-   "code": 响应编码,
-   "data": 文本json或其它，开启加密为加密后的内容,
-   "message": 提示消息,
-   "timestamp": 时间戳,
-   "sign": 签名
-}
 ```
 
 - 单点登录功能支持，登录支持 cookie 或 token 两种模式，更多细节点击 [kisso](https://gitee.com/baomidou/kisso)

@@ -18,17 +18,17 @@ import java.io.*;
  * <p>
  * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
  *
- * @author imantou
+ * @author imantou hubin
  * @since 2021-11-26
  */
-public class SignRequestWrapper extends HttpServletRequestWrapper {
+public class ParamsSignRequestWrapper extends HttpServletRequestWrapper {
 
     /**
      * 缓存下来的HTTP body
      */
     private byte[] body;
 
-    public SignRequestWrapper(HttpServletRequest request) throws IOException {
+    public ParamsSignRequestWrapper(HttpServletRequest request) throws IOException {
         super(request);
         body = StreamUtils.copyToByteArray(request.getInputStream());
     }

@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletRequest;
  * <p>
  * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
  *
- * @author imantou hubin
- * @since 2021-12-01
+ * @author hubin
+ * @since 2021-12-08
  */
 public interface IParamsSignHandler {
 

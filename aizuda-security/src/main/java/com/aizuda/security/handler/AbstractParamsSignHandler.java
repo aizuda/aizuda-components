@@ -97,8 +97,7 @@ public abstract class AbstractParamsSignHandler implements IParamsSignHandler {
         return this.doCheck(request, () -> {
             try {
                 byte[] bodyBytes = StreamUtils.copyToByteArray(request.getInputStream());
-                String jsonStr = new String(bodyBytes, request.getCharacterEncoding());
-                return this.parse(jsonStr);
+                return this.parse(new String(bodyBytes, request.getCharacterEncoding()));
             } catch (IOException e) {
                 throw new ParamsSignException("request body copy error");
             }
