@@ -163,7 +163,7 @@ subprojects {
                     developers {
                         developer {
                             id = 'aizuda'
-                            name = 'hubin'
+                            name = '青苗'
                             email = 'jobob@qq.com'
                         }
                     }

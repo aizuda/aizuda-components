@@ -18,7 +18,7 @@ import java.util.Objects;
  * <p>
  * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
  *
- * @author LoveHuahua hubin
+ * @author LoveHuahua 青苗
  * @since 2021-11-21
  */
 public abstract class AbstractRobotSendMessage implements ISendMessage {

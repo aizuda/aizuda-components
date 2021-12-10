@@ -15,7 +15,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
  * <p>
  * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
  *
- * @author zhongjiahua hubin
+ * @author zhongjiahua 青苗
  * @since 2021-11-28
  */
 public interface IDistributedLockHandler {
