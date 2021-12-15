@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -697,44 +698,35 @@ public class JacksonUtils {
     }
 
     private static class JacksonHolder {
-        private static final ObjectMapper INSTANCE = new JacksonObjectMapper();
-    }
+        private static final ObjectMapper INSTANCE;
 
-    private static class JacksonObjectMapper extends ObjectMapper {
-        private static final long serialVersionUID = 4288193147502386170L;
-
-        JacksonObjectMapper() {
-            super(jsonFactory());
-            super.setLocale(Locale.CHINA);
-            super.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            super.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            // 忽略 transient 关键词属性
-            super.configure(MapperFeature.PROPAGATE_TRANSIENT_MARKER, true);
-            // Long 转为 String 防止 js 丢失精度
-            SimpleModule simpleModule = new SimpleModule();
-            simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
-            super.registerModule(simpleModule);
-            super.registerModule(new JavaTimeModule());
-            super.findAndRegisterModules();
-        }
-
-        JacksonObjectMapper(ObjectMapper src) {
-            super(src);
-        }
-
-        private static JsonFactory jsonFactory() {
-            return JsonFactory.builder()
+        static {
+            JsonFactory jsonFactory = JsonFactory.builder()
                     // 可解析反斜杠引用的所有字符
                     .configure(JsonReadFeature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true)
                     // 允许JSON字符串包含非引号控制字符（值小于32的ASCII字符，包含制表符和换行符）
-                    .configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS, true)
-                    .build();
-        }
+                    .configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS, true).build();
 
-        @Override
-        public ObjectMapper copy() {
-            return new JacksonObjectMapper(this);
+
+            // Long 转为 String 防止 js 丢失精度
+            SimpleModule simpleModule = new SimpleModule();
+            simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
+
+            JavaTimeModule javaTimeModule = new JavaTimeModule();
+
+
+            INSTANCE = JsonMapper.builder(jsonFactory)
+                    .configure(MapperFeature.PROPAGATE_TRANSIENT_MARKER, true)
+                    .defaultLocale(Locale.CHINA)
+                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                    .serializationInclusion(JsonInclude.Include.NON_NULL)
+                    .addModules(simpleModule, javaTimeModule)
+                    .build();
+
+            INSTANCE.findAndRegisterModules();
+
         }
     }
+
 
 }
