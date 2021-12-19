@@ -55,24 +55,28 @@ public class RedisDistributedLockHandler implements IDistributedLockHandler {
         long expire = DurationStyle.detectAndParse(distributedLock.tryAcquireTimeout()).getSeconds();
 
         DistributedLockCallback callback = this.builderDistributedLockCallback(pjp, methodMetadata, acquireLockTimeoutHandler,
-                distributedLimitListeners, lockKey);
+                distributedLimitListeners, distributedLockTemplate.completeLockKey(lockKey));
 
-        beforeDistributedLock(methodMetadata, distributedLimitListeners, lockKey);
+        beforeDistributedLock(methodMetadata, distributedLimitListeners, distributedLockTemplate.completeLockKey(lockKey));
         try {
             return distributedLockTemplate.execute(lockKey, expire, TimeUnit.SECONDS, callback);
         } finally {
-            distributedLockFinally(methodMetadata, distributedLimitListeners, lockKey);
+            distributedLockFinally(methodMetadata, distributedLimitListeners, distributedLockTemplate.completeLockKey(lockKey));
         }
     }
 
     private DistributedLockCallback builderDistributedLockCallback(ProceedingJoinPoint joinPoint, MethodMetadata methodMetadata,
                                                                    IAcquireLockTimeoutHandler acquireLockTimeoutHandler,
-                                                                   List<IDistributedLockListener> distributedLimitListeners, String lockKey) {
+                                                                   List<IDistributedLockListener> distributedLimitListeners,
+                                                                   String lockKey) {
         return new DistributedLockCallback() {
 
             @SneakyThrows
             @Override
             public Object onGetLock() {
+                if (log.isDebugEnabled()) {
+                    log.debug("Success acquire distribute lock[{}]", lockKey);
+                }
                 afterDistributedLock(distributedLimitListeners, methodMetadata, lockKey);
 
                 Object result = joinPoint.proceed();
