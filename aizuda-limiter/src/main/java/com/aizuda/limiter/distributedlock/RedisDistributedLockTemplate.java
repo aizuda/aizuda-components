@@ -58,4 +58,9 @@ public class RedisDistributedLockTemplate implements IDistributedLockTemplate {
             }
         }
     }
+
+    @Override
+    public String completeLockKey(String lockId) {
+        return redisLockRegistry.completeLockKey(lockId);
+    }
 }

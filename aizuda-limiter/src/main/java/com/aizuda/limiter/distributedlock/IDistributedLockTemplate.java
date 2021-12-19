@@ -32,4 +32,14 @@ public interface IDistributedLockTemplate {
      * @return 执行返回的数据
      */
     Object execute(String lockId, long timeout, TimeUnit unit, DistributedLockCallback callback);
+
+    /**
+     * 获得完整的redis key，底层可能会有所变化
+     *
+     * @param lockId 当前解析的key
+     * @return 完整的redis key
+     */
+    default String completeLockKey(String lockId) {
+        return lockId;
+    }
 }

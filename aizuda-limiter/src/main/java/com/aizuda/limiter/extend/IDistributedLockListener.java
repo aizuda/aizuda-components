@@ -31,17 +31,17 @@ public interface IDistributedLockListener {
      * 在加锁之前需要运行
      *
      * @param methodMetadata 当前方法的运行时参数 {@link DistributedLockMethodMetaData}
-     * @param lockKey        自定义封装的key
+     * @param redisKey       redisKey
      */
-    void beforeDistributedLock(MethodMetadata methodMetadata, String lockKey);
+    void beforeDistributedLock(MethodMetadata methodMetadata, String redisKey);
 
     /**
      * 在加锁之后还未执行用户方法时运行
      *
      * @param methodMetadata 当前方法的运行时参数 {@link DistributedLockMethodMetaData}
-     * @param lockKey        自定义封装的key
+     * @param redisKey       redisKey
      */
-    void afterDistributedLock(MethodMetadata methodMetadata, String lockKey);
+    void afterDistributedLock(MethodMetadata methodMetadata, String redisKey);
 
 
     /**
@@ -49,18 +49,18 @@ public interface IDistributedLockListener {
      * 注意：此方法有可能因执行用户方法后异常不运行
      *
      * @param methodMetadata 当前方法的运行时参数 {@link DistributedLockMethodMetaData}
-     * @param lockKey        自定义封装的key
+     * @param redisKey       redisKey
      * @param result         结果
      */
-    void afterExecute(MethodMetadata methodMetadata, String lockKey, Object result);
+    void afterExecute(MethodMetadata methodMetadata, String redisKey, Object result);
 
     /**
      * 一定会运行的方法，可能还未加锁成功
      *
      * @param methodMetadata 当前方法的运行时参数 {@link DistributedLockMethodMetaData}
-     * @param lockKey        自定义封装的key
+     * @param redisKey       redisKey
      */
-    void distributedLockFinally(MethodMetadata methodMetadata, String lockKey);
+    void distributedLockFinally(MethodMetadata methodMetadata, String redisKey);
 
 
 }

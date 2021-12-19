@@ -139,6 +139,10 @@ public class RedisLockRegistry {
         return this.locks.computeIfAbsent(path, RedisLock::new);
     }
 
+    public String completeLockKey(String path) {
+        Assert.notNull(path, "'path' cannot be null");
+        return this.registryKey + ':' + path;
+    }
 
     private final class RedisLock implements Lock {
 
@@ -153,11 +157,7 @@ public class RedisLockRegistry {
         private volatile long lockedAt;
 
         private RedisLock(String path) {
-            this.lockKey = constructLockKey(path);
-        }
-
-        private String constructLockKey(String path) {
-            return RedisLockRegistry.this.registryKey + ':' + path;
+            this.lockKey = completeLockKey(path);
         }
 
 
