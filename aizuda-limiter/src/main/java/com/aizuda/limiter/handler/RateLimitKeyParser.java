@@ -70,7 +70,10 @@ public class RateLimitKeyParser {
                 keyGenerateStrategyList.stream()
                         .filter(t -> Objects.equals(t.getType(), str))
                         .findFirst()
-                        .ifPresent(rateLimitStrategy -> key.append(rateLimitStrategy.getKey(methodMetadata, parseKey)));
+                        .ifPresent(rateLimitStrategy ->
+                                key.append(key.length() > 0 ? ":" : "")
+                                        .append(rateLimitStrategy.getKey(methodMetadata, parseKey))
+                        );
             }
         }
         if (key.length() == 0) {
