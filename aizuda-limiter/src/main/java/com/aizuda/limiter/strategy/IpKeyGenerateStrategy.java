@@ -6,6 +6,7 @@
 package com.aizuda.limiter.strategy;
 
 import com.aizuda.common.toolkit.RequestUtils;
+import com.aizuda.limiter.metadata.MethodMetadata;
 
 /**
  * IP 速率限制策略
@@ -15,15 +16,17 @@ import com.aizuda.common.toolkit.RequestUtils;
  * @author 青苗
  * @since 2021-11-16
  */
-public class IpRateLimitStrategy implements IRateLimitStrategy {
+public class IpKeyGenerateStrategy implements IKeyGenerateStrategy {
+    public final static String TYPE = "ip";
 
     @Override
     public String getType() {
-        return "ip";
+        return TYPE;
     }
 
     @Override
-    public String getKey() {
+    public String getKey(MethodMetadata methodMetadata, String parseKey) {
         return RequestUtils.getIp(this.getRequest());
     }
+
 }

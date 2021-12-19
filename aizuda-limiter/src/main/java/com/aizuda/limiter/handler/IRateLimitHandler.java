@@ -5,10 +5,8 @@
  */
 package com.aizuda.limiter.handler;
 
-import com.aizuda.limiter.annotation.RateLimit;
-
-import java.lang.reflect.Method;
-import java.util.function.Supplier;
+import com.aizuda.limiter.metadata.MethodMetadata;
+import com.aizuda.limiter.metadata.RateLimitMethodMetaData;
 
 /**
  * 速率限制处理器接口
@@ -23,11 +21,8 @@ public interface IRateLimitHandler {
     /**
      * 继续执行
      *
-     * @param method          {@link Method}
-     * @param args            Object[]
-     * @param classMethodName 执行类方法名
-     * @param rateLimit       速率限制注解对象
+     * @param methodMetadata {@link RateLimitMethodMetaData}
      * @return true 继续执行 false 限流不执行
      */
-    boolean proceed(Method method, Supplier<Object[]> args, String classMethodName, RateLimit rateLimit);
+    boolean proceed(MethodMetadata methodMetadata);
 }

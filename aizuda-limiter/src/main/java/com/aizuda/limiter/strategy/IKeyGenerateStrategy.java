@@ -6,18 +6,19 @@
 package com.aizuda.limiter.strategy;
 
 import com.aizuda.common.toolkit.RequestUtils;
+import com.aizuda.limiter.metadata.MethodMetadata;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 速率限制策略接口
+ * key生成策略接口
  * <p>
  * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
  *
  * @author 青苗
  * @since 2021-11-16
  */
-public interface IRateLimitStrategy {
+public interface IKeyGenerateStrategy {
 
     /**
      * 策略类型
@@ -29,9 +30,11 @@ public interface IRateLimitStrategy {
     /**
      * 唯一标示 key
      *
-     * @return 限流key
+     * @param methodMetadata {@link MethodMetadata}
+     * @param parseKey       解析spEL得到的Key
+     * @return 包装的key
      */
-    String getKey();
+    String getKey(MethodMetadata methodMetadata, String parseKey);
 
     /**
      * 当前请求

@@ -5,7 +5,9 @@
  */
 package com.aizuda.limiter.annotation;
 
-import com.aizuda.limiter.strategy.IRateLimitStrategy;
+import com.aizuda.limiter.metadata.MethodMetadata;
+import com.aizuda.limiter.strategy.DefaultKeyGenerateStrategy;
+import com.aizuda.limiter.strategy.IKeyGenerateStrategy;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -40,8 +42,8 @@ public @interface DistributedLock {
 
     /**
      * 加key策略
-     * 需要实现{@link IRateLimitStrategy}接口注入到spring中
-     * 通过{@link IRateLimitStrategy#getKey()}返回的key将会作为后缀加在默认得到的key后
+     * 需要实现{@link IKeyGenerateStrategy}接口注入到spring中
+     * 通过{@link IKeyGenerateStrategy#getKey(MethodMetadata, String)}返回的key将会作为后缀加在默认得到的key后
      */
     String[] strategy() default {};
 
@@ -49,4 +51,9 @@ public @interface DistributedLock {
      * 获取分布式锁超时提示
      */
     String acquireTimeoutMessage() default "";
+
+    /**
+     * 是否使用默认的key生成策略{@link DefaultKeyGenerateStrategy}作为前缀
+     */
+    boolean useDefaultStrategy() default true;
 }

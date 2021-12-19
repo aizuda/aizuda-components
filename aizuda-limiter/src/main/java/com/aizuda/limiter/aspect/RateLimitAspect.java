@@ -10,6 +10,8 @@ import com.aizuda.common.toolkit.StringUtils;
 import com.aizuda.limiter.annotation.RateLimit;
 import com.aizuda.limiter.exception.RateLimitException;
 import com.aizuda.limiter.handler.IRateLimitHandler;
+import com.aizuda.limiter.metadata.MethodMetadata;
+import com.aizuda.limiter.metadata.RateLimitMethodMetaData;
 import lombok.AllArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -50,7 +52,8 @@ public class RateLimitAspect {
         Method method = signature.getMethod();
         final String classMethodName = MethodUtils.getClassMethodName(method);
         final RateLimit rateLimit = this.getRateLimit(method, classMethodName);
-        if (rateLimitHandler.proceed(method, pjp::getArgs, classMethodName, rateLimit)) {
+        MethodMetadata methodMetadata = this.buildMethodMetadata(pjp);
+        if (rateLimitHandler.proceed(methodMetadata)) {
             return pjp.proceed();
         } else {
             throw new RateLimitException(StringUtils.hasLength(rateLimit.message()) ? rateLimit.message() :
@@ -67,5 +70,13 @@ public class RateLimitAspect {
      */
     public RateLimit getRateLimit(Method method, String classMethodName) {
         return RATE_LIMIT_MAP.computeIfAbsent(classMethodName, k -> method.getAnnotation(RateLimit.class));
+    }
+
+    private MethodMetadata buildMethodMetadata(ProceedingJoinPoint joinPoint) {
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        Method method = signature.getMethod();
+        String classMethodName = MethodUtils.getClassMethodName(method);
+        RateLimit rateLimit = this.getRateLimit(method, classMethodName);
+        return new RateLimitMethodMetaData(method, joinPoint::getArgs, rateLimit);
     }
 }

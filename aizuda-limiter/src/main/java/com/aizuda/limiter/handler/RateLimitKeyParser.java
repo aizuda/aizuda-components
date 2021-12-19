@@ -6,7 +6,10 @@
 package com.aizuda.limiter.handler;
 
 import com.aizuda.common.toolkit.StringUtils;
-import com.aizuda.limiter.strategy.IRateLimitStrategy;
+import com.aizuda.limiter.metadata.MethodMetadata;
+import com.aizuda.limiter.strategy.DefaultKeyGenerateStrategy;
+import com.aizuda.limiter.strategy.IKeyGenerateStrategy;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.expression.MethodBasedEvaluationContext;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
@@ -18,7 +21,7 @@ import org.springframework.util.ObjectUtils;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Supplier;
+import java.util.Optional;
 
 /**
  * 速率限制唯一标示 key 解析器
@@ -28,37 +31,56 @@ import java.util.function.Supplier;
  * @author 青苗
  * @since 2021-11-16
  */
+@Slf4j
 public class RateLimitKeyParser {
     private final ParameterNameDiscoverer nameDiscoverer = new DefaultParameterNameDiscoverer();
     private final ExpressionParser parser = new SpelExpressionParser();
-    private final List<IRateLimitStrategy> rateLimitStrategyList;
+    private final List<IKeyGenerateStrategy> keyGenerateStrategyList;
+    private final IKeyGenerateStrategy defaultKeyGenerateStrategy;
 
-    public RateLimitKeyParser(List<IRateLimitStrategy> rateLimitStrategyList) {
-        this.rateLimitStrategyList = rateLimitStrategyList;
+    public RateLimitKeyParser(List<IKeyGenerateStrategy> keyGenerateStrategyList) {
+        this.keyGenerateStrategyList = keyGenerateStrategyList;
+        // 默认key生成策略
+        defaultKeyGenerateStrategy = new DefaultKeyGenerateStrategy();
     }
 
     /**
      * 构建唯一标示 KEY
+     *
+     * @param useDefaultStrategy 是否使用默认的key策略
      */
-    public String buildKey(Method method, Supplier<Object[]> args, String classMethodName, String spELKey, String[] strategy) {
+    public String buildKey(MethodMetadata methodMetadata, String spELKey, String[] strategy, boolean useDefaultStrategy) {
         StringBuffer key = new StringBuffer();
-        key.append(classMethodName).append(":");
 
         // SpEL Key 解析
-        if (StringUtils.hasLength(spELKey)) {
-            key.append(this.parser(spELKey, method, args.get()));
-        }
+        String parseKey = Optional.ofNullable(spELKey)
+                .filter(StringUtils::hasLength)
+                .map(str -> {
+                    Method method = methodMetadata.getMethod();
+                    Object[] args = methodMetadata.getArgs();
+                    return this.parser(spELKey, method, args);
+                }).orElse("");
 
+        if (useDefaultStrategy) {
+            key.append(defaultKeyGenerateStrategy.getKey(methodMetadata, parseKey));
+        }
         // 组装自定义策略
         if (strategy.length > 0) {
             for (String str : strategy) {
-                rateLimitStrategyList.stream()
+                keyGenerateStrategyList.stream()
                         .filter(t -> Objects.equals(t.getType(), str))
-                        .findFirst().ifPresent(rateLimitStrategy -> key.append(rateLimitStrategy.getKey()));
+                        .findFirst()
+                        .ifPresent(rateLimitStrategy -> key.append(rateLimitStrategy.getKey(methodMetadata, parseKey)));
             }
         }
+        if (key.length() == 0) {
+            log.warn("The generated key is empty, then will use the default strategy");
+            key.append(defaultKeyGenerateStrategy.getKey(methodMetadata, parseKey));
+        }
+
         return key.toString();
     }
+
 
     public String parser(String key, Method method, Object[] args) {
         EvaluationContext context = new MethodBasedEvaluationContext(null, method, args, nameDiscoverer);

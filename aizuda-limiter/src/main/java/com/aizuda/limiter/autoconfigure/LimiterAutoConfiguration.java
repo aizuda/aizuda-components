@@ -15,8 +15,8 @@ import com.aizuda.limiter.distributedlock.RedisDistributedLockTemplate;
 import com.aizuda.limiter.extend.IAcquireLockTimeoutHandler;
 import com.aizuda.limiter.extend.IDistributedLockListener;
 import com.aizuda.limiter.handler.*;
-import com.aizuda.limiter.strategy.IRateLimitStrategy;
-import com.aizuda.limiter.strategy.IpRateLimitStrategy;
+import com.aizuda.limiter.strategy.IKeyGenerateStrategy;
+import com.aizuda.limiter.strategy.IpKeyGenerateStrategy;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -42,12 +42,12 @@ import java.util.Optional;
 public class LimiterAutoConfiguration {
 
     @Bean
-    public IpRateLimitStrategy ipRateLimitStrategy() {
-        return new IpRateLimitStrategy();
+    public IpKeyGenerateStrategy ipRateLimitStrategy() {
+        return new IpKeyGenerateStrategy();
     }
 
     @Bean
-    public RateLimitKeyParser rateLimitKeyParser(List<IRateLimitStrategy> rateLimitStrategyList) {
+    public RateLimitKeyParser rateLimitKeyParser(List<IKeyGenerateStrategy> rateLimitStrategyList) {
         return new RateLimitKeyParser(rateLimitStrategyList);
     }
 
