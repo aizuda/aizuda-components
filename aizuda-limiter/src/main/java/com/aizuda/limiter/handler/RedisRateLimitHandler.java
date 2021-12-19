@@ -6,15 +6,14 @@
 package com.aizuda.limiter.handler;
 
 import com.aizuda.limiter.annotation.RateLimit;
+import com.aizuda.limiter.metadata.MethodMetadata;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.convert.DurationStyle;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
 
-import java.lang.reflect.Method;
 import java.util.Collections;
-import java.util.function.Supplier;
 
 /**
  * Redis 速率限制处理器
@@ -32,13 +31,14 @@ public class RedisRateLimitHandler implements IRateLimitHandler {
     private final RateLimitKeyParser rateLimitKeyParser;
 
     @Override
-    public boolean proceed(Method method, Supplier<Object[]> args, String classMethodName, RateLimit rateLimit) {
+    public boolean proceed(MethodMetadata methodMetadata) {
+        RateLimit rateLimit = methodMetadata.getAnnotation();
         if (null == REDIS_SCRIPT_RATE_LIMIT) {
             REDIS_SCRIPT_RATE_LIMIT = RedisScript.of(this.luaScript(), Long.class);
         }
         // 间隔时间解析为秒
         long interval = DurationStyle.detectAndParse(rateLimit.interval()).getSeconds();
-        final String key = rateLimitKeyParser.buildKey(method, args, classMethodName, rateLimit.key(), rateLimit.strategy());
+        final String key = rateLimitKeyParser.buildKey(methodMetadata, rateLimit.key(), rateLimit.strategy(), true);
         if (log.isDebugEnabled()) {
             log.debug("rate.limit.key = {}", key);
         }
@@ -58,6 +58,7 @@ public class RedisRateLimitHandler implements IRateLimitHandler {
         }
         return false;
     }
+
 
     /**
      * Lua 限流脚本

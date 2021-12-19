@@ -48,8 +48,8 @@ public class RedisDistributedLockHandler implements IDistributedLockHandler {
 
         DistributedLock distributedLock = methodMetadata.getAnnotation();
 
-        final String lockKey = rateLimitKeyParser.buildKey(methodMetadata.getMethod(), pjp::getArgs, methodMetadata.getClassMethodName(),
-                distributedLock.key(), distributedLock.strategy());
+        final String lockKey = rateLimitKeyParser.buildKey(methodMetadata, distributedLock.key(), distributedLock.strategy(),
+                distributedLock.useDefaultStrategy());
 
         IDistributedLockTemplate distributedLockTemplate = distributedContext.getDistributedLockTemplate();
         long expire = DurationStyle.detectAndParse(distributedLock.tryAcquireTimeout()).getSeconds();
