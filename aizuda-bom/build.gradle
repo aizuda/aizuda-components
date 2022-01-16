@@ -17,6 +17,7 @@ dependencyManagement {
         dependency "com.aizuda:aizuda-limiter:1.0.0"
         dependency "com.aizuda:aizuda-robot:0.0.1"
         dependency "com.aizuda:aizuda-security:0.0.1"
+        dependency "com.aizuda:aizuda-toolkit:0.0.1"
 
     }
 }

@@ -56,11 +56,16 @@ subprojects {
             dependency("com.baomidou:kisso:3.8.0")
             dependency("org.aspectj:aspectjweaver:1.9.8.M1")
 
+            // 工具类
+            dependency("com.aizuda:aizuda-toolkit:0.0.1")
+
         }
     }
 
     // 依赖配置
     dependencies {
+        api("com.aizuda:aizuda-toolkit")
+
         compileOnly("org.projectlombok:lombok")
         annotationProcessor("org.projectlombok:lombok")
         testAnnotationProcessor("org.projectlombok:lombok")
