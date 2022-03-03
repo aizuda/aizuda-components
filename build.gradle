@@ -31,7 +31,7 @@ allprojects {
 subprojects {
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
-    apply plugin: 'signing'
+//    apply plugin: 'signing'
     apply plugin: "io.spring.dependency-management"
 
     // 仓库配置
@@ -119,11 +119,11 @@ subprojects {
         from javadoc
     }
 
-    tasks.whenTaskAdded { task ->
-        if (task.name.contains('signMavenJavaPublication')) {
-            task.enabled = new File(project.property('signing.secretKeyRingFile') as String).isFile()
-        }
-    }
+//    tasks.whenTaskAdded { task ->
+//        if (task.name.contains('signMavenJavaPublication')) {
+//            task.enabled = new File(project.property('signing.secretKeyRingFile') as String).isFile()
+//        }
+//    }
 
     publishing {
         repositories {
@@ -191,8 +191,8 @@ subprojects {
             }
         }
 
-        signing {
-            sign publishing.publications.mavenJava
-        }
+//        signing {
+//            sign publishing.publications.mavenJava
+//        }
     }
 }
