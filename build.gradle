@@ -59,6 +59,8 @@ subprojects {
             // 工具类
             dependency("com.aizuda:aizuda-toolkit:0.0.1")
 
+            // 监控
+            dependency("com.github.oshi:oshi-core:6.1.4")
         }
     }
 
