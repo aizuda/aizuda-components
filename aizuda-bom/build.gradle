@@ -8,6 +8,10 @@ buildscript {
     }
 }
 
+description "爱组搭 BOM"
+
+version "1.0.0"
+
 apply plugin: "io.spring.dependency-management"
 
 dependencyManagement {
