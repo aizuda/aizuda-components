@@ -14,8 +14,12 @@ import oshi.software.os.OperatingSystem;
 import oshi.software.os.windows.WindowsOperatingSystem;
 import oshi.util.Util;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +93,7 @@ public class OshiMonitor {
      * System.out.println("  serialnumber: " + baseboard.getSerialNumber());
      * </code>
      *
-     * @return {@link SysInfo}
+     * @return {@link ComputerSystem}
      */
     public ComputerSystem getComputerSystem() {
         return getHardwareAbstractionLayer().getComputerSystem();
@@ -97,6 +101,37 @@ public class OshiMonitor {
 
     public WindowsOperatingSystem getWindowsOperatingSystem() {
         return new WindowsOperatingSystem();
+    }
+
+    public InetAddress getInetAddress() throws UnknownHostException {
+        return InetAddress.getLocalHost();
+    }
+
+    public Properties getSystemProperties() {
+        return System.getProperties();
+    }
+
+    /**
+     * 获取系统信息
+     *
+     * @return {@link SysInfo}
+     */
+    public SysInfo getSysInfo() {
+        Properties props = getSystemProperties();
+        SysInfo sysInfo = new SysInfo();
+        InetAddress inetAddress = null;
+        try {
+            inetAddress = getInetAddress();
+            sysInfo.setName(inetAddress.getHostName());
+            sysInfo.setIp(inetAddress.getHostAddress());
+        } catch (UnknownHostException e) {
+            sysInfo.setName("unknown");
+            sysInfo.setIp("unknown");
+        }
+        sysInfo.setOsName(props.getProperty("os.name"));
+        sysInfo.setOsArch(props.getProperty("os.arch"));
+        sysInfo.setUserDir(props.getProperty("user.dir"));
+        return sysInfo;
     }
 
     /**
@@ -152,7 +187,7 @@ public class OshiMonitor {
      * @return {@link JvmInfo}
      */
     public JvmInfo getJvmInfo() {
-        Properties props = System.getProperties();
+        Properties props = getSystemProperties();
         Runtime runtime = Runtime.getRuntime();
         long jvmTotalMemoryByte = runtime.totalMemory();
         long freeMemoryByte = runtime.freeMemory();
@@ -164,6 +199,10 @@ public class OshiMonitor {
         jvmInfo.setUsedMemory(formatByte(jvmTotalMemoryByte - freeMemoryByte));
         jvmInfo.setFreeMemory(formatByte(freeMemoryByte));
         jvmInfo.setUsePercent(formatDouble((jvmTotalMemoryByte - freeMemoryByte) * 1.0 / jvmTotalMemoryByte));
+        RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+        jvmInfo.setJdkName(runtimeMXBean.getVmName());
+        jvmInfo.setStartTime(runtimeMXBean.getStartTime());
+        jvmInfo.setUptime(runtimeMXBean.getUptime());
         return jvmInfo;
     }
 

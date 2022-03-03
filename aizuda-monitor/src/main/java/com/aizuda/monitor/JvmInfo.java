@@ -30,6 +30,11 @@ public class JvmInfo {
     String jdkHome;
 
     /**
+     * jak name
+     */
+    private String jdkName;
+
+    /**
      * 总内存
      */
     String jvmTotalMemory;
@@ -53,5 +58,15 @@ public class JvmInfo {
      * 内存使用率
      */
     private double usePercent;
+
+    /**
+     * 返回Java虚拟机的启动时间（毫秒）。此方法返回Java虚拟机启动的大致时间。
+     */
+    private long startTime;
+
+    /**
+     * 返回Java虚拟机的正常运行时间（毫秒）
+     */
+    private long uptime;
 
 }
