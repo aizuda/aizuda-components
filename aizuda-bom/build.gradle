@@ -15,6 +15,7 @@ dependencyManagement {
         // 爱组搭 http://aizuda.com 低代码组件化开发平台
         dependency "com.aizuda:aizuda-common:0.0.1"
         dependency "com.aizuda:aizuda-limiter:1.0.0"
+        dependency "com.aizuda:aizuda-monitor:0.0.1"
         dependency "com.aizuda:aizuda-robot:0.0.1"
         dependency "com.aizuda:aizuda-security:0.0.1"
         dependency "com.aizuda:aizuda-toolkit:0.0.1"

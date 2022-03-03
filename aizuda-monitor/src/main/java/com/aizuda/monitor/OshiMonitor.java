@@ -306,11 +306,11 @@ public class OshiMonitor {
         return decimalFormat("#.##TB", gbNumber / FORMAT);
     }
 
-    private String decimalFormat(String pattern, double number) {
+    public String decimalFormat(String pattern, double number) {
         return new DecimalFormat(pattern).format(number);
     }
 
-    private double formatDouble(double str) {
+    public double formatDouble(double str) {
         return new BigDecimal(str).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
 }
