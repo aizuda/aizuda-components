@@ -11,6 +11,7 @@ import oshi.hardware.*;
 import oshi.software.os.FileSystem;
 import oshi.software.os.OSFileStore;
 import oshi.software.os.OperatingSystem;
+import oshi.software.os.windows.WindowsOperatingSystem;
 import oshi.util.Util;
 
 import java.math.BigDecimal;
@@ -94,6 +95,10 @@ public class OshiMonitor {
         return getHardwareAbstractionLayer().getComputerSystem();
     }
 
+    public WindowsOperatingSystem getWindowsOperatingSystem() {
+        return new WindowsOperatingSystem();
+    }
+
     /**
      * 获取 cpu 信息
      *
@@ -102,7 +107,7 @@ public class OshiMonitor {
     public CpuInfo getCpuInfo() {
         CentralProcessor centralProcessor = getCentralProcessor();
         long[] prevTicks = centralProcessor.getSystemCpuLoadTicks();
-        Util.sleep(1000);
+        Util.sleep(600);
         long[] ticks = centralProcessor.getSystemCpuLoadTicks();
         long nice = ticks[CentralProcessor.TickType.NICE.getIndex()] - prevTicks[CentralProcessor.TickType.NICE.getIndex()];
         long irq = ticks[CentralProcessor.TickType.IRQ.getIndex()] - prevTicks[CentralProcessor.TickType.IRQ.getIndex()];
