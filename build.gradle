@@ -103,21 +103,21 @@ subprojects {
         from sourceSets.main.allSource
     }
 
-    javadoc {
-        options {
-            encoding "UTF-8"
-            charSet 'UTF-8'
-            author true
-            version true
-            failOnError false
-            links "http://docs.oracle.com/javase/7/docs/api"
-        }
-    }
-
-    task javadocJar(type: Jar) {
-        archiveClassifier = 'javadoc'
-        from javadoc
-    }
+//    javadoc {
+//        options {
+//            encoding "UTF-8"
+//            charSet 'UTF-8'
+//            author true
+//            version true
+//            failOnError false
+//            links "http://docs.oracle.com/javase/7/docs/api"
+//        }
+//    }
+//
+//    task javadocJar(type: Jar) {
+//        archiveClassifier = 'javadoc'
+//        from javadoc
+//    }
 
 //    tasks.whenTaskAdded { task ->
 //        if (task.name.contains('signMavenJavaPublication')) {
@@ -146,7 +146,7 @@ subprojects {
                 from components.java
 
                 artifact sourcesJar
-                artifact javadocJar
+//                artifact javadocJar
 
                 pom {
                     name = 'aizuda-components'
