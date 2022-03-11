@@ -10,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -33,8 +34,8 @@ public abstract class AbstractRobotSendMessage implements ISendMessage {
     public boolean request(RestTemplate restTemplate, Map<String, Object> objectMap) throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        Map<String, Object> response = restTemplate.postForEntity(this.getUrl(),
-                new HttpEntity<>(objectMap, headers), Map.class).getBody();
+        HashMap<String, Object> response = restTemplate.postForEntity(this.getUrl(),
+                new HttpEntity<>(objectMap, headers), HashMap.class).getBody();
         if(null != response && Objects.equals(response.get("errcode"), 0)) {
             return true;
         }

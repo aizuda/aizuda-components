@@ -54,7 +54,7 @@ subprojects {
         dependencies {
             // 单点登录
             dependency("com.baomidou:kisso:3.8.0")
-            dependency("org.aspectj:aspectjweaver:1.9.8.M1")
+            dependency("org.aspectj:aspectjweaver:1.9.8")
 
             // 工具类
             dependency("com.aizuda:aizuda-toolkit:0.0.1")
