@@ -209,36 +209,38 @@ public class OshiMonitor {
     /**
      * 获取磁盘使用信息
      */
-    public List<DeskInfo> getDeskInfos() {
+    public List<DiskInfo> getDiskInfos() {
         OperatingSystem operatingSystem = getOperatingSystem();
         FileSystem fileSystem = operatingSystem.getFileSystem();
-        List<DeskInfo> deskInfos = new ArrayList<>();
+        List<DiskInfo> diskInfos = new ArrayList<>();
         Iterable<OSFileStore> fsArray = fileSystem.getFileStores();
         for (OSFileStore fs : fsArray) {
-            DeskInfo deskInfo = new DeskInfo();
-            deskInfo.setName(fs.getName());
-            deskInfo.setVolume(fs.getVolume());
-            deskInfo.setLabel(fs.getLabel());
-            deskInfo.setLogicalVolume(fs.getLogicalVolume());
-            deskInfo.setMount(fs.getMount());
-            deskInfo.setDescription(fs.getDescription());
-            deskInfo.setOptions(fs.getOptions());
-            deskInfo.setType(fs.getType());
-            deskInfo.setUUID(fs.getUUID());
+            DiskInfo diskInfo = new DiskInfo();
+            diskInfo.setName(fs.getName());
+            diskInfo.setVolume(fs.getVolume());
+            diskInfo.setLabel(fs.getLabel());
+            diskInfo.setLogicalVolume(fs.getLogicalVolume());
+            diskInfo.setMount(fs.getMount());
+            diskInfo.setDescription(fs.getDescription());
+            diskInfo.setOptions(fs.getOptions());
+            diskInfo.setType(fs.getType());
+            diskInfo.setUUID(fs.getUUID());
             long usable = fs.getUsableSpace();
+            diskInfo.setUsableSpace(usable);
             long total = fs.getTotalSpace();
-            deskInfo.setSize(formatByte(total));
-            deskInfo.setAvail(formatByte(usable));
-            deskInfo.setUsed(formatByte(total - usable));
+            diskInfo.setSize(formatByte(total));
+            diskInfo.setTotalSpace(total);
+            diskInfo.setAvail(formatByte(usable));
+            diskInfo.setUsed(formatByte(total - usable));
             double usedSize = (total - usable);
             double usePercent = 0;
             if (total > 0) {
                 usePercent = formatDouble(usedSize / total * 100);
             }
-            deskInfo.setUsePercent(usePercent);
-            deskInfos.add(deskInfo);
+            diskInfo.setUsePercent(usePercent);
+            diskInfos.add(diskInfo);
         }
-        return deskInfos;
+        return diskInfos;
     }
 
     /**
