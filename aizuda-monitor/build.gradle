@@ -1,6 +1,6 @@
 description "爱组搭服务器监控模块"
 
-version "0.0.1"
+version "1.0.0"
 
 dependencies {
     api("com.github.oshi:oshi-core")

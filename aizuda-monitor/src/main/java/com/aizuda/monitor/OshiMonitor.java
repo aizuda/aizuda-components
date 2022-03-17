@@ -11,7 +11,6 @@ import oshi.hardware.*;
 import oshi.software.os.FileSystem;
 import oshi.software.os.OSFileStore;
 import oshi.software.os.OperatingSystem;
-import oshi.software.os.windows.WindowsOperatingSystem;
 import oshi.util.Util;
 
 import java.lang.management.ManagementFactory;
@@ -97,10 +96,6 @@ public class OshiMonitor {
      */
     public ComputerSystem getComputerSystem() {
         return getHardwareAbstractionLayer().getComputerSystem();
-    }
-
-    public WindowsOperatingSystem getWindowsOperatingSystem() {
-        return new WindowsOperatingSystem();
     }
 
     public InetAddress getInetAddress() throws UnknownHostException {
