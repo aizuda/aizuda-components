@@ -18,7 +18,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class DeskInfo {
+public class DiskInfo {
     /**
      * 名称
      */
@@ -68,11 +68,13 @@ public class DeskInfo {
      * 分区大小
      */
     private String size;
+    private Long totalSpace;
 
     /**
      * 已使用
      */
     private String used;
+    private Long usableSpace;
 
     /**
      * 可用
