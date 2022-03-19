@@ -5,7 +5,6 @@
  */
 package com.aizuda.monitor;
 
-import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +19,6 @@ import oshi.SystemInfo;
  * @since 2022-03-02
  */
 @Configuration
-@AllArgsConstructor
 public class MonitorAutoConfiguration {
 
     @Bean
