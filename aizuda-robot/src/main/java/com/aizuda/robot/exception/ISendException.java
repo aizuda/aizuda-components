@@ -25,4 +25,20 @@ public interface ISendException {
      * @return true 发送成功  false 发送失败
      */
     boolean send(JoinPoint joinPoint, Exception e);
+
+    /**
+     * 发送异常内容
+     *
+     * @param e         {@link Exception}
+     * @return true 发送成功  false 发送失败
+     */
+    boolean send(Exception e);
+
+    /**
+     * 发送异常内容
+     *
+     * @param msg         异常消息
+     * @return true 发送成功  false 发送失败
+     */
+    boolean send(String msg);
 }
