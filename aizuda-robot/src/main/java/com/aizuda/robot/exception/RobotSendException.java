@@ -43,4 +43,35 @@ public class RobotSendException implements ISendException {
             return false;
         }
     }
+
+    @Override
+    public boolean send(Exception e) {
+        try {
+            String message = errorMessageHandler.message(e);
+            for (ISendMessage sendMessage : sendMessageList) {
+                sendMessage.send(message);
+            }
+            return true;
+        } catch (Throwable t) {
+            /**
+             * 捕获可能异常，切面记录日志
+             */
+            return false;
+        }
+    }
+
+    @Override
+    public boolean send(String msg) {
+        try {
+            for (ISendMessage sendMessage : sendMessageList) {
+                sendMessage.send(msg);
+            }
+            return true;
+        } catch (Throwable t) {
+            /**
+             * 捕获可能异常，切面记录日志
+             */
+            return false;
+        }
+    }
 }

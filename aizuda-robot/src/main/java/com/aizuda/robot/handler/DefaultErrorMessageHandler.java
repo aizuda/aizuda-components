@@ -40,4 +40,12 @@ public class DefaultErrorMessageHandler implements IErrorMessageHandler {
         error.append(LINE_BREAK).append("Exception: ").append(ThrowableUtils.getStackTrace(e));
         return error.toString();
     }
+
+    @Override
+    public String message(Exception e) {
+        StringBuffer error = new StringBuffer();
+        error.append("Time: ").append(DateUtils.nowTime());
+        error.append(LINE_BREAK).append("Exception: ").append(ThrowableUtils.getStackTrace(e));
+        return error.toString();
+    }
 }
