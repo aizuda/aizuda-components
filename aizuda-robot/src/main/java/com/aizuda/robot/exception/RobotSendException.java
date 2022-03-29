@@ -53,9 +53,6 @@ public class RobotSendException implements ISendException {
             }
             return true;
         } catch (Throwable t) {
-            /**
-             * 捕获可能异常，切面记录日志
-             */
             return false;
         }
     }
@@ -68,9 +65,6 @@ public class RobotSendException implements ISendException {
             }
             return true;
         } catch (Throwable t) {
-            /**
-             * 捕获可能异常，切面记录日志
-             */
             return false;
         }
     }
