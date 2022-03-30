@@ -57,6 +57,7 @@ public class RobotAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnProperty(prefix = RobotProperties.PREFIX,name = "enableDefaultRobot",havingValue = "true",matchIfMissing = true)
     public ExceptionAspect exceptionAspect(ISendException sendException) {
         return new ExceptionAspect(sendException);
     }
