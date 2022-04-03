@@ -42,14 +42,14 @@ public abstract class AbstractRestEncryptHandler implements IRestEncryptHandler 
              * 请求数据 RSA 公钥解密
              */
             String publicKey = this.getPublicKey(props);
-            DecryptRequestException.isEmpty(publicKey, "not found rsa publicKey.");
-            log.error("request publicKey={}", publicKey);
+            DecryptRequestException.isEmpty(publicKey, "not found rsa publicKey");
+            log.debug("request publicKey={}", publicKey);
             String content = StreamUtils.copyToString(inputMessage.getBody(), StandardCharsets.UTF_8);
             byte[] decryptBytes = RSA.decryptByPublicKey(Base64.decode(content.getBytes(StandardCharsets.UTF_8)), publicKey);
             ByteArrayInputStream inputStream = new ByteArrayInputStream(decryptBytes);
             return new MappingJacksonInputMessage(inputStream, inputMessage.getHeaders());
         } catch (Exception e) {
-            throw new DecryptRequestException("RestEncryptHandler request error.", e);
+            throw new DecryptRequestException("Decrypt request error", e);
         }
     }
 
@@ -57,7 +57,7 @@ public abstract class AbstractRestEncryptHandler implements IRestEncryptHandler 
      * 公钥
      */
     public String getPublicKey(SecurityProperties props) {
-        return props.getPrivateKey();
+        return props.getPublicKey();
     }
 
     @Override
@@ -69,12 +69,12 @@ public abstract class AbstractRestEncryptHandler implements IRestEncryptHandler 
              * 返回 base64 加密后的 RSA 密文内容
              */
             String privateKey = this.getPrivateKey(props);
-            DecryptRequestException.isEmpty(privateKey, "not found rsa privateKey.");
-            log.error("response privateKey={}", privateKey);
+            DecryptRequestException.isEmpty(privateKey, "not found rsa privateKey");
+            log.debug("response privateKey={}", privateKey);
             byte[] plaintextBytes = this.toJson(body).getBytes(StandardCharsets.UTF_8);
             return Base64.toBase64String(RSA.encryptByPrivateKey(plaintextBytes, privateKey));
         } catch (Exception e) {
-            throw new DecryptRequestException("RestEncryptHandler response error.", e);
+            throw new DecryptRequestException("Encrypt response error", e);
         }
     }
 
