@@ -58,7 +58,7 @@ public class Md5ParamsSignHandler extends AbstractParamsSignHandler {
     @Override
     public SortedMap<String, String> parse(String jsonStr) {
         SortedMap<String, String> parameterMap = null;
-        if(null != jsonStr && jsonStr.contains(StringPool.LEFT_BRACE)) {
+        if (null != jsonStr && jsonStr.contains(StringPool.LEFT_BRACE)) {
             try {
                 parameterMap = JacksonUtils.parseThrows(jsonStr, TreeMap.class);
             } catch (Exception e) {
@@ -80,19 +80,18 @@ public class Md5ParamsSignHandler extends AbstractParamsSignHandler {
 
     @Override
     public String getSignParam() {
-        return securityProperties.getParamsSign().getSign();
+        return securityProperties.getSign();
     }
 
     @Override
     public String getTimestampParam() {
-        return securityProperties.getParamsSign().getTimestamp();
+        return securityProperties.getTimestamp();
     }
 
     @Override
     public Long getFailureTime() {
         if (null == FAILURE_TIME) {
-            FAILURE_TIME = DurationStyle.detectAndParse(securityProperties.getParamsSign()
-                    .getInvalidTime()).getSeconds() * 1000;
+            FAILURE_TIME = DurationStyle.detectAndParse(securityProperties.getInvalidTime()).getSeconds() * 1000;
         }
         return FAILURE_TIME;
     }
