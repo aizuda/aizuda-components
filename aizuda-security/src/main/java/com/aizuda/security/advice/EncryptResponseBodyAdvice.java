@@ -30,7 +30,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 public class EncryptResponseBodyAdvice implements ResponseBodyAdvice<Object> {
     private final SecurityProperties securityProperties;
     private final IRestEncryptHandler restEncryptHandler;
-    private boolean encrypt = true;
 
     public EncryptResponseBodyAdvice(SecurityProperties securityProperties, IRestEncryptHandler restEncryptHandler) {
         this.securityProperties = securityProperties;

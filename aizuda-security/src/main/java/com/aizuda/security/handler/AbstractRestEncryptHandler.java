@@ -24,7 +24,7 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 
 /**
- * 接口加密处理抽象类
+ * 接口加解密处理抽象类
  * <p>
  * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
  *
@@ -38,14 +38,26 @@ public abstract class AbstractRestEncryptHandler implements IRestEncryptHandler 
     public HttpInputMessage request(SecurityProperties props, HttpInputMessage inputMessage, MethodParameter parameter, Type targetType,
                                     Class<? extends HttpMessageConverter<?>> converterType) {
         try {
+            /**
+             * 请求数据 RSA 公钥解密
+             */
+            String publicKey = this.getPublicKey(props);
+            DecryptRequestException.isEmpty(publicKey, "not found rsa publicKey.");
+            log.error("request publicKey={}", publicKey);
             String content = StreamUtils.copyToString(inputMessage.getBody(), StandardCharsets.UTF_8);
-            byte[] decryptBytes = RSA.decryptByPrivateKey(Base64.decode(content.getBytes(StandardCharsets.UTF_8)),
-                    props.getPrivateKey());
+            byte[] decryptBytes = RSA.decryptByPublicKey(Base64.decode(content.getBytes(StandardCharsets.UTF_8)), publicKey);
             ByteArrayInputStream inputStream = new ByteArrayInputStream(decryptBytes);
             return new MappingJacksonInputMessage(inputStream, inputMessage.getHeaders());
         } catch (Exception e) {
             throw new DecryptRequestException("RestEncryptHandler request error.", e);
         }
+    }
+
+    /**
+     * 公钥
+     */
+    public String getPublicKey(SecurityProperties props) {
+        return props.getPrivateKey();
     }
 
     @Override
@@ -54,25 +66,23 @@ public abstract class AbstractRestEncryptHandler implements IRestEncryptHandler 
                            ServerHttpRequest request, ServerHttpResponse response) {
         try {
             /**
-             * 返回 base64 加密后的 rsa 密文内容
+             * 返回 base64 加密后的 RSA 密文内容
              */
-            return encryptByPrivateKey(this.toJson(body), props.getPrivateKey());
+            String privateKey = this.getPrivateKey(props);
+            DecryptRequestException.isEmpty(privateKey, "not found rsa privateKey.");
+            log.error("response privateKey={}", privateKey);
+            byte[] plaintextBytes = this.toJson(body).getBytes(StandardCharsets.UTF_8);
+            return Base64.toBase64String(RSA.encryptByPrivateKey(plaintextBytes, privateKey));
         } catch (Exception e) {
-            log.error("RestEncryptHandler response error.", e);
+            throw new DecryptRequestException("RestEncryptHandler response error.", e);
         }
-        return body;
     }
 
     /**
-     * 私钥加密
-     *
-     * @param plaintext  明文
-     * @param privateKey 私钥(BASE64编码)
-     * @return 返回私钥加密数据
-     * @throws Exception
+     * 私钥
      */
-    public String encryptByPrivateKey(String plaintext, String privateKey) throws Exception {
-        return Base64.toBase64String(RSA.encryptByPrivateKey(plaintext.getBytes(StandardCharsets.UTF_8), privateKey));
+    public String getPrivateKey(SecurityProperties props) {
+        return props.getPrivateKey();
     }
 
     /**

@@ -5,6 +5,8 @@
  */
 package com.aizuda.security.exception;
 
+import com.aizuda.common.toolkit.ObjectUtils;
+
 /**
  * 请求参数解密签名异常
  * <p>
@@ -15,7 +17,17 @@ package com.aizuda.security.exception;
  */
 public class DecryptRequestException extends RuntimeException {
 
+    public DecryptRequestException(String message) {
+        super(message);
+    }
+
     public DecryptRequestException(String message, Throwable cause) {
         super(message, cause);
+    }
+
+    public static void isEmpty(Object object, String message) {
+        if (ObjectUtils.isEmpty(object)) {
+            throw new DecryptRequestException(message);
+        }
     }
 }
