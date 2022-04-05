@@ -41,7 +41,7 @@ public abstract class AbstractRestEncryptHandler implements IRestEncryptHandler 
             /**
              * 请求数据 RSA 公钥解密
              */
-            String publicKey = this.getPublicKey(props);
+            String publicKey = this.getPublicKey(props, inputMessage);
             DecryptRequestException.isEmpty(publicKey, "not found rsa publicKey");
             log.debug("request publicKey={}", publicKey);
             String content = StreamUtils.copyToString(inputMessage.getBody(), StandardCharsets.UTF_8);
@@ -56,7 +56,7 @@ public abstract class AbstractRestEncryptHandler implements IRestEncryptHandler 
     /**
      * 公钥
      */
-    public String getPublicKey(SecurityProperties props) {
+    public String getPublicKey(SecurityProperties props, HttpInputMessage inputMessage) {
         return props.getPublicKey();
     }
 
@@ -68,7 +68,7 @@ public abstract class AbstractRestEncryptHandler implements IRestEncryptHandler 
             /**
              * 返回 base64 加密后的 RSA 密文内容
              */
-            String privateKey = this.getPrivateKey(props);
+            String privateKey = this.getPrivateKey(props, request);
             DecryptRequestException.isEmpty(privateKey, "not found rsa privateKey");
             log.debug("response privateKey={}", privateKey);
             byte[] plaintextBytes = this.toJson(body).getBytes(StandardCharsets.UTF_8);
@@ -81,7 +81,7 @@ public abstract class AbstractRestEncryptHandler implements IRestEncryptHandler 
     /**
      * 私钥
      */
-    public String getPrivateKey(SecurityProperties props) {
+    public String getPrivateKey(SecurityProperties props, ServerHttpRequest request) {
         return props.getPrivateKey();
     }
 
