@@ -49,7 +49,7 @@ public abstract class AbstractRestEncryptHandler implements IRestEncryptHandler 
             ByteArrayInputStream inputStream = new ByteArrayInputStream(decryptBytes);
             return new MappingJacksonInputMessage(inputStream, inputMessage.getHeaders());
         } catch (Exception e) {
-            throw new DecryptRequestException("Decrypt request error", e);
+            return requestException(e);
         }
     }
 
@@ -58,6 +58,16 @@ public abstract class AbstractRestEncryptHandler implements IRestEncryptHandler 
      */
     public String getPublicKey(SecurityProperties props, HttpInputMessage inputMessage) {
         return props.getPublicKey();
+    }
+
+    /**
+     * 预留子类处理抛出请求解密异常逻辑
+     *
+     * @param e {@link Exception}
+     * @return
+     */
+    public HttpInputMessage requestException(Exception e) {
+        throw new DecryptRequestException("Decrypt request error", e);
     }
 
     @Override
@@ -74,7 +84,7 @@ public abstract class AbstractRestEncryptHandler implements IRestEncryptHandler 
             byte[] plaintextBytes = this.toJson(body).getBytes(StandardCharsets.UTF_8);
             return Base64.toBase64String(RSA.encryptByPrivateKey(plaintextBytes, privateKey));
         } catch (Exception e) {
-            throw new DecryptRequestException("Encrypt response error", e);
+            return responseException(e);
         }
     }
 
@@ -83,6 +93,16 @@ public abstract class AbstractRestEncryptHandler implements IRestEncryptHandler 
      */
     public String getPrivateKey(SecurityProperties props, ServerHttpRequest request) {
         return props.getPrivateKey();
+    }
+
+    /**
+     * 响应解密异常逻辑
+     *
+     * @param e {@link Exception}
+     * @return
+     */
+    public Object responseException(Exception e) {
+        throw new DecryptRequestException("Decrypt response error", e);
     }
 
     /**
