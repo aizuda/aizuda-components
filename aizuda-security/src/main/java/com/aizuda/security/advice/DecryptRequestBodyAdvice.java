@@ -14,6 +14,7 @@ import org.springframework.http.HttpInputMessage;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.RequestBodyAdviceAdapter;
+import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.Type;
 
@@ -39,7 +40,13 @@ public class DecryptRequestBodyAdvice extends RequestBodyAdviceAdapter {
     @Override
     public boolean supports(MethodParameter methodParameter, Type targetType,
                             Class<? extends HttpMessageConverter<?>> converterType) {
-        return Encrypted.class.isAssignableFrom((Class<?>) targetType);
+        Class<?> clazz;
+        if (targetType instanceof ParameterizedTypeImpl) {
+            clazz = ((ParameterizedTypeImpl) targetType).getRawType();
+        } else {
+            clazz = (Class) targetType;
+        }
+        return Encrypted.class.isAssignableFrom(clazz);
     }
 
     @Override
