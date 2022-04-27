@@ -22,6 +22,8 @@ dependencyManagement {
         dependency "com.aizuda:aizuda-robot:1.0.0"
         dependency "com.aizuda:aizuda-security:1.0.1"
         dependency "com.aizuda:aizuda-toolkit:0.0.1"
+        // http://deepoove.com/poi-tl/
+        dependency "com.deepoove:poi-tl:1.12.0"
 
     }
 }

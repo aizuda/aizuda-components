@@ -1,0 +1,10 @@
+description "爱组搭POI模块"
+
+version "1.0.0"
+
+dependencies {
+    api("com.aizuda:aizuda-toolkit")
+    compileOnly("org.springframework.boot:spring-boot-starter-web")
+    compileOnly("com.deepoove:poi-tl")
+
+}
