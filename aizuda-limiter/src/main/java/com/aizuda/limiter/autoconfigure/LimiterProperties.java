@@ -44,6 +44,7 @@ public class LimiterProperties implements Serializable {
      * 分布式锁的前缀名称：默认为'aizuda-redis-lock'
      */
     private String distributedRootKey;
+
     /**
      * RedisLock的key失效时间
      * 默认2分钟

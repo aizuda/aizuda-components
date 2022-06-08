@@ -18,6 +18,7 @@ import com.aizuda.limiter.metadata.MethodMetadata;
  * @since 2021-12-05
  */
 public interface IAcquireLockTimeoutHandler {
+
     /**
      * 判断是否支持当前处理策略
      *
