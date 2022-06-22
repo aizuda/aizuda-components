@@ -8,4 +8,5 @@ include 'aizuda-security'
 include 'aizuda-robot'
 include 'aizuda-monitor'
 include 'aizuda-poi'
+include 'aizuda-oss'
 
