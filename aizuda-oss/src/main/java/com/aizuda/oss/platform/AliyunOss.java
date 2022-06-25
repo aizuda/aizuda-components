@@ -6,8 +6,7 @@
 package com.aizuda.oss.platform;
 
 import com.aizuda.common.toolkit.ObjectUtils;
-import com.aizuda.common.toolkit.StringUtils;
-import com.aizuda.oss.IFileStorage;
+import com.aizuda.oss.AbstractFileStorage;
 import com.aizuda.oss.autoconfigure.OssProperty;
 import com.aizuda.oss.model.OssResult;
 import com.aliyun.oss.ClientConfiguration;
@@ -34,19 +33,9 @@ import java.util.concurrent.TimeUnit;
  * @author 青苗
  * @since 2022-06-09
  */
-public class AliyunOss implements IFileStorage {
+public class AliyunOss extends AbstractFileStorage {
 
     private OSSClient ossClient;
-
-    /**
-     * 配置属性
-     */
-    private OssProperty ossProperty;
-
-    /**
-     * 默认桶
-     */
-    private String bucketName;
 
     public AliyunOss(OssProperty ossProperty) {
         this.ossProperty = ossProperty;
@@ -57,20 +46,8 @@ public class AliyunOss implements IFileStorage {
     }
 
     @Override
-    public IFileStorage bucket(String bucketName) {
-        if (StringUtils.hasLength(bucketName)) {
-            this.bucketName = bucketName;
-        }
-        return this;
-    }
-
-    private String getBucketName() {
-        return null == bucketName ? ossProperty.getBucketName() : bucketName;
-    }
-
-    @Override
     public OssResult upload(InputStream is, String filename) throws Exception {
-        bucketName = this.getBucketName();
+        String bucketName = this.getBucketName();
         String suffix = this.getFileSuffix(filename);
         String objectName = this.getObjectName(suffix);
         PutObjectResult por = ossClient.putObject(bucketName, objectName, is);
@@ -84,7 +61,8 @@ public class AliyunOss implements IFileStorage {
 
     @Override
     public InputStream download(String objectName) throws Exception {
-        OSSObject ossObject = ossClient.getObject(this.getBucketName(), objectName);
+        String bucketName = this.getBucketName();
+        OSSObject ossObject = ossClient.getObject(bucketName, objectName);
         return null == ossObject ? null : ossObject.getObjectContent();
     }
 
@@ -93,21 +71,24 @@ public class AliyunOss implements IFileStorage {
         if (ObjectUtils.isEmpty(objectNameList)) {
             return false;
         }
-        DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(this.getBucketName());
+        String bucketName = this.getBucketName();
+        DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(bucketName);
         deleteObjectsRequest.setKeys(objectNameList);
         return null != ossClient.deleteObjects(deleteObjectsRequest);
     }
 
     @Override
     public boolean delete(String objectName) throws Exception {
-        return null != ossClient.deleteObject(this.getBucketName(), objectName);
+        String bucketName = this.getBucketName();
+        return null != ossClient.deleteObject(bucketName, objectName);
     }
 
     @Override
     public String getUrl(String objectName, int duration, TimeUnit unit) throws Exception {
+        String bucketName = this.getBucketName();
         LocalDateTime localDateTime = LocalDateTime.now().plusSeconds(unit.toSeconds(duration));
         Date expiration = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-        URL url = ossClient.generatePresignedUrl(this.getBucketName(), objectName, expiration, HttpMethod.GET);
+        URL url = ossClient.generatePresignedUrl(bucketName, objectName, expiration, HttpMethod.GET);
         return null == url ? null : url.toString();
     }
 }
