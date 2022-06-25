@@ -8,6 +8,8 @@ import java.io.Serializable;
 
 /**
  * 存储返回结果对象
+ * <p>
+ * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
  *
  * @author hubin
  * @since 2022-06-09

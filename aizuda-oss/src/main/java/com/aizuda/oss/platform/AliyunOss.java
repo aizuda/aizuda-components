@@ -6,7 +6,7 @@
 package com.aizuda.oss.platform;
 
 import com.aizuda.common.toolkit.ObjectUtils;
-import com.aizuda.common.toolkit.SpringUtils;
+import com.aizuda.common.toolkit.StringUtils;
 import com.aizuda.oss.IFileStorage;
 import com.aizuda.oss.autoconfigure.OssProperty;
 import com.aizuda.oss.model.OssResult;
@@ -28,6 +28,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * aliyun oss 存储
+ * <p>
+ * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
  *
  * @author 青苗
  * @since 2022-06-09
@@ -37,31 +39,40 @@ public class AliyunOss implements IFileStorage {
     private OSSClient ossClient;
 
     /**
+     * 配置属性
+     */
+    private OssProperty ossProperty;
+
+    /**
      * 默认桶
      */
     private String bucketName;
 
-    public static AliyunOss getInstance() {
-        return SpringUtils.getBean(AliyunOss.class);
-    }
-
     public AliyunOss(OssProperty ossProperty) {
-        this.bucketName = ossProperty.getBucketName();
+        this.ossProperty = ossProperty;
         ClientConfiguration clientConfiguration = new ClientConfiguration();
         clientConfiguration.setConnectionTimeout(ossProperty.getConnectionTimeout());
         ossClient = new OSSClient(ossProperty.getEndpoint(), new DefaultCredentialProvider(ossProperty.getAccessKey(),
                 ossProperty.getSecretKey()), clientConfiguration);
     }
 
-    private String getBucketName(String bucketName) {
-        return null == bucketName ? this.bucketName : bucketName;
+    @Override
+    public IFileStorage bucket(String bucketName) {
+        if (StringUtils.hasLength(bucketName)) {
+            this.bucketName = bucketName;
+        }
+        return this;
+    }
+
+    private String getBucketName() {
+        return null == bucketName ? ossProperty.getBucketName() : bucketName;
     }
 
     @Override
-    public OssResult upload(String bucketName, InputStream is, String filename) throws Exception {
-        bucketName = this.getBucketName(bucketName);
-        String suffix = filename.substring(filename.lastIndexOf(".") + 1);
-        String objectName = getPath() + suffix;
+    public OssResult upload(InputStream is, String filename) throws Exception {
+        bucketName = this.getBucketName();
+        String suffix = this.getFileSuffix(filename);
+        String objectName = this.getObjectName(suffix);
         PutObjectResult por = ossClient.putObject(bucketName, objectName, is);
         return null == por ? null : OssResult.builder().bucketName(bucketName)
                 .objectName(objectName)
@@ -72,31 +83,31 @@ public class AliyunOss implements IFileStorage {
     }
 
     @Override
-    public InputStream download(String bucketName, String objectName) throws Exception {
-        OSSObject ossObject = ossClient.getObject(this.getBucketName(bucketName), objectName);
+    public InputStream download(String objectName) throws Exception {
+        OSSObject ossObject = ossClient.getObject(this.getBucketName(), objectName);
         return null == ossObject ? null : ossObject.getObjectContent();
     }
 
     @Override
-    public boolean delete(String bucketName, List<String> objectNameList) throws Exception {
+    public boolean delete(List<String> objectNameList) throws Exception {
         if (ObjectUtils.isEmpty(objectNameList)) {
             return false;
         }
-        DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(this.getBucketName(bucketName));
+        DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(this.getBucketName());
         deleteObjectsRequest.setKeys(objectNameList);
         return null != ossClient.deleteObjects(deleteObjectsRequest);
     }
 
     @Override
-    public boolean delete(String bucketName, String objectName) throws Exception {
-        return null != ossClient.deleteObject(this.getBucketName(bucketName), objectName);
+    public boolean delete(String objectName) throws Exception {
+        return null != ossClient.deleteObject(this.getBucketName(), objectName);
     }
 
     @Override
-    public String getUrl(String bucketName, String objectName, int duration, TimeUnit unit) throws Exception {
+    public String getUrl(String objectName, int duration, TimeUnit unit) throws Exception {
         LocalDateTime localDateTime = LocalDateTime.now().plusSeconds(unit.toSeconds(duration));
         Date expiration = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-        URL url = ossClient.generatePresignedUrl(this.getBucketName(bucketName), objectName, expiration, HttpMethod.GET);
+        URL url = ossClient.generatePresignedUrl(this.getBucketName(), objectName, expiration, HttpMethod.GET);
         return null == url ? null : url.toString();
     }
 }

@@ -11,6 +11,8 @@ import lombok.Getter;
 
 /**
  * 文件存储平台
+ * <p>
+ * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
  *
  * @author 青苗
  * @since 2022-03-29

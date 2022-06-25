@@ -6,43 +6,36 @@
 package com.aizuda.oss;
 
 import com.aizuda.common.toolkit.SpringUtils;
-import com.aizuda.common.toolkit.StringUtils;
 import com.aizuda.oss.autoconfigure.OssProperties;
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * aizuda 文件存储接口
+ * <p>
+ * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
  *
  * @author 青苗
  * @since 2022-06-09
  */
 @Slf4j
 public class OSS {
+
     /**
-     * 存储平台
+     * 根据平台选择文件存储实现实例
+     *
+     * @param platform 存储平台，对应 yml 配置 map key
+     * @return 文件存储实现实例 {@link IFileStorage}
      */
-    private String platform = OssProperties.DEFAULT_PLATFORM;
-
-    public static OSS builder() {
-        return new OSS();
-    }
-
-    public OSS platform(String platform) {
-        if (StringUtils.hasLength(platform)) {
-            this.platform = platform;
-        } else {
-            log.debug(" OSS platform is empty.");
-        }
-        return this;
+    public static IFileStorage fileStorage(String platform) {
+        return SpringUtils.getBean(platform, IFileStorage.class);
     }
 
     /**
      * 根据平台选择文件存储实现实例
      *
-     * @return 文件存储实现实例
+     * @return 文件存储实现实例 {@link IFileStorage}
      */
-    private IFileStorage fileStorage() {
-        return SpringUtils.getBean(platform, IFileStorage.class);
+    public static IFileStorage fileStorage() {
+        return SpringUtils.getBean(OssProperties.DEFAULT_PLATFORM, IFileStorage.class);
     }
-
 }

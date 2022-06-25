@@ -7,8 +7,8 @@ package com.aizuda.oss.platform;
 
 import com.aizuda.common.toolkit.ObjectUtils;
 import com.aizuda.common.toolkit.SpringUtils;
+import com.aizuda.common.toolkit.StringUtils;
 import com.aizuda.oss.IFileStorage;
-import com.aizuda.oss.autoconfigure.OssProperties;
 import com.aizuda.oss.autoconfigure.OssProperty;
 import com.aizuda.oss.model.OssResult;
 import io.minio.*;
@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
 
 /**
  * Minio 存储
+ * <p>
+ * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
  *
  * @author 青苗
  * @since 2022-06-09
@@ -33,33 +35,42 @@ public class Minio implements IFileStorage {
     private MinioClient minioClient;
 
     /**
-     * 默认桶
+     * 配置属性
+     */
+    private OssProperty ossProperty;
+
+    /**
+     * 存储桶名称
      */
     private String bucketName;
 
-    public static Minio getInstance() {
-        return SpringUtils.getBean(Minio.class);
-    }
-
     public Minio(OssProperty ossProperty) {
-        this.bucketName = ossProperty.getBucketName();
+        this.ossProperty = ossProperty;
         this.minioClient = MinioClient.builder().endpoint(ossProperty.getEndpoint())
                 .credentials(ossProperty.getAccessKey(), ossProperty.getSecretKey())
                 .build();
     }
 
-    private String getBucketName(String bucketName) {
-        return null == bucketName ? this.bucketName : bucketName;
+    private String getBucketName() {
+        return null == bucketName ? ossProperty.getBucketName() : bucketName;
     }
 
     @Override
-    public OssResult upload(String bucketName, InputStream is, String filename) throws Exception {
+    public IFileStorage bucket(String bucketName) {
+        if (StringUtils.hasLength(bucketName)) {
+            this.bucketName = bucketName;
+        }
+        return this;
+    }
+
+    @Override
+    public OssResult upload(InputStream is, String filename) throws Exception {
         if (null == is || null == filename) {
             return null;
         }
-        bucketName = this.getBucketName(bucketName);
-        String suffix = filename.substring(filename.lastIndexOf(".") + 1);
-        String objectName = getPath() + suffix;
+        bucketName = this.getBucketName();
+        String suffix = this.getFileSuffix(filename);
+        String objectName = this.getObjectName(suffix);
         ObjectWriteResponse response = minioClient.putObject(PutObjectArgs.builder()
                 .bucket(bucketName).object(objectName)
                 .stream(is, is.available(), -1).build());
@@ -72,35 +83,35 @@ public class Minio implements IFileStorage {
     }
 
     @Override
-    public InputStream download(String bucketName, String objectName) throws Exception {
+    public InputStream download(String objectName) throws Exception {
         return minioClient.getObject(GetObjectArgs.builder()
-                .bucket(this.getBucketName(bucketName))
+                .bucket(this.getBucketName())
                 .object(objectName).build());
     }
 
     @Override
-    public boolean delete(String bucketName, List<String> objectNameList) throws Exception {
+    public boolean delete(List<String> objectNameList) throws Exception {
         if (ObjectUtils.isEmpty(objectNameList)) {
             return false;
         }
-        minioClient.removeObjects(RemoveObjectsArgs.builder().bucket(this.getBucketName(bucketName))
+        minioClient.removeObjects(RemoveObjectsArgs.builder().bucket(this.getBucketName())
                 .objects(objectNameList.stream().map(k -> new DeleteObject(k)).collect(Collectors.toList()))
                 .build());
         return true;
     }
 
     @Override
-    public boolean delete(String bucketName, String objectName) throws Exception {
-        minioClient.removeObject(RemoveObjectArgs.builder().bucket(this.getBucketName(bucketName))
+    public boolean delete(String objectName) throws Exception {
+        minioClient.removeObject(RemoveObjectArgs.builder().bucket(this.getBucketName())
                 .object(objectName).build());
         return true;
     }
 
     @Override
-    public String getUrl(String bucketName, String objectName, int duration, TimeUnit unit) throws Exception {
+    public String getUrl(String objectName, int duration, TimeUnit unit) throws Exception {
         return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
                 .method(Method.GET).expiry(duration, unit)
-                .bucket(this.getBucketName(bucketName))
+                .bucket(this.getBucketName())
                 .object(objectName).build());
     }
 }

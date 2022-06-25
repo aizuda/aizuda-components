@@ -23,6 +23,11 @@
         </dependency>
         <dependency>
             <groupId>com.aizuda</groupId>
+            <artifactId>aizuda-oss</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.aizuda</groupId>
             <artifactId>aizuda-robot</artifactId>
             <version>1.0.0</version>
         </dependency>
