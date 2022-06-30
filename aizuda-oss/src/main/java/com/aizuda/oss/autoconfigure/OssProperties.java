@@ -9,9 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import javax.sql.DataSource;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -29,7 +27,12 @@ import java.util.Map;
 public class OssProperties {
 
     public static final String OSS_PREFIX = "aizuda";
-    public static String DEFAULT_PLATFORM;
+
+    protected static String DEFAULT_PLATFORM;
+
+    public static String getDefaultPlatform() {
+        return DEFAULT_PLATFORM;
+    }
 
     /**
      * OSS 配置属性

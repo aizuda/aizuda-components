@@ -36,6 +36,6 @@ public class OSS {
      * @return 文件存储实现实例 {@link IFileStorage}
      */
     public static IFileStorage fileStorage() {
-        return SpringUtils.getBean(OssProperties.DEFAULT_PLATFORM, IFileStorage.class);
+        return SpringUtils.getBean(OssProperties.getDefaultPlatform(), IFileStorage.class);
     }
 }

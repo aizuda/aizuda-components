@@ -12,13 +12,15 @@ import com.aizuda.common.toolkit.ZipUtils;
 import com.aizuda.oss.model.OssResult;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.zip.ZipEntry;
 
 /**
@@ -38,6 +40,25 @@ public interface IFileStorage {
      * @return
      */
     IFileStorage bucket(String bucketName);
+
+    /**
+     * 允许媒体类型判断，该方法使用配置 allowMediaType 媒体类型
+     *
+     * @param is 文件夹流 {@link InputStream}
+     * @return
+     */
+    default IFileStorage allowMediaType(InputStream is) throws Exception {
+        return this.allowMediaType(is, null);
+    }
+
+    /**
+     * 允许媒体类型判断
+     *
+     * @param is       文件夹流 {@link InputStream}
+     * @param function 文件类型合法判断函数
+     * @return
+     */
+    IFileStorage allowMediaType(InputStream is, Function<String, Boolean> function) throws Exception;
 
     /**
      * 上传
@@ -92,24 +113,29 @@ public interface IFileStorage {
     /**
      * 下载
      *
-     * @param os         {@link OutputStream}
+     * @param response   {@link HttpServletResponse}
      * @param objectName 文件对象名
      */
-    default void download(OutputStream os, String objectName) throws Exception {
-        IoUtils.write(this.download(objectName), os);
+    default void download(HttpServletResponse response, String objectName) throws Exception {
+        InputStream is = this.download(objectName);
+        if (null != is) {
+            response.setHeader("Content-Disposition", "attachment;filename=" +
+                    URLEncoder.encode(objectName, "UTF-8"));
+            IoUtils.write(is, response.getOutputStream());
+        }
     }
 
     /**
      * 下载、多个打包 zip 下载
      *
-     * @param os             {@link OutputStream}
+     * @param response       {@link HttpServletResponse}
      * @param objectNameList 文件对象名列表
      */
-    default void download(OutputStream os, List<String> objectNameList) throws Exception {
+    default void download(HttpServletResponse response, List<String> objectNameList) throws Exception {
         if (ObjectUtils.isNotEmpty(objectNameList)) {
             if (objectNameList.size() == 1) {
                 // 单个文件下载
-                IoUtils.write(this.download(objectNameList.get(0)), os);
+                this.download(response, objectNameList.get(0));
             } else {
                 List<ZipUtils.FileEntry> fileEntries = new ArrayList<>();
                 for (String objectName : objectNameList) {
@@ -121,7 +147,7 @@ public interface IFileStorage {
                             .zipEntry(new ZipEntry(objectName)).build());
                 }
                 // 批量下载
-                ZipUtils.zipFile(os, fileEntries);
+                ZipUtils.zipFile(response.getOutputStream(), fileEntries);
             }
         }
     }

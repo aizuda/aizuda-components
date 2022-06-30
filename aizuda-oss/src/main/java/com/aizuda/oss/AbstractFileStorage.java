@@ -7,6 +7,11 @@ package com.aizuda.oss;
 
 import com.aizuda.common.toolkit.StringUtils;
 import com.aizuda.oss.autoconfigure.OssProperty;
+import com.aizuda.oss.exception.MediaTypeException;
+
+import java.io.InputStream;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * aizuda 抽象文件存储类
@@ -45,6 +50,25 @@ public abstract class AbstractFileStorage implements IFileStorage {
     public IFileStorage bucket(String bucketName) {
         if (StringUtils.hasLength(bucketName)) {
             this.bucketName = bucketName;
+        }
+        return this;
+    }
+
+    @Override
+    public IFileStorage allowMediaType(InputStream is, Function<String, Boolean> function) throws Exception {
+        boolean legal = false;
+        String mediaType = MediaType.detect(is);
+        if (null == function) {
+            List<String> allowMediaType = this.ossProperty.getAllowMediaType();
+            if (null != allowMediaType) {
+                legal = allowMediaType.stream().anyMatch(t -> mediaType.startsWith(t));
+            }
+        } else {
+            legal = function.apply(mediaType);
+        }
+        // 不合法媒体类型抛出异常
+        if (!legal) {
+            throw new MediaTypeException("Illegal file type");
         }
         return this;
     }

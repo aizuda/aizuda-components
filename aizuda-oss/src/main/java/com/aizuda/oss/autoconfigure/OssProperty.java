@@ -9,6 +9,10 @@ import com.aizuda.oss.model.StoragePlatform;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.List;
+
 /**
  * oss 存储配置属性
  * <p>
@@ -51,4 +55,30 @@ public class OssProperty {
      */
     private int connectionTimeout = 60000;
 
+    /**
+     * 文件服务器域名
+     */
+    private String localFileUrl;
+
+    /**
+     * 文件存储路径
+     */
+    private String localFilePath;
+
+    /**
+     * 允许上传媒体类型（不设置默认所有文件）
+     * <p>
+     * 例如：PNG图片 image/png
+     * <br/>
+     * 文件类型对照表：https://tool.oschina.net/commons
+     * </p>
+     */
+    private List<String> allowMediaType;
+
+    public String getLocalFilePath(String objectName) throws FileNotFoundException {
+        if (null == this.localFilePath) {
+            throw new FileNotFoundException("localFilePath is Empty");
+        }
+        return this.localFilePath + File.separator + objectName;
+    }
 }
