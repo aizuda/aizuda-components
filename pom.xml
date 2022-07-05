@@ -14,9 +14,11 @@
     <modules>
         <module>aizuda-bom</module>
         <module>aizuda-limiter</module>
-        <module>aizuda-security</module>
-        <module>aizuda-robot</module>
         <module>aizuda-monitor</module>
+        <module>aizuda-oss</module>
+        <module>aizuda-poi</module>
+        <module>aizuda-robot</module>
+        <module>aizuda-security</module>
     </modules>
 
     <parent>
