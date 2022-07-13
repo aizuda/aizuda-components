@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.aizuda</groupId>
         <artifactId>aizuda-components</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
     </parent>
     <artifactId>aizuda-bom</artifactId>
     <packaging>pom</packaging>
@@ -24,7 +24,7 @@
         <dependency>
             <groupId>com.aizuda</groupId>
             <artifactId>aizuda-oss</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.2</version>
         </dependency>
         <dependency>
             <groupId>com.aizuda</groupId>
@@ -39,7 +39,7 @@
         <dependency>
             <groupId>com.aizuda</groupId>
             <artifactId>aizuda-toolkit</artifactId>
-            <version>0.0.1</version>
+            <version>0.0.3</version>
         </dependency>
         <dependency>
             <groupId>com.deepoove</groupId>

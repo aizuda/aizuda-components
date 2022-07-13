@@ -10,7 +10,7 @@ buildscript {
 
 description "爱组搭 BOM"
 
-version "1.0.1"
+version "1.0.2"
 
 apply plugin: "io.spring.dependency-management"
 
@@ -19,10 +19,10 @@ dependencyManagement {
         // 爱组搭 http://aizuda.com 低代码组件化开发平台
         dependency "com.aizuda:aizuda-limiter:1.0.0"
         dependency "com.aizuda:aizuda-monitor:1.0.0"
-        dependency "com.aizuda:aizuda-oss:1.0.1"
+        dependency "com.aizuda:aizuda-oss:1.0.2"
         dependency "com.aizuda:aizuda-robot:1.0.0"
         dependency "com.aizuda:aizuda-security:1.0.1"
-        dependency "com.aizuda:aizuda-toolkit:0.0.2"
+        dependency "com.aizuda:aizuda-toolkit:0.0.3"
         // http://deepoove.com/poi-tl/
         dependency "com.deepoove:poi-tl:1.12.0"
 

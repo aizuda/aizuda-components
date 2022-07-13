@@ -6,6 +6,7 @@
 package com.aizuda.oss;
 
 import com.aizuda.common.toolkit.StringUtils;
+import com.aizuda.common.toolkit.ThreadLocalUtils;
 import com.aizuda.oss.autoconfigure.OssProperty;
 import com.aizuda.oss.exception.MediaTypeException;
 
@@ -22,7 +23,6 @@ import java.util.function.Function;
  * @since 2022-03-22
  */
 public abstract class AbstractFileStorage implements IFileStorage {
-
     /**
      * 配置属性
      */
@@ -31,25 +31,25 @@ public abstract class AbstractFileStorage implements IFileStorage {
     /**
      * 存储桶名称
      */
-    protected String bucketName;
-
-    /**
-     * 存储桶名称
-     */
     protected String getBucketName() {
-        String _bucketName = ossProperty.getBucketName();
-        if (null != this.bucketName) {
-            _bucketName = this.bucketName;
-            // 清空设置桶
-            this.bucketName = null;
+        String _bucketName = ThreadLocalUtils.get(this.tempBucketName());
+        if (null == _bucketName) {
+            _bucketName = ossProperty.getBucketName();
         }
         return _bucketName;
+    }
+
+    /**
+     * 临时桶名称
+     */
+    protected String tempBucketName() {
+        return this.getClass().getName() + "OssBucket";
     }
 
     @Override
     public IFileStorage bucket(String bucketName) {
         if (StringUtils.hasLength(bucketName)) {
-            this.bucketName = bucketName;
+            ThreadLocalUtils.put(this.tempBucketName(), bucketName);
         }
         return this;
     }
