@@ -32,9 +32,13 @@ public abstract class AbstractFileStorage implements IFileStorage {
      * 存储桶名称
      */
     protected String getBucketName() {
-        String _bucketName = ThreadLocalUtils.get(this.tempBucketName());
+        String tempBucketName = this.tempBucketName();
+        String _bucketName = ThreadLocalUtils.get(tempBucketName);
         if (null == _bucketName) {
             _bucketName = ossProperty.getBucketName();
+        } else {
+            // 释放临时桶名称
+            ThreadLocalUtils.remove(tempBucketName);
         }
         return _bucketName;
     }
