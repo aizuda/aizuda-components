@@ -42,6 +42,14 @@ public interface IFileStorage {
     IFileStorage bucket(String bucketName);
 
     /**
+     * 指定存储对象名称
+     *
+     * @param objectName 存储对象名称
+     * @return
+     */
+    IFileStorage objectName(String objectName);
+
+    /**
      * 允许媒体类型判断，该方法使用配置 allowMediaType 媒体类型
      *
      * @param is 文件夹流 {@link InputStream}
@@ -79,19 +87,6 @@ public interface IFileStorage {
      * @return {@link OssResult}
      */
     OssResult upload(InputStream is, String filename) throws Exception;
-
-    /**
-     * 生成日期文件路径，按年月目录存储
-     *
-     * @param suffix 文件后缀
-     * @return 文件名，包含存储路径
-     */
-    default String getObjectName(String suffix) {
-        StringBuffer ojn = new StringBuffer();
-        ojn.append(DateUtils.nowTimeFormat("yyyyMM")).append("/");
-        ojn.append(UUID.randomUUID()).append(".").append(suffix);
-        return ojn.toString();
-    }
 
     /**
      * 文件后缀，从文件名中获取后缀

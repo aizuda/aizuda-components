@@ -25,6 +25,7 @@ dependencyManagement {
         dependency "com.aizuda:aizuda-toolkit:0.0.3"
         // http://deepoove.com/poi-tl/
         dependency "com.deepoove:poi-tl:1.12.0"
+        dependency "org.apache.tika:tika-core:2.4.1"
 
     }
 }

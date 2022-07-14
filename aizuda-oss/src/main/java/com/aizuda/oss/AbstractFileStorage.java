@@ -5,6 +5,7 @@
  */
 package com.aizuda.oss;
 
+import com.aizuda.common.toolkit.DateUtils;
 import com.aizuda.common.toolkit.StringUtils;
 import com.aizuda.common.toolkit.ThreadLocalUtils;
 import com.aizuda.oss.autoconfigure.OssProperty;
@@ -12,6 +13,7 @@ import com.aizuda.oss.exception.MediaTypeException;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 
 /**
@@ -54,6 +56,40 @@ public abstract class AbstractFileStorage implements IFileStorage {
     public IFileStorage bucket(String bucketName) {
         if (StringUtils.hasLength(bucketName)) {
             ThreadLocalUtils.put(this.tempBucketName(), bucketName);
+        }
+        return this;
+    }
+
+    /**
+     * 存储对象名称，默认生成日期文件路径，按年月目录存储
+     *
+     * @param suffix 文件后缀
+     * @return 文件名，包含存储路径
+     */
+    public String getObjectName(String suffix) {
+        String tempObjectName = this.tempObjectName();
+        if (null != tempObjectName) {
+            // 释放存储对象名称
+            ThreadLocalUtils.remove(tempObjectName);
+            return tempObjectName;
+        }
+        StringBuffer ojn = new StringBuffer();
+        ojn.append(DateUtils.nowTimeFormat("yyyyMM")).append("/");
+        ojn.append(UUID.randomUUID()).append(".").append(suffix);
+        return ojn.toString();
+    }
+
+    /**
+     * 临时存储对象名称
+     */
+    protected String tempObjectName() {
+        return this.getClass().getName() + "ObjectName";
+    }
+
+    @Override
+    public IFileStorage objectName(String objectName) {
+        if (StringUtils.hasLength(objectName)) {
+            ThreadLocalUtils.put(this.tempObjectName(), objectName);
         }
         return this;
     }
