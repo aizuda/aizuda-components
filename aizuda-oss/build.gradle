@@ -1,6 +1,6 @@
 description "爱组搭存储模块"
 
-version "1.0.3"
+version "1.0.4"
 
 dependencies {
     api("com.aizuda:aizuda-toolkit")
