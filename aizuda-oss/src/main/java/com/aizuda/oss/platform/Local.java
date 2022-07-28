@@ -33,10 +33,7 @@ public class Local extends AbstractFileStorage {
     @Override
     public OssResult upload(InputStream is, String filename, String objectName) throws Exception {
         String suffix = this.getFileSuffix(filename);
-        String _objectName = objectName;
-        if (null == _objectName) {
-            _objectName = this.getObjectName(suffix);
-        }
+        String _objectName = this.getObjectName(suffix, objectName);
         File file = new File(this.getLocalFilePath(_objectName));
         if (!file.exists()) {
             // 文件不存在则创建文件，先创建目录
