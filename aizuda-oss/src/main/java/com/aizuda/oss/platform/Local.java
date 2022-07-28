@@ -8,6 +8,7 @@ package com.aizuda.oss.platform;
 import com.aizuda.common.toolkit.IoUtils;
 import com.aizuda.common.toolkit.ObjectUtils;
 import com.aizuda.oss.AbstractFileStorage;
+import com.aizuda.oss.MultipartUploadResponse;
 import com.aizuda.oss.autoconfigure.OssProperty;
 import com.aizuda.oss.model.OssResult;
 
@@ -90,5 +91,10 @@ public class Local extends AbstractFileStorage {
     @Override
     public String getUrl(String objectName, int duration, TimeUnit unit) throws Exception {
         return objectName;
+    }
+
+    @Override
+    public MultipartUploadResponse getUploadSignedUrl(String filename) {
+        return null;
     }
 }

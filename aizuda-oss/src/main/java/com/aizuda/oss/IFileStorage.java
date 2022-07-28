@@ -5,11 +5,12 @@
  */
 package com.aizuda.oss;
 
-import com.aizuda.common.toolkit.DateUtils;
 import com.aizuda.common.toolkit.IoUtils;
 import com.aizuda.common.toolkit.ObjectUtils;
 import com.aizuda.common.toolkit.ZipUtils;
 import com.aizuda.oss.model.OssResult;
+import org.springframework.http.MediaType;
+import org.springframework.http.MediaTypeFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -18,7 +19,6 @@ import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.zip.ZipEntry;
@@ -182,4 +182,22 @@ public interface IFileStorage {
     default String getUrl(String objectName) throws Exception {
         return this.getUrl(objectName, 3, TimeUnit.HOURS);
     }
+
+    /**
+     * 根据文件名获取 ContentType
+     *
+     * @param filename 文件名
+     * @return
+     */
+    default String getContentType(String filename) {
+        return MediaTypeFactory.getMediaType(filename).orElse(MediaType.APPLICATION_OCTET_STREAM).toString();
+    }
+
+    /**
+     * 获取上传签名地址
+     *
+     * @param filename 文件名
+     * @return
+     */
+    MultipartUploadResponse getUploadSignedUrl(String filename);
 }

@@ -7,6 +7,7 @@ package com.aizuda.oss.platform;
 
 import com.aizuda.common.toolkit.ObjectUtils;
 import com.aizuda.oss.AbstractFileStorage;
+import com.aizuda.oss.MultipartUploadResponse;
 import com.aizuda.oss.autoconfigure.OssProperty;
 import com.aizuda.oss.model.OssResult;
 import io.minio.*;
@@ -15,7 +16,9 @@ import io.minio.messages.DeleteObject;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -92,6 +95,34 @@ public class Minio extends AbstractFileStorage {
         return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
                 .method(Method.GET).expiry(duration, unit)
                 .bucket(bucketName)
+                .extraQueryParams(this.queryParams(objectName))
                 .object(objectName).build());
+    }
+
+    protected Map<String, String> queryParams(String filename) {
+        Map<String, String> reqParams = new HashMap<>();
+        reqParams.put("response-content-type", this.getContentType(filename));
+        return reqParams;
+    }
+
+    @Override
+    public MultipartUploadResponse getUploadSignedUrl(String filename) {
+        try {
+            String bucketName = this.getBucketName();
+            String suffix = this.getFileSuffix(filename);
+            String objectName = this.getObjectName(suffix);
+            return MultipartUploadResponse.builder().objectName(objectName).uploadUrl(
+                    minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
+                            .method(Method.PUT)
+                            .bucket(bucketName)
+                            .object(objectName)
+                            .expiry(12, TimeUnit.HOURS)
+                            .extraQueryParams(this.queryParams(filename))
+                            .build())
+            ).build();
+        } catch (Exception e) {
+            log.error("minio getPresignedObjectUrl error.", e);
+            return null;
+        }
     }
 }

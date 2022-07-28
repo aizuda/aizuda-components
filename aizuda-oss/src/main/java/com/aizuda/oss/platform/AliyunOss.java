@@ -7,6 +7,7 @@ package com.aizuda.oss.platform;
 
 import com.aizuda.common.toolkit.ObjectUtils;
 import com.aizuda.oss.AbstractFileStorage;
+import com.aizuda.oss.MultipartUploadResponse;
 import com.aizuda.oss.autoconfigure.OssProperty;
 import com.aizuda.oss.model.OssResult;
 import com.aliyun.oss.ClientConfiguration;
@@ -86,9 +87,24 @@ public class AliyunOss extends AbstractFileStorage {
     @Override
     public String getUrl(String objectName, int duration, TimeUnit unit) throws Exception {
         String bucketName = this.getBucketName();
-        LocalDateTime localDateTime = LocalDateTime.now().plusSeconds(unit.toSeconds(duration));
-        Date expiration = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+        Date expiration = this.getExpiration(unit.toSeconds(duration));
         URL url = ossClient.generatePresignedUrl(bucketName, objectName, expiration, HttpMethod.GET);
         return null == url ? null : url.toString();
+    }
+
+    protected Date getExpiration(long seconds) {
+        LocalDateTime localDateTime = LocalDateTime.now().plusSeconds(seconds);
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    @Override
+    public MultipartUploadResponse getUploadSignedUrl(String filename) {
+        String bucketName = this.getBucketName();
+        String suffix = this.getFileSuffix(filename);
+        String objectName = this.getObjectName(suffix);
+        Date expiration = this.getExpiration(TimeUnit.HOURS.toSeconds(12));
+        URL url = ossClient.generatePresignedUrl(bucketName, objectName, expiration, HttpMethod.PUT);
+        return null == url ? null : MultipartUploadResponse.builder().objectName(objectName)
+                .uploadUrl(url.toString()).build();
     }
 }
