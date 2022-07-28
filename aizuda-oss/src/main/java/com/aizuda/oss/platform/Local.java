@@ -31,10 +31,13 @@ public class Local extends AbstractFileStorage {
     }
 
     @Override
-    public OssResult upload(InputStream is, String filename) throws Exception {
+    public OssResult upload(InputStream is, String filename, String objectName) throws Exception {
         String suffix = this.getFileSuffix(filename);
-        String objectName = this.getObjectName(suffix);
-        File file = new File(this.getLocalFilePath(objectName));
+        String _objectName = objectName;
+        if (null == _objectName) {
+            _objectName = this.getObjectName(suffix);
+        }
+        File file = new File(this.getLocalFilePath(_objectName));
         if (!file.exists()) {
             // 文件不存在则创建文件，先创建目录
             File dir = new File(file.getParent());
@@ -45,7 +48,7 @@ public class Local extends AbstractFileStorage {
             IoUtils.write(is, fos);
         }
         return OssResult.builder().bucketName(this.ossProperty.getLocalFileUrl())
-                .objectName(objectName)
+                .objectName(_objectName)
                 .filename(filename)
                 .suffix(suffix)
                 .build();

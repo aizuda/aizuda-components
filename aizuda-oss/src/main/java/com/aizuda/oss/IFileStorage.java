@@ -42,14 +42,6 @@ public interface IFileStorage {
     IFileStorage bucket(String bucketName);
 
     /**
-     * 指定存储对象名称
-     *
-     * @param objectName 存储对象名称
-     * @return
-     */
-    IFileStorage objectName(String objectName);
-
-    /**
      * 允许媒体类型判断，该方法使用配置 allowMediaType 媒体类型
      *
      * @param is 文件夹流 {@link InputStream}
@@ -78,15 +70,27 @@ public interface IFileStorage {
         return this.upload(file.getInputStream(), file.getOriginalFilename());
     }
 
+    /**
+     * 上传
+     *
+     * @param is       文件流 {@link InputStream}
+     * @param filename 文件名
+     * @return {@link OssResult}
+     */
+    default OssResult upload(InputStream is, String filename) throws Exception {
+        return upload(is, filename, null);
+    }
+
 
     /**
      * 上传
      *
-     * @param filename 文件名
-     * @param is       文件流 {@link InputStream}
+     * @param is         文件流 {@link InputStream}
+     * @param filename   文件名
+     * @param objectName 文件对象名
      * @return {@link OssResult}
      */
-    OssResult upload(InputStream is, String filename) throws Exception;
+    OssResult upload(InputStream is, String filename, String objectName) throws Exception;
 
     /**
      * 文件后缀，从文件名中获取后缀

@@ -63,35 +63,18 @@ public abstract class AbstractFileStorage implements IFileStorage {
     /**
      * 存储对象名称，默认生成日期文件路径，按年月目录存储
      *
-     * @param suffix 文件后缀
+     * @param suffix     文件后缀
+     * @param objectName 文件对象名
      * @return 文件名，包含存储路径
      */
-    public String getObjectName(String suffix) {
-        String tempObjectName = this.tempObjectName();
-        if (null != tempObjectName) {
-            // 释放存储对象名称
-            ThreadLocalUtils.remove(tempObjectName);
-            return tempObjectName;
+    protected String getObjectName(String suffix, String objectName) {
+        if (null != objectName) {
+            return objectName;
         }
         StringBuffer ojn = new StringBuffer();
         ojn.append(DateUtils.nowTimeFormat("yyyyMM")).append("/");
         ojn.append(UUID.randomUUID()).append(".").append(suffix);
         return ojn.toString();
-    }
-
-    /**
-     * 临时存储对象名称
-     */
-    protected String tempObjectName() {
-        return this.getClass().getName() + "ObjectName";
-    }
-
-    @Override
-    public IFileStorage objectName(String objectName) {
-        if (StringUtils.hasLength(objectName)) {
-            ThreadLocalUtils.put(this.tempObjectName(), objectName);
-        }
-        return this;
     }
 
     @Override

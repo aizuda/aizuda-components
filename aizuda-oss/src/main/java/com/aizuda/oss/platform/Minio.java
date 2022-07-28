@@ -43,18 +43,18 @@ public class Minio extends AbstractFileStorage {
     }
 
     @Override
-    public OssResult upload(InputStream is, String filename) throws Exception {
+    public OssResult upload(InputStream is, String filename, String objectName) throws Exception {
         if (null == is || null == filename) {
             return null;
         }
         String bucketName = this.getBucketName();
         String suffix = this.getFileSuffix(filename);
-        String objectName = this.getObjectName(suffix);
+        String _objectName = this.getObjectName(suffix, objectName);
         ObjectWriteResponse response = minioClient.putObject(PutObjectArgs.builder()
-                .bucket(bucketName).object(objectName)
+                .bucket(bucketName).object(_objectName)
                 .stream(is, is.available(), -1).build());
         return null == response ? null : OssResult.builder().bucketName(bucketName)
-                .objectName(objectName)
+                .objectName(_objectName)
                 .versionId(response.versionId())
                 .filename(filename)
                 .suffix(suffix)
@@ -110,7 +110,7 @@ public class Minio extends AbstractFileStorage {
         try {
             String bucketName = this.getBucketName();
             String suffix = this.getFileSuffix(filename);
-            String objectName = this.getObjectName(suffix);
+            String objectName = this.getObjectName(suffix, null);
             return MultipartUploadResponse.builder().objectName(objectName).uploadUrl(
                     minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
                             .method(Method.PUT)

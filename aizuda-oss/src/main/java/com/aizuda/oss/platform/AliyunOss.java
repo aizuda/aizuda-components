@@ -47,13 +47,13 @@ public class AliyunOss extends AbstractFileStorage {
     }
 
     @Override
-    public OssResult upload(InputStream is, String filename) throws Exception {
+    public OssResult upload(InputStream is, String filename, String objectName) throws Exception {
         String bucketName = this.getBucketName();
         String suffix = this.getFileSuffix(filename);
-        String objectName = this.getObjectName(suffix);
-        PutObjectResult por = ossClient.putObject(bucketName, objectName, is);
+        String _objectName = this.getObjectName(suffix, objectName);
+        PutObjectResult por = ossClient.putObject(bucketName, _objectName, is);
         return null == por ? null : OssResult.builder().bucketName(bucketName)
-                .objectName(objectName)
+                .objectName(_objectName)
                 .versionId(por.getVersionId())
                 .filename(filename)
                 .suffix(suffix)
@@ -101,7 +101,7 @@ public class AliyunOss extends AbstractFileStorage {
     public MultipartUploadResponse getUploadSignedUrl(String filename) {
         String bucketName = this.getBucketName();
         String suffix = this.getFileSuffix(filename);
-        String objectName = this.getObjectName(suffix);
+        String objectName = this.getObjectName(suffix, null);
         Date expiration = this.getExpiration(TimeUnit.HOURS.toSeconds(12));
         URL url = ossClient.generatePresignedUrl(bucketName, objectName, expiration, HttpMethod.PUT);
         return null == url ? null : MultipartUploadResponse.builder().objectName(objectName)
