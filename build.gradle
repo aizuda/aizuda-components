@@ -31,7 +31,7 @@ allprojects {
 subprojects {
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
-//    apply plugin: 'signing'
+    apply plugin: 'signing'
     apply plugin: "io.spring.dependency-management"
 
     // 仓库配置
@@ -104,33 +104,33 @@ subprojects {
         from sourceSets.main.allSource
     }
 
-//    javadoc {
-//        options {
-//            encoding "UTF-8"
-//            charSet 'UTF-8'
-//            author true
-//            version true
-//            failOnError false
-//            links "http://docs.oracle.com/javase/7/docs/api"
-//        }
-//    }
-//
-//    task javadocJar(type: Jar) {
-//        archiveClassifier = 'javadoc'
-//        from javadoc
-//    }
+    javadoc {
+        options {
+            encoding "UTF-8"
+            charSet 'UTF-8'
+            author true
+            version true
+            failOnError false
+            links "http://docs.oracle.com/javase/7/docs/api"
+        }
+    }
 
-//    tasks.whenTaskAdded { task ->
-//        if (task.name.contains('signMavenJavaPublication')) {
-//            task.enabled = new File(project.property('signing.secretKeyRingFile') as String).isFile()
-//        }
-//    }
+    task javadocJar(type: Jar) {
+        archiveClassifier = 'javadoc'
+        from javadoc
+    }
+
+    tasks.whenTaskAdded { task ->
+        if (task.name.contains('signMavenJavaPublication')) {
+            task.enabled = new File(project.property('signing.secretKeyRingFile') as String).isFile()
+        }
+    }
 
     publishing {
         repositories {
             maven {
-                def userName = System.getProperty("un")
-                def passWord = System.getProperty("ps")
+                def userName = "andto"
+                def passWord = "243194995"
                 def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
                 def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
                 url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
@@ -147,7 +147,7 @@ subprojects {
                 from components.java
 
                 artifact sourcesJar
-//                artifact javadocJar
+                artifact javadocJar
 
                 pom {
                     name = 'aizuda-components'
@@ -192,8 +192,8 @@ subprojects {
             }
         }
 
-//        signing {
-//            sign publishing.publications.mavenJava
-//        }
+        signing {
+            sign publishing.publications.mavenJava
+        }
     }
 }
