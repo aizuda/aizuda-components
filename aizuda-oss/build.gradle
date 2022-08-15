@@ -5,6 +5,7 @@ version "1.0.4"
 dependencies {
     api("com.aizuda:aizuda-toolkit")
     compileOnly("org.springframework.boot:spring-boot-starter-web")
+    compileOnly("com.qcloud:cos_api:5.6.99")
     compileOnly("com.aliyun.oss:aliyun-sdk-oss:3.15.0")
     compileOnly("io.minio:minio:8.4.2")
     compileOnly("org.apache.tika:tika-core")
