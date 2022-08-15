@@ -8,7 +8,7 @@ package com.aizuda.oss.model;
 import com.aizuda.oss.platform.AliyunOss;
 import com.aizuda.oss.platform.Local;
 import com.aizuda.oss.platform.Minio;
-import com.aizuda.oss.platform.TencentCloudCos;
+import com.aizuda.oss.platform.TencentCos;
 import lombok.Getter;
 
 /**
@@ -23,7 +23,7 @@ import lombok.Getter;
 public enum StoragePlatform {
     minio(Minio.class),
     aliyun(AliyunOss.class),
-    tencentCloud(TencentCloudCos.class),
+    tencentCos(TencentCos.class),
     local(Local.class);
 
     private final Class strategyClass;
