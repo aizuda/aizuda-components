@@ -14,6 +14,7 @@ import org.springframework.http.MediaTypeFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URLEncoder;
@@ -44,21 +45,21 @@ public interface IFileStorage {
     /**
      * 允许媒体类型判断，该方法使用配置 allowMediaType 媒体类型
      *
-     * @param is 文件夹流 {@link InputStream}
+     * @param bis 文件夹流 {@link BufferedInputStream}
      * @return
      */
-    default IFileStorage allowMediaType(InputStream is) throws Exception {
-        return this.allowMediaType(is, null);
+    default IFileStorage allowMediaType(BufferedInputStream bis) throws Exception {
+        return this.allowMediaType(bis, null);
     }
 
     /**
      * 允许媒体类型判断
      *
-     * @param is       文件夹流 {@link InputStream}
+     * @param bis       文件夹流 {@link BufferedInputStream}
      * @param function 文件类型合法判断函数
      * @return
      */
-    IFileStorage allowMediaType(InputStream is, Function<String, Boolean> function) throws Exception;
+    IFileStorage allowMediaType(BufferedInputStream bis, Function<String, Boolean> function) throws Exception;
 
     /**
      * 上传

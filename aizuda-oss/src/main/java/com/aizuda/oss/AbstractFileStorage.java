@@ -11,7 +11,7 @@ import com.aizuda.common.toolkit.ThreadLocalUtils;
 import com.aizuda.oss.autoconfigure.OssProperty;
 import com.aizuda.oss.exception.MediaTypeException;
 
-import java.io.InputStream;
+import java.io.BufferedInputStream;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
@@ -78,9 +78,10 @@ public abstract class AbstractFileStorage implements IFileStorage {
     }
 
     @Override
-    public IFileStorage allowMediaType(InputStream is, Function<String, Boolean> function) throws Exception {
+    public IFileStorage allowMediaType(BufferedInputStream bis, Function<String, Boolean> function) throws Exception {
         boolean legal = false;
-        String mediaType = MediaType.detect(is);
+        bis.mark(bis.available() + 1);
+        String mediaType = MediaType.detect(bis);
         if (null == function) {
             List<String> allowMediaType = this.ossProperty.getAllowMediaType();
             if (null != allowMediaType) {
@@ -93,6 +94,7 @@ public abstract class AbstractFileStorage implements IFileStorage {
         if (!legal) {
             throw new MediaTypeException("Illegal file type");
         }
+        bis.reset();
         return this;
     }
 }
