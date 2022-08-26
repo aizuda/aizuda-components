@@ -1,3 +1,8 @@
+/*
+ * 爱组搭 http://aizuda.com 低代码组件化开发平台
+ * ------------------------------------------
+ * 受知识产权保护，请勿删除版权申明
+ */
 package com.aizuda.oss.platform;
 
 import com.aizuda.oss.AbstractFileStorage;
@@ -11,13 +16,7 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.DeleteObjectsRequest;
-import com.amazonaws.services.s3.model.DeleteObjectsResult;
-import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectResult;
-import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.*;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -28,19 +27,27 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * amazon aws s3 存储
+ * <p>
+ * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
+ *
+ * @author 一百多斤的雪松
+ * @since 2022-08-26
+ */
 public class AWSS3 extends AbstractFileStorage {
 
-    private AmazonS3 s3Client = null;
+    private AmazonS3 s3Client;
 
-    public AWSS3(OssProperty ossProperty){
+    public AWSS3(OssProperty ossProperty) {
         this.ossProperty = ossProperty;
         BasicAWSCredentials credentials = new BasicAWSCredentials(ossProperty.getAccessKey(), ossProperty.getSecretKey());
         AwsClientBuilder.EndpointConfiguration endpointConfiguration = new AwsClientBuilder.EndpointConfiguration(
                 ossProperty.getEndpoint(), Regions.DEFAULT_REGION.getName());
         s3Client = AmazonS3ClientBuilder.standard()
-                //凭证设置
+                // 凭证设置
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                //endpoint设置
+                // endpoint设置
                 .withEndpointConfiguration(endpointConfiguration)
                 .build();
     }
@@ -103,11 +110,10 @@ public class AWSS3 extends AbstractFileStorage {
 
     @Override
     public MultipartUploadResponse getUploadSignedUrl(String filename) {
-        String bucketName = this.getBucketName();
         String suffix = this.getFileSuffix(filename);
         String objectName = this.getObjectName(suffix, null);
         Date expiration = this.getExpiration(TimeUnit.HOURS.toSeconds(12));
-        URL url = s3Client.generatePresignedUrl(bucketName, objectName, expiration, HttpMethod.PUT);
+        URL url = s3Client.generatePresignedUrl(this.getBucketName(), objectName, expiration, HttpMethod.PUT);
         return null == url ? null : MultipartUploadResponse.builder().objectName(objectName)
                 .uploadUrl(url.toString()).build();
     }
