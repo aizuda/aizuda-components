@@ -35,5 +35,11 @@
             <artifactId>tika-core</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-s3</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 </project>

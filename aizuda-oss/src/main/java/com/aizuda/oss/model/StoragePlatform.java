@@ -5,6 +5,7 @@
  */
 package com.aizuda.oss.model;
 
+import com.aizuda.oss.platform.AWSS3;
 import com.aizuda.oss.platform.AliyunOss;
 import com.aizuda.oss.platform.Local;
 import com.aizuda.oss.platform.Minio;
@@ -24,6 +25,7 @@ public enum StoragePlatform {
     minio(Minio.class),
     aliyun(AliyunOss.class),
     tencentCos(TencentCos.class),
+    awss3(AWSS3.class),
     local(Local.class);
 
     private final Class strategyClass;
