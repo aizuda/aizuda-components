@@ -51,6 +51,10 @@ public class TencentCos extends AbstractFileStorage {
         cosClient = new COSClient(cred, clientConfig);
     }
 
+    public COSClient getCosClient() {
+        return cosClient;
+    }
+
     @Override
     public OssResult upload(InputStream is, String filename, String objectName) throws Exception {
 

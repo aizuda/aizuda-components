@@ -52,6 +52,10 @@ public class AWSS3 extends AbstractFileStorage {
                 .build();
     }
 
+    public AmazonS3 getS3Client() {
+        return s3Client;
+    }
+
     @Override
     public OssResult upload(InputStream is, String filename, String objectName) throws Exception {
         String bucketName = this.getBucketName();

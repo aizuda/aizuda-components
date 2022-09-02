@@ -42,6 +42,10 @@ public class Minio extends AbstractFileStorage {
                 .build();
     }
 
+    public MinioClient getMinioClient() {
+        return minioClient;
+    }
+
     @Override
     public OssResult upload(InputStream is, String filename, String objectName) throws Exception {
         if (null == is || null == filename) {

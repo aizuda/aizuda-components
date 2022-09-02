@@ -46,6 +46,10 @@ public class AliyunOss extends AbstractFileStorage {
                 ossProperty.getSecretKey()), clientConfiguration);
     }
 
+    public OSSClient getOssClient() {
+        return ossClient;
+    }
+
     @Override
     public OssResult upload(InputStream is, String filename, String objectName) throws Exception {
         String bucketName = this.getBucketName();
