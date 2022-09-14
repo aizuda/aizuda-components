@@ -22,6 +22,10 @@ import lombok.Setter;
 @Builder
 public class MultipartUploadResponse {
     /**
+     * 存储桶名
+     */
+    private String bucketName;
+    /**
      * 对象名
      */
     private String objectName;

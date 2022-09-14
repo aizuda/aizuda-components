@@ -108,7 +108,7 @@ public class AliyunOss extends AbstractFileStorage {
         String objectName = this.getObjectName(suffix, null);
         Date expiration = this.getExpiration(TimeUnit.HOURS.toSeconds(12));
         URL url = ossClient.generatePresignedUrl(bucketName, objectName, expiration, HttpMethod.PUT);
-        return null == url ? null : MultipartUploadResponse.builder().objectName(objectName)
+        return null == url ? null : MultipartUploadResponse.builder().bucketName(bucketName).objectName(objectName)
                 .uploadUrl(url.toString()).build();
     }
 }

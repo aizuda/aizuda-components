@@ -117,8 +117,9 @@ public class AWSS3 extends AbstractFileStorage {
         String suffix = this.getFileSuffix(filename);
         String objectName = this.getObjectName(suffix, null);
         Date expiration = this.getExpiration(TimeUnit.HOURS.toSeconds(12));
-        URL url = s3Client.generatePresignedUrl(this.getBucketName(), objectName, expiration, HttpMethod.PUT);
-        return null == url ? null : MultipartUploadResponse.builder().objectName(objectName)
+        String bucketName = this.getBucketName();
+        URL url = s3Client.generatePresignedUrl(bucketName, objectName, expiration, HttpMethod.PUT);
+        return null == url ? null : MultipartUploadResponse.builder().bucketName(bucketName).objectName(objectName)
                 .uploadUrl(url.toString()).build();
     }
 

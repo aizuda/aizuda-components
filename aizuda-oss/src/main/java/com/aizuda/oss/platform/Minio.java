@@ -115,15 +115,15 @@ public class Minio extends AbstractFileStorage {
             String bucketName = this.getBucketName();
             String suffix = this.getFileSuffix(filename);
             String objectName = this.getObjectName(suffix, null);
-            return MultipartUploadResponse.builder().objectName(objectName).uploadUrl(
-                    minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
+            return MultipartUploadResponse.builder().bucketName(bucketName).objectName(objectName)
+                    .uploadUrl(minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
                             .method(Method.PUT)
                             .bucket(bucketName)
                             .object(objectName)
                             .expiry(12, TimeUnit.HOURS)
                             .extraQueryParams(this.queryParams(filename))
                             .build())
-            ).build();
+                    ).build();
         } catch (Exception e) {
             log.error("minio getPresignedObjectUrl error.", e);
             return null;
