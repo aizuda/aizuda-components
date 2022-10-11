@@ -8,7 +8,7 @@ package com.aizuda.security.handler;
 import com.aizuda.security.autoconfigure.SecurityProperties;
 import com.aizuda.security.exception.DecryptRequestException;
 import com.baomidou.kisso.common.encrypt.RSA;
-import com.baomidou.kisso.common.encrypt.base64.Base64;
+import com.baomidou.kisso.common.util.Base64Util;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpInputMessage;
@@ -45,7 +45,7 @@ public abstract class AbstractRestEncryptHandler implements IRestEncryptHandler 
             DecryptRequestException.isEmpty(publicKey, "not found rsa publicKey");
             log.debug("request publicKey={}", publicKey);
             String content = StreamUtils.copyToString(inputMessage.getBody(), StandardCharsets.UTF_8);
-            byte[] decryptBytes = RSA.decryptByPublicKey(Base64.decode(content.getBytes(StandardCharsets.UTF_8)), publicKey);
+            byte[] decryptBytes = RSA.decryptByPublicKey(Base64Util.decode(content), publicKey);
             ByteArrayInputStream inputStream = new ByteArrayInputStream(decryptBytes);
             return new MappingJacksonInputMessage(inputStream, inputMessage.getHeaders());
         } catch (Exception e) {
@@ -82,7 +82,7 @@ public abstract class AbstractRestEncryptHandler implements IRestEncryptHandler 
             DecryptRequestException.isEmpty(privateKey, "not found rsa privateKey");
             log.debug("response privateKey={}", privateKey);
             byte[] plaintextBytes = this.toJson(body).getBytes(StandardCharsets.UTF_8);
-            return Base64.toBase64String(RSA.encryptByPrivateKey(plaintextBytes, privateKey));
+            return Base64Util.encode(RSA.encryptByPrivateKey(plaintextBytes, privateKey));
         } catch (Exception e) {
             return responseException(e);
         }

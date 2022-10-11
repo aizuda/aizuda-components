@@ -2,7 +2,7 @@
 buildscript {
     ext {
         // https://start.spring.io/actuator/info
-        springBootVersion = "2.6.6"
+        springBootVersion = "2.7.0"
     }
 
     // 仓库配置
@@ -53,7 +53,7 @@ subprojects {
 
         dependencies {
             // 单点登录
-            dependency("com.baomidou:kisso:3.8.0")
+            dependency("com.baomidou:kisso:3.8.3")
             dependency("org.aspectj:aspectjweaver:1.9.8")
 
             // 工具类
@@ -63,7 +63,7 @@ subprojects {
             dependency("org.apache.tika:tika-core:2.4.1")
 
             // 监控
-            dependency("com.github.oshi:oshi-core:6.1.4")
+            dependency("com.github.oshi:oshi-core:6.2.2")
         }
     }
 
