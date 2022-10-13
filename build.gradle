@@ -43,6 +43,7 @@ subprojects {
         maven { url 'https://repo.spring.io/release' }
         maven { url 'https://repo.spring.io/milestone' }
         maven { url 'https://repo.spring.io/snapshot' }
+        mavenCentral()
     }
 
     // 依赖管理
