@@ -44,7 +44,7 @@ public class FeiShuSendMessage extends AbstractRobotSendMessage {
             RobotProperties.FeiShu feiShu = robotProperties.getFeiShu();
             final String secret = feiShu.getSecret();
             if (StringUtils.hasLength(secret)) {
-                final long currentTimeMillis = System.currentTimeMillis();
+                final long currentTimeMillis = System.currentTimeMillis() / 1000L;
                 String stringToSign = currentTimeMillis + "\n" + secret;
                 // 使用HmacSHA256算法计算签名
                 Mac mac = Mac.getInstance("HmacSHA256");
