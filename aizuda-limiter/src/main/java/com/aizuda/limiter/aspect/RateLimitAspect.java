@@ -48,14 +48,11 @@ public class RateLimitAspect {
      */
     @Around("@annotation(com.aizuda.limiter.annotation.RateLimit)")
     public Object interceptor(ProceedingJoinPoint pjp) throws Throwable {
-        MethodSignature signature = (MethodSignature) pjp.getSignature();
-        Method method = signature.getMethod();
-        final String classMethodName = MethodUtils.getClassMethodName(method);
-        final RateLimit rateLimit = this.getRateLimit(method, classMethodName);
         MethodMetadata methodMetadata = this.buildMethodMetadata(pjp);
         if (rateLimitHandler.proceed(methodMetadata)) {
             return pjp.proceed();
         } else {
+            RateLimit rateLimit = methodMetadata.getAnnotation();
             throw new RateLimitException(StringUtils.hasLength(rateLimit.message()) ? rateLimit.message() :
                     "current limiting rule triggered");
         }
