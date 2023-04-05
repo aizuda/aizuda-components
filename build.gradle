@@ -2,7 +2,7 @@
 buildscript {
     ext {
         // https://start.spring.io/actuator/info
-        springBootVersion = "2.7.0"
+        springBootVersion = "3.0.5"
     }
 
     // 仓库配置
@@ -54,14 +54,14 @@ subprojects {
 
         dependencies {
             // 单点登录
-            dependency("com.baomidou:kisso:3.8.3")
+            dependency("com.baomidou:kisso:3.9.1")
             dependency("org.aspectj:aspectjweaver:1.9.8")
 
             // 工具类
             dependency("com.aizuda:aizuda-toolkit:0.0.3")
             // http://deepoove.com/poi-tl/
-            dependency("com.deepoove:poi-tl:1.12.0")
-            dependency("org.apache.tika:tika-core:2.4.1")
+            dependency("com.deepoove:poi-tl:1.12.1")
+            dependency("org.apache.tika:tika-core:2.7.0")
 
             // 监控
             dependency("com.github.oshi:oshi-core:6.2.2")
@@ -77,17 +77,13 @@ subprojects {
 
         compileOnly("org.aspectj:aspectjweaver")
         testImplementation("org.aspectj:aspectjweaver")
-        compileOnly("javax.servlet:javax.servlet-api")
-        testImplementation("javax.servlet:javax.servlet-api")
 
         // 编译测试
         testImplementation("org.springframework.boot:spring-boot-starter-test")
-        testImplementation("javax.servlet:javax.servlet-api")
     }
 
-    // 编译环境 JDK1.8
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'

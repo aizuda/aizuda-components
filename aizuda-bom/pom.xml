@@ -44,12 +44,12 @@
         <dependency>
             <groupId>com.deepoove</groupId>
             <artifactId>poi-tl</artifactId>
-            <version>1.12.0</version>
+            <version>1.12.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-core</artifactId>
-            <version>2.4.1</version>
+            <version>2.7.0</version>
         </dependency>
     </dependencies>
 </project>

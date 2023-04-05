@@ -8,7 +8,7 @@ package com.aizuda.limiter.strategy;
 import com.aizuda.common.toolkit.RequestUtils;
 import com.aizuda.limiter.metadata.MethodMetadata;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * key生成策略接口

@@ -12,7 +12,7 @@ import com.aizuda.common.toolkit.ThrowableUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * 默认异常消息处理器

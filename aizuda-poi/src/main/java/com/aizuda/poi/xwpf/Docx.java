@@ -4,7 +4,7 @@ import com.aizuda.common.toolkit.ClassLoaderUtils;
 import com.deepoove.poi.XWPFTemplate;
 import com.deepoove.poi.util.PoitlIOUtils;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;

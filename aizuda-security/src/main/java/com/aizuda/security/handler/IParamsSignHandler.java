@@ -5,7 +5,7 @@
  */
 package com.aizuda.security.handler;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * 请求参数验签处理器接口类

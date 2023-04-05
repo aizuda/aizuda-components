@@ -9,7 +9,7 @@ import com.aizuda.common.toolkit.StringUtils;
 import com.aizuda.security.exception.ParamsSignException;
 import org.springframework.util.StreamUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.SortedMap;

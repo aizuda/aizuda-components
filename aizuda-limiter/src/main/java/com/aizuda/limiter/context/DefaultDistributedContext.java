@@ -13,7 +13,7 @@ import com.aizuda.limiter.metadata.MethodMetadata;
 import lombok.AllArgsConstructor;
 import org.springframework.util.Assert;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

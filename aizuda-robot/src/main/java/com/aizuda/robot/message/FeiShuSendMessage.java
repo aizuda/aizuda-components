@@ -8,12 +8,12 @@ package com.aizuda.robot.message;
 import com.aizuda.common.toolkit.StringUtils;
 import com.aizuda.robot.autoconfigure.RobotProperties;
 import lombok.AllArgsConstructor;
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.web.client.RestTemplate;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 
 /**
@@ -51,7 +51,7 @@ public class FeiShuSendMessage extends AbstractRobotSendMessage {
                 mac.init(new SecretKeySpec(stringToSign.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
                 byte[] signData = mac.doFinal(new byte[]{});
                 put("timestamp", currentTimeMillis);
-                put("sign", new String(Base64.encodeBase64(signData)));
+                put("sign", new String(Base64.getEncoder().encode(signData)));
             }
             put("msg_type", "text");
             put("content", new HashMap<String, Object>(1) {{

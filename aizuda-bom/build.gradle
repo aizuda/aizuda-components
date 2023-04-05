@@ -4,7 +4,7 @@ buildscript {
         maven { url "https://repo.spring.io/plugins-release" }
     }
     dependencies {
-        classpath "io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE"
+        classpath "io.spring.gradle:dependency-management-plugin:1.1.0"
     }
 }
 
@@ -24,8 +24,8 @@ dependencyManagement {
         dependency "com.aizuda:aizuda-security:1.0.1"
         dependency "com.aizuda:aizuda-toolkit:0.0.3"
         // http://deepoove.com/poi-tl/
-        dependency "com.deepoove:poi-tl:1.12.0"
-        dependency "org.apache.tika:tika-core:2.4.1"
+        dependency "com.deepoove:poi-tl:1.12.1"
+        dependency "org.apache.tika:tika-core:2.7.0"
 
     }
 }
