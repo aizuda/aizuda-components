@@ -1,7 +1,7 @@
 /*
- * 爱组搭 http://aizuda.com 低代码组件化开发平台
+ * 爱组搭，低代码组件化开发平台
  * ------------------------------------------
- * 受知识产权保护，请勿删除版权申明
+ * 受知识产权保护，请勿删除版权申明，开发平台不允许做非法网站，后果自负
  */
 package com.aizuda.oss.platform;
 
@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * 腾讯云对象存储（Cloud Object Storage，COS）
  * <p>
- * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
+ * 尊重知识产权，CV 请保留版权，开发平台不允许做非法网站，后果自负
  *
  * @author tugenhao
  * @since 2022-08-15 01:09

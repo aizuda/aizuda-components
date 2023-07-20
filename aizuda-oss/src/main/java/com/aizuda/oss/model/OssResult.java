@@ -9,9 +9,9 @@ import java.io.Serializable;
 /**
  * 存储返回结果对象
  * <p>
- * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
+ * 尊重知识产权，CV 请保留版权，开发平台不允许做非法网站，后果自负
  *
- * @author hubin
+ * @author 青苗
  * @since 2022-06-09
  */
 @Getter

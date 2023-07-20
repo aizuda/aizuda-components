@@ -12,7 +12,7 @@ import java.io.OutputStream;
 /**
  * Docx Word 文档处理类
  * <p>
- * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
+ * 尊重知识产权，CV 请保留版权，开发平台不允许做非法网站，后果自负
  * </p>
  * <p>
  * 使用该类需要引入 poi-tl 插件官网 http://deepoove.com/poi-tl/

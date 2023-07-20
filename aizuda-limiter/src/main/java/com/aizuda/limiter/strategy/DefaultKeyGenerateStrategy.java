@@ -6,7 +6,7 @@ import com.aizuda.limiter.metadata.MethodMetadata;
 /**
  * 默认key策略
  * <p>
- * 尊重知识产权，CV 请保留版权，爱组搭 http://aizuda.com 出品
+ * 尊重知识产权，CV 请保留版权，开发平台不允许做非法网站，后果自负
  *
  * @author 风尘
  * @since 2021-12-19

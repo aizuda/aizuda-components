@@ -3,8 +3,9 @@
 
 ![logo](https://portrait.gitee.com/uploads/avatars/namespace/2879/8637007_aizuda_1636162864.png!avatar100)
 
-- 爱组搭 ~ 低代码组件化开发平台之组件库
+> 开发平台不允许做非法网站，后果自负
 
+- 爱组搭 ~ 低代码组件化开发平台之组件库
 
 - 愿景：每个人都是架构师
 
